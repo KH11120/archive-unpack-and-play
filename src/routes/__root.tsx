@@ -91,7 +91,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap",
+      },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
@@ -132,7 +135,9 @@ function SiteLayout() {
   const navigate = useSiteNavigate();
   const { pathname } = useLocation();
   const current =
-    (Object.keys(pagePaths) as Page[]).find((p) => pagePaths[p] === pathname) ?? "home";
+    pathname === "/courses" || pathname.startsWith("/courses/")
+      ? "courses"
+      : ((Object.keys(pagePaths) as Page[]).find((p) => pagePaths[p] === pathname) ?? "home");
   return (
     <div className="min-h-screen bg-white">
       <Navbar currentPage={current} navigate={navigate} />

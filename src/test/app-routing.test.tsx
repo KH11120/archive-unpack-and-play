@@ -14,4 +14,14 @@ describe("App routing", () => {
 
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
+
+  it("matches the catalogue index, category route, and course-detail route", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+
+    expect(router.matchRoutes("/courses").at(-1)?.routeId).toBe("/courses/");
+    expect(router.matchRoutes("/courses/category/python").at(-1)?.routeId).toBe(
+      "/courses/category/$category",
+    );
+    expect(router.matchRoutes("/courses/example-course").at(-1)?.routeId).toBe("/courses/$slug");
+  });
 });
