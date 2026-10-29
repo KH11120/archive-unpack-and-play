@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+# Agent rules
+- Site pages/components live in src/site and receive a `navigate(page)` prop; useSiteNavigate maps page keys to file routes (keeps imported components unchanged).
