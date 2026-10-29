@@ -94,8 +94,8 @@ export default function CodelyDemo() {
     setCommands((current) => {
       const next = [...current]
       const selected = next[index]
-      next[index] = next[nextIndex]
-      next[nextIndex] = selected
+      next[index] = next[nextIndex]!
+      next[nextIndex] = selected!
       return next
     })
     prepareForEdit()
@@ -140,8 +140,8 @@ export default function CodelyDemo() {
         setDirection(currentDirection)
       } else {
         const nextPosition = {
-          x: currentPosition.x + directionSteps[currentDirection].x,
-          y: currentPosition.y + directionSteps[currentDirection].y,
+          x: currentPosition.x + directionSteps[currentDirection]!.x,
+          y: currentPosition.y + directionSteps[currentDirection]!.y,
         }
         const outsideGrid = nextPosition.x < 0 || nextPosition.x > 3 || nextPosition.y < 0 || nextPosition.y > 3
 

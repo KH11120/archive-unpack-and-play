@@ -228,7 +228,7 @@ export default function HomePage({ navigate }: Props) {
   const [activeProject, setActiveProject] = useState(0)
   const [showMorePossibilities, setShowMorePossibilities] = useState(false)
   const { t } = useLanguage()
-  const selectedProject = projects[activeProject]
+  const selectedProject = projects[activeProject]!
 
   return (
     <div>
