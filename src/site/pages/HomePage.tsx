@@ -1,6 +1,7 @@
 import { useState } from "react"
 import type { Page } from "../page"
 import CodelyDemo from "../components/CodelyDemo"
+import HeroBackgroundVideo from "../components/HeroBackgroundVideo"
 import RecordedClassLead from "../components/RecordedClassLead"
 import { useLanguage } from "../components/LanguageContext"
 import { siteWideFaqs } from "../data/siteFaqs"
@@ -192,10 +193,10 @@ export default function HomePage({ navigate }: Props) {
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-white">
-        <div className="absolute right-0 top-0 h-full w-1/2 rounded-l-[80px] bg-peach -z-0" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14 md:pt-12 md:pb-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+      <section className="relative isolate overflow-hidden bg-white">
+        <HeroBackgroundVideo />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14 md:pt-12 md:pb-20 lg:flex lg:min-h-[34rem] lg:items-center">
+          <div className="grid w-full grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] gap-10 lg:gap-14 items-center">
             <div>
               <div className="section-label mb-5">
                 {t(
@@ -218,7 +219,7 @@ export default function HomePage({ navigate }: Props) {
                   )}
                 </p>
               </div>
-              <p className="text-base leading-relaxed text-gray-500 max-w-xl mb-8">
+              <p className="text-base leading-relaxed text-gray-700 max-w-xl mb-8">
                 {t(
                   "Children learn coding, AI and robotics through a language they understand best — so they can focus on understanding ideas, solving problems and creating with technology.",
                   "बच्चे कोडिंग, एआई और रोबोटिक्स उस भाषा में सीखते हैं जिसे वे सबसे अच्छी तरह समझते हैं — ताकि वे विचारों को समझने, समस्याओं को हल करने और तकनीक के साथ रचना करने पर ध्यान दे सकें।",
@@ -244,8 +245,9 @@ export default function HomePage({ navigate }: Props) {
               </div>
             </div>
 
-            <div className="relative">
-              <div className="rounded-3xl border border-red-100 bg-white p-4 shadow-sm mb-4">
+            {/* Featured programme card, floating over the video */}
+            <div className="relative w-full max-w-md lg:justify-self-end">
+              <div className="rounded-3xl border border-red-100 bg-white p-5 shadow-[0_12px_40px_-12px_rgba(17,24,39,0.25)]">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="text-[10px] font-black tracking-widest text-primary mb-1">
@@ -265,27 +267,6 @@ export default function HomePage({ navigate }: Props) {
                   >
                     Explore Camp →
                   </button>
-                </div>
-              </div>
-              <div
-                className="aspect-[4/3] rounded-3xl bg-peach-mid p-6 sm:p-8 flex items-center justify-center"
-                role="img"
-                aria-label="Video placeholder for approved Vernatics footage"
-              >
-                <div className="max-w-sm text-center">
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-primary">
-                    <LineIcon
-                      path="M4 6h11v12H4V6Zm11 4 5-3v10l-5-3M8 10h3m-3 4h5"
-                      className="h-7 w-7"
-                    />
-                  </div>
-                  <p className="font-black text-dark mb-2">
-                    Approved video placeholder
-                  </p>
-                  <p className="text-sm leading-relaxed text-gray-600">
-                    A child codes on a laptop, tests a physical Vernatics robot
-                    and sees it respond.
-                  </p>
                 </div>
               </div>
             </div>
