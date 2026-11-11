@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Clock3, Code2, GraduationCap, Languages, ListChecks } from "lucide-react";
 import type { CourseRecord } from "@/site/data/courseCatalogue";
@@ -16,6 +17,8 @@ function displayLearningModel(value: string): string | undefined {
 }
 
 export default function CourseCard({ course }: { course: CourseRecord }) {
+  // If an image file is missing, fall back to the neutral placeholder instead of a broken image.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const gradeLabel =
     typeof course.gradeFrom === "number" && typeof course.gradeTo === "number"
       ? course.gradeFrom === course.gradeTo
@@ -31,10 +34,15 @@ export default function CourseCard({ course }: { course: CourseRecord }) {
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8401C]"
     >
       <div className="relative aspect-video overflow-hidden bg-[#FFF5F2]">
-        {course.thumbnailUrl ? (
+        {course.thumbnailUrl && failedSrc !== course.thumbnailUrl ? (
           <img
             src={course.thumbnailUrl}
             alt={course.title}
+            width={1280}
+            height={720}
+            loading="lazy"
+            decoding="async"
+            onError={() => setFailedSrc(course.thumbnailUrl ?? null)}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (

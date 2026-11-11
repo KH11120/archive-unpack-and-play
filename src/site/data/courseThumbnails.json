@@ -1,0 +1,180 @@
+{
+  "about": "Course thumbnail mapping. Keys are course IDs from the Website Courses sheet (COURSE-### from S.No.). 'source' is the original file in public/Thumbnail Samples; the website serves a resized copy from public/course-thumbnails/<id>.jpg, made by scripts/build-course-thumbnails.py. Only High and Medium confidence matches are listed; see docs/course-thumbnails.md for unmapped courses, unused images and open decisions.",
+  "thumbnails": {
+    "COURSE-001": {
+      "source": "Python Transition Program - Hindi Adaptive Learning.jpg",
+      "confidence": "High",
+      "reason": "Image title in Hindi reads 'Python Transition Program (Hindi / Adaptive Learning)'."
+    },
+    "COURSE-002": {
+      "source": "Programming Fundamentals with Codely (EnglishSelf Learning).jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Programming Fundamentals with Codely', 'Self Learning', 'English'."
+    },
+    "COURSE-003": {
+      "source": "Intellectual property Thumbnail-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Intellectual Property' with copyright, trademark and patent icons."
+    },
+    "COURSE-004": {
+      "source": "Art and Music with Coding Camp.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Art and Music with Coding Camp'."
+    },
+    "COURSE-005": {
+      "source": "Artificial Intelligence & Machine Learning Camp .jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Artificial Intelligence & Machine Learning Camp'."
+    },
+    "COURSE-007": {
+      "source": "Block Chain and Cryptography CAMP-page-00001.jpg",
+      "confidence": "Medium",
+      "reason": "Image reads 'Block Chain and Cryptography Camp'; this course's Subject is 'Blockchain & Cryptography'. Could also suit 'Block Chain Camp - Live' (COURSE-070) or 'Cryptography Camp - Live' (COURSE-071)."
+    },
+    "COURSE-010": {
+      "source": "Block Coding(VE) - AL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding (Very Easy) | AL'."
+    },
+    "COURSE-011": {
+      "source": "Grade 1 Assisted Learning Easy-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Grade 1 Assisted Learning Easy'."
+    },
+    "COURSE-012": {
+      "source": "Block Coding(M) -AL (Level 2)-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding (Moderate) - AL Level 2'."
+    },
+    "COURSE-013": {
+      "source": "Grade 1 Assisted Learning Hard-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Grade 1 Assisted Learning Hard'."
+    },
+    "COURSE-014": {
+      "source": "Grade 1 Assisted Learning Moderate-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Grade 1 Assisted Learning Moderate'."
+    },
+    "COURSE-015": {
+      "source": "Grade 1 Assisted Learning Very Easy-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Grade 1 Assisted Learning Very Easy'."
+    },
+    "COURSE-017": {
+      "source": "Grade 6 Assisted Learning-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Grade 6 Assisted Learning'."
+    },
+    "COURSE-019": {
+      "source": "Block Coding Hindi (M)-page-00001.jpg",
+      "confidence": "Medium",
+      "reason": "Image reads 'Block Coding Hindi (Medium)'; course is Hindi block coding at Moderate level, but the image does not say 'Fundamentals'."
+    },
+    "COURSE-026": {
+      "source": "Art With Coding - AL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Art with Coding AL'; course is 'Creative Art with Coding', Assisted Learning."
+    },
+    "COURSE-029": {
+      "source": "Javascript( E) - AL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'JavaScript (Easy) - AL'; course is JavaScript Fundamentals, Easy, Assisted Learning."
+    },
+    "COURSE-030": {
+      "source": "AIML Level-1 - AL-page-00001.jpg",
+      "confidence": "Medium",
+      "reason": "Image reads 'AIML Level-1 Assisted Learning'; the only Assisted Learning AI course is 'Foundations of AI & ML', but the image does not use that name."
+    },
+    "COURSE-031": {
+      "source": "Block Coding Capstone - Live-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding Capstone LIVE'. A second design for the same course exists (unused)."
+    },
+    "COURSE-032": {
+      "source": "Web Development Capstone - Live-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Web Development Capstone LIVE'. A second design for the same course exists (unused)."
+    },
+    "COURSE-033": {
+      "source": "Python Capstone - Live-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Python Capstone LIVE'. A second design ('copy') exists (unused)."
+    },
+    "COURSE-034": {
+      "source": "Cloud Computing Capstone - Live-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Cloud Computing Capstone LIVE'. A second design ('copy') exists (unused)."
+    },
+    "COURSE-035": {
+      "source": "App Development Capstone - Live-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'App Development Capstone LIVE'. A second design ('copy') exists (unused)."
+    },
+    "COURSE-036": {
+      "source": "Web Development(H) - ALTS-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Web Development Hard ALTS'; course is Advanced Web Development, Hard, ALTS."
+    },
+    "COURSE-037": {
+      "source": "Python(Hard) - ALTS-page-00001.jpg",
+      "confidence": "Medium",
+      "reason": "Image reads 'Python Hard ALTS'; course is Advanced Python, Hard, ALTS, but the image does not mention block coding."
+    },
+    "COURSE-038": {
+      "source": "Block Coding(Hard) - AL-page-00001.jpg",
+      "confidence": "Medium",
+      "reason": "Image reads 'Block Coding (Hard) - AL'; this is the only Hard, Assisted Learning block-coding course, but its title is 'Block-Based Coding Applications'."
+    },
+    "COURSE-039": {
+      "source": "Block Coding(M) - AL-page-00001.jpg",
+      "confidence": "Medium",
+      "reason": "Image reads 'Block Coding (Medium)' (file says AL); course is Block-Based Coding Advance, Assisted Learning, Moderate."
+    },
+    "COURSE-040": {
+      "source": "Codely Course - AL(TM)  -page-00001.jpg",
+      "confidence": "Medium",
+      "reason": "Image reads 'Codely Course - AL (TM)'. COURSE-040 and COURSE-041 are identical rows in the workbook, so both use this image."
+    },
+    "COURSE-041": {
+      "source": "Codely Course - AL(TM)  -page-00001.jpg",
+      "confidence": "Medium",
+      "reason": "Duplicate of COURSE-040 (identical workbook row); same image."
+    },
+    "COURSE-044": {
+      "source": "Block Coding Level-1 - Live(TM)-page-00001.jpg",
+      "confidence": "Medium",
+      "reason": "File name says '(TM)'; the image itself reads 'Block Coding Level-1 LIVE', which also fits 'Block Coding Level-1 - Live' (COURSE-059)."
+    },
+    "COURSE-045": {
+      "source": "Web Development(M) - SL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Web Development Medium SL'; course is Intermediate Web Development, Moderate, Self Learning."
+    },
+    "COURSE-046": {
+      "source": "Block Coding(VE) - SL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding Very Easy SL'; course is Block-Based Coding Fundamentals, Very Easy, Self Learning, English."
+    },
+    "COURSE-047": {
+      "source": "ब्लॉक कोडिंग(VE) - SL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image title matches the course title exactly: 'ब्लॉक कोडिंग (Very Easy) - SL'."
+    },
+    "COURSE-066": {
+      "source": "Cloud Computing Level-1 - Live(N)-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Cloud Computing Level-1 LIVE (N)'."
+    },
+    "COURSE-067": {
+      "source": "Block Coding Level-1 - Live(N)-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding Level-1 LIVE (N)'."
+    },
+    "COURSE-068": {
+      "source": "App Development Level-1 - Live(N)-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'App Development Level-1 LIVE (N)'."
+    }
+  }
+}

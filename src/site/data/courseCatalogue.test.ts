@@ -3,6 +3,8 @@ import {
   emptyCatalogueFilters,
   gradeOptions,
   getCatalogueOptionCount,
+  getCourseFacetValues,
+  getFacetOptions,
   isPublishableCourse,
   matchesCatalogueFilters,
   catalogueCourses,
@@ -232,6 +234,65 @@ describe("course catalogue publication and filtering", () => {
         levels: ["Not specified"],
       }),
     ).toBe(false);
+  });
+
+  it("matches values case-insensitively, ignores stray spaces and splits multi-value cells", () => {
+    const course = testCourse({ language: " english ;  Hindi ", learningModel: "LIVE" });
+    expect(getCourseFacetValues(course, "languages")).toEqual(["english", "Hindi"]);
+    expect(
+      matchesCatalogueFilters(course, { ...emptyCatalogueFilters, languages: ["English"] }),
+    ).toBe(true);
+    expect(
+      matchesCatalogueFilters(course, { ...emptyCatalogueFilters, languages: ["Hindi"] }),
+    ).toBe(true);
+    expect(matchesCatalogueFilters(course, { ...emptyCatalogueFilters, models: ["Live"] })).toBe(
+      true,
+    );
+  });
+
+  it("builds options only from values courses use, without placeholders or duplicates", () => {
+    const courses = [
+      testCourse({ id: "1", language: "Hindi", level: "Not specified" }),
+      testCourse({ id: "2", language: " hindi ", level: "Moderate" }),
+      testCourse({
+        id: "3",
+        language: "English, Tamil",
+        learningModel: "ALTS (meaning to confirm)",
+      }),
+    ];
+    expect(getFacetOptions(courses, "languages")).toEqual(["English", "Hindi", "Tamil"]);
+    expect(getFacetOptions(courses, "levels")).toEqual(["Easy", "Moderate"]);
+    expect(getFacetOptions(courses, "models")).toEqual(["Live"]);
+  });
+
+  it("derives sidebar options from the real catalogue rows", () => {
+    for (const [key, field] of [
+      ["models", "learningModel"],
+      ["levels", "level"],
+      ["languages", "language"],
+      ["programTypes", "programType"],
+    ] as const) {
+      const used = new Set(
+        catalogueCourses
+          .map((course) => String(course[field]))
+          .filter((value) => !["Not specified", "ALTS (meaning to confirm)"].includes(value)),
+      );
+      expect(new Set(getFacetOptions(catalogueCourses, key))).toEqual(used);
+    }
+  });
+
+  it("gives each option the same count as the cards shown when it is selected", () => {
+    const filters = { ...emptyCatalogueFilters, programTypes: ["Course"] };
+    for (const category of [undefined, "Python", "Games & Creative Coding"]) {
+      for (const model of getFacetOptions(catalogueCourses, "models")) {
+        const shown = catalogueCourses.filter((course) =>
+          matchesCatalogueFilters(course, { ...filters, models: [model] }, category),
+        );
+        expect(getCatalogueOptionCount(catalogueCourses, filters, category, "models", model)).toBe(
+          shown.length,
+        );
+      }
+    }
   });
 
   it("counts each option after applying the other filter groups", () => {

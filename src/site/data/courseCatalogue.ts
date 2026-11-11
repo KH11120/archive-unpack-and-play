@@ -1,12 +1,6 @@
 import workbookPublicCourses from "./courseCatalogue.generated.json";
+import courseThumbnails from "./courseThumbnails.json";
 
-const catalogueOptions = workbookPublicCourses.options;
-export const categoryOptions: readonly string[] = catalogueOptions.categories;
-export const learningModelOptions: readonly string[] = catalogueOptions.learningModels;
-export const levelOptions: readonly string[] = catalogueOptions.levels;
-export const languageOptions: readonly string[] = catalogueOptions.languages;
-export const programTypeOptions: readonly string[] = catalogueOptions.programTypes;
-export const gradeOptions: readonly number[] = catalogueOptions.grades;
 export const sortOptions = ["recommended", "grade", "level", "az"] as const;
 
 export type LearningModel = (typeof learningModelOptions)[number];
@@ -108,8 +102,135 @@ export interface CatalogueFilters {
 export type CatalogueFilterKey = "models" | "grades" | "levels" | "languages" | "programTypes";
 export type CatalogueFilterValue = string | number;
 
+/** Web path of a mapped course thumbnail (built by scripts/build-course-thumbnails.py). */
+export function getCourseThumbnailPath(courseId: string): string | null {
+  const mapped = (courseThumbnails.thumbnails as Record<string, unknown>)[courseId];
+  return mapped ? `/course-thumbnails/${courseId.toLowerCase()}.jpg` : null;
+}
+
 /** Generated from intended Website Courses rows through an explicit safe-field whitelist. */
-export const catalogueCourses = workbookPublicCourses.courses as unknown as readonly CourseRecord[];
+export const catalogueCourses: readonly CourseRecord[] = (
+  workbookPublicCourses.courses as unknown as CourseRecord[]
+).map((course) => {
+  const thumbnailUrl = course.thumbnailUrl ?? getCourseThumbnailPath(course.id);
+  return {
+    ...course,
+    thumbnailUrl,
+    thumbnailReady: course.thumbnailReady || Boolean(thumbnailUrl),
+  };
+});
+
+/*
+ * Filter options, counts and results are all derived from the course records below, so the
+ * sidebar can never offer a value the catalogue does not contain.
+ */
+type FacetKey = Exclude<CatalogueFilterKey, "grades">;
+
+const FACET_FIELDS: Record<FacetKey, "learningModel" | "level" | "language" | "programType"> = {
+  models: "learningModel",
+  levels: "level",
+  languages: "language",
+  programTypes: "programType",
+};
+
+/** Placeholders meaning "value unknown"; they never become filter options. */
+const UNRESOLVED_VALUES = new Set(["", "not specified", "alts (meaning to confirm)", "recorded"]);
+
+/** Several values in one workbook cell may be separated by ; | , or a line break. */
+const MULTI_VALUE_SEPARATOR = /[;|,\n]/;
+
+/** Display order only. An option still appears only when a course actually uses it. */
+const PREFERRED_ORDER: Record<FacetKey, readonly string[]> = {
+  models: ["Live", "Assisted Learning (AL)", "Self Learning (SL)"],
+  levels: ["Very Easy", "Easy", "Moderate", "Hard", "All Levels"],
+  languages: ["English", "Hindi"],
+  programTypes: ["Course", "Camp", "Capstone"],
+};
+
+export function normalizeCatalogueValue(value: string | null | undefined): string {
+  return (value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function valueKey(value: string): string {
+  return normalizeCatalogueValue(value).toLocaleLowerCase();
+}
+
+function sameValue(a: string, b: string): boolean {
+  return valueKey(a) === valueKey(b);
+}
+
+export function isResolvedCatalogueValue(value: string | null | undefined): boolean {
+  return !UNRESOLVED_VALUES.has(valueKey(value ?? ""));
+}
+
+/** The known values a course has for one filter group (multi-value cells are split). */
+export function getCourseFacetValues(course: CourseRecord, key: FacetKey): string[] {
+  const raw = course[FACET_FIELDS[key]];
+  const values: string[] = [];
+  for (const part of String(raw ?? "").split(MULTI_VALUE_SEPARATOR)) {
+    const value = normalizeCatalogueValue(part);
+    if (isResolvedCatalogueValue(value) && !values.some((item) => sameValue(item, value))) {
+      values.push(value);
+    }
+  }
+  return values;
+}
+
+/** Distinct values used by the given courses, spelled as first seen in the catalogue. */
+export function getFacetOptions(courses: readonly CourseRecord[], key: FacetKey): string[] {
+  const options: string[] = [];
+  for (const course of courses) {
+    for (const value of getCourseFacetValues(course, key)) {
+      if (!options.some((option) => sameValue(option, value))) options.push(value);
+    }
+  }
+  const rank = (value: string) => {
+    const index = PREFERRED_ORDER[key].findIndex((preferred) => sameValue(preferred, value));
+    return index < 0 ? PREFERRED_ORDER[key].length : index;
+  };
+  return options
+    .map((value, index) => ({ value, index }))
+    .sort((a, b) => rank(a.value) - rank(b.value) || a.index - b.index)
+    .map(({ value }) => value);
+}
+
+export function getGradeOptions(courses: readonly CourseRecord[]): number[] {
+  const grades = new Set<number>();
+  for (const course of courses) {
+    if (typeof course.gradeFrom === "number" && typeof course.gradeTo === "number") {
+      for (let grade = course.gradeFrom; grade <= course.gradeTo; grade += 1) grades.add(grade);
+    }
+  }
+  return [...grades].sort((a, b) => a - b);
+}
+
+/** Courses visible on a category page before any sidebar filter is applied. */
+export function getCoursesInCategory(
+  courses: readonly CourseRecord[],
+  category: string | undefined,
+): CourseRecord[] {
+  return courses.filter((course) => !category || sameValue(course.category, category));
+}
+
+function distinctValues(values: readonly string[]): string[] {
+  const result: string[] = [];
+  for (const value of values.map(normalizeCatalogueValue)) {
+    if (value && !result.some((item) => sameValue(item, value))) result.push(value);
+  }
+  return result;
+}
+
+export const categoryOptions: readonly string[] = distinctValues(
+  catalogueCourses.map((course) => course.category),
+);
+export const learningModelOptions: readonly string[] = getFacetOptions(catalogueCourses, "models");
+export const levelOptions: readonly string[] = getFacetOptions(catalogueCourses, "levels");
+export const languageOptions: readonly string[] = getFacetOptions(catalogueCourses, "languages");
+export const programTypeOptions: readonly string[] = getFacetOptions(
+  catalogueCourses,
+  "programTypes",
+);
+export const gradeOptions: readonly number[] = getGradeOptions(catalogueCourses);
 
 export function isPublishableCourse(
   course: CourseRecord,
@@ -205,46 +326,57 @@ export const emptyCatalogueFilters: CatalogueFilters = {
   sort: "recommended",
 };
 
-function includesSelected(selected: string[], value: string): boolean {
-  return selected.length === 0 || selected.includes(value);
+/** OR within one group: no selection matches everything; otherwise any selected value matches. */
+function matchesFacet(course: CourseRecord, key: FacetKey, selected: readonly string[]): boolean {
+  const wanted = selected.filter(isResolvedCatalogueValue);
+  if (selected.length === 0) return true;
+  const values = getCourseFacetValues(course, key);
+  if (values.some((value) => wanted.some((item) => sameValue(item, value)))) return true;
+  // A course for every ability appears under each specific level a parent selects.
+  return key === "levels" && wanted.length > 0 && values.some((v) => sameValue(v, "All Levels"));
 }
 
-export function matchesCatalogueFilters(
-  course: CourseRecord,
-  filters: CatalogueFilters,
-  category?: string,
-): boolean {
-  const query = filters.q.trim().toLocaleLowerCase();
-  const matchesQuery =
-    query.length < 2 ||
-    [course.title, course.subject ?? "", course.category ?? ""].some((value) =>
-      value.toLocaleLowerCase().includes(query),
-    );
-  const matchesGrade =
-    filters.grades.length === 0 ||
-    filters.grades.some(
+function matchesGrades(course: CourseRecord, grades: readonly number[]): boolean {
+  return (
+    grades.length === 0 ||
+    grades.some(
       (grade) =>
         typeof course.gradeFrom === "number" &&
         typeof course.gradeTo === "number" &&
         course.gradeFrom <= grade &&
         course.gradeTo >= grade,
-    );
-  const matchesLevel =
-    filters.levels.length === 0 ||
-    (course.level === "All Levels" && filters.levels.some((level) => level !== "Not specified")) ||
-    filters.levels.includes(course.level ?? "");
-
-  return (
-    (!category || course.category === category) &&
-    matchesQuery &&
-    includesSelected(filters.models, course.learningModel ?? "") &&
-    matchesGrade &&
-    matchesLevel &&
-    includesSelected(filters.languages, course.language ?? "") &&
-    includesSelected(filters.programTypes, course.programType ?? "")
+    )
   );
 }
 
+/** AND across groups, OR within a group. The single matching rule for cards and counts. */
+export function matchesCatalogueFilters(
+  course: CourseRecord,
+  filters: CatalogueFilters,
+  category?: string,
+): boolean {
+  const query = normalizeCatalogueValue(filters.q).toLocaleLowerCase();
+  const matchesQuery =
+    query.length < 2 ||
+    [course.title, course.subject ?? "", course.category ?? ""].some((value) =>
+      normalizeCatalogueValue(value).toLocaleLowerCase().includes(query),
+    );
+
+  return (
+    (!category || sameValue(course.category ?? "", category)) &&
+    matchesQuery &&
+    matchesFacet(course, "models", filters.models) &&
+    matchesGrades(course, filters.grades) &&
+    matchesFacet(course, "levels", filters.levels) &&
+    matchesFacet(course, "languages", filters.languages) &&
+    matchesFacet(course, "programTypes", filters.programTypes)
+  );
+}
+
+/**
+ * How many courses would be listed if this option were the only one selected in its group,
+ * with every other active filter (search, other groups, category) still applied.
+ */
 export function getCatalogueOptionCount(
   courses: readonly CourseRecord[],
   filters: CatalogueFilters,
@@ -252,23 +384,9 @@ export function getCatalogueOptionCount(
   key: CatalogueFilterKey,
   value: CatalogueFilterValue,
 ): number {
-  const withoutThisGroup = { ...filters, [key]: [] } as CatalogueFilters;
-  return courses.filter((course) => {
-    const optionMatches =
-      key === "models"
-        ? course.learningModel === value
-        : key === "grades"
-          ? typeof course.gradeFrom === "number" &&
-            typeof course.gradeTo === "number" &&
-            course.gradeFrom <= Number(value) &&
-            course.gradeTo >= Number(value)
-          : key === "levels"
-            ? course.level === value || (course.level === "All Levels" && value !== "Not specified")
-            : key === "languages"
-              ? course.language === value
-              : course.programType === value;
-    return optionMatches && matchesCatalogueFilters(course, withoutThisGroup, category);
-  }).length;
+  const onlyThisOption = { ...filters, [key]: [value] } as CatalogueFilters;
+  return courses.filter((course) => matchesCatalogueFilters(course, onlyThisOption, category))
+    .length;
 }
 
 export function sortCourses(
@@ -309,9 +427,7 @@ export function getCourseCategorySlug(category: string): string {
 }
 
 export function getCatalogueCategories(): string[] {
-  return categoryOptions.filter((category) =>
-    catalogueCourses.some((course) => course.category === category),
-  );
+  return [...categoryOptions];
 }
 
 export function getCategoryBySlug(slug: string): string | undefined {

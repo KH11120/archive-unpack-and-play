@@ -17,11 +17,10 @@ import {
   getCatalogueCategories,
   getCatalogueOptionCount,
   getCourseCategorySlug,
-  languageOptions,
-  learningModelOptions,
-  levelOptions,
+  getCoursesInCategory,
+  getFacetOptions,
+  getGradeOptions,
   matchesCatalogueFilters,
-  programTypeOptions,
   catalogueCourses,
   sortCourses,
   type CatalogueFilters,
@@ -128,6 +127,42 @@ export function FilterPanel({
     onChange({ ...filters, [key]: next } as CatalogueFilters);
   };
 
+  // Options come from the courses on this page (all courses, or one category), so a group
+  // only lists values those courses actually have. Selected values always stay visible so they
+  // can be removed, e.g. after switching to a category that does not use them.
+  const scopedCourses = getCoursesInCategory(courses, category);
+  const withSelected = <T extends FilterValue>(options: T[], selected: readonly T[]): T[] => [
+    ...options,
+    ...selected.filter((value) => !options.includes(value)),
+  ];
+  const groups: { title: string; key: FilterKey; options: FilterValue[] }[] = [
+    {
+      title: "Learning Model",
+      key: "models",
+      options: withSelected(getFacetOptions(scopedCourses, "models"), filters.models),
+    },
+    {
+      title: "Grade",
+      key: "grades",
+      options: withSelected(getGradeOptions(scopedCourses), filters.grades),
+    },
+    {
+      title: "Level",
+      key: "levels",
+      options: withSelected(getFacetOptions(scopedCourses, "levels"), filters.levels),
+    },
+    {
+      title: "Language",
+      key: "languages",
+      options: withSelected(getFacetOptions(scopedCourses, "languages"), filters.languages),
+    },
+    {
+      title: "Program Type",
+      key: "programTypes",
+      options: withSelected(getFacetOptions(scopedCourses, "programTypes"), filters.programTypes),
+    },
+  ];
+
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
@@ -140,19 +175,13 @@ export function FilterPanel({
           Clear all
         </button>
       </div>
-      {[
-        { title: "Learning Model", key: "models", options: learningModelOptions },
-        { title: "Grade", key: "grades", options: gradeOptions },
-        { title: "Level", key: "levels", options: levelOptions },
-        { title: "Language", key: "languages", options: languageOptions },
-        { title: "Program Type", key: "programTypes", options: programTypeOptions },
-      ].map(
+      {groups.map(
         ({ title, key, options }) =>
           options.length > 0 && (
             <FilterGroup
               key={key}
               title={title}
-              filterKey={key as FilterKey}
+              filterKey={key}
               options={options}
               filters={filters}
               category={category}
@@ -170,6 +199,13 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
   const [visibleCount, setVisibleCount] = useState(12);
   const activeCategory = category ?? "All";
 
+  // Category pages share one component instance, so start each category at the first page.
+  const [pagedCategory, setPagedCategory] = useState(category);
+  if (pagedCategory !== category) {
+    setPagedCategory(category);
+    setVisibleCount(12);
+  }
+
   const categories = useMemo(() => {
     return getCatalogueCategories();
   }, []);
@@ -186,8 +222,9 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
     onFiltersChange(next, replace);
   };
 
+  // Removes the search and every sidebar filter; the chosen sort order is kept.
   const clearFilters = () => {
-    updateFilters({ ...emptyCatalogueFilters });
+    updateFilters({ ...emptyCatalogueFilters, sort: filters.sort });
   };
 
   const activeChips: { key: FilterKey | "q"; value: FilterValue | string; label: string }[] = [];
@@ -195,7 +232,11 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
     activeChips.push({ key: "q", value: filters.q, label: `Search: ${filters.q}` });
   for (const key of ["models", "grades", "levels", "languages", "programTypes"] as const) {
     for (const value of filters[key])
-      activeChips.push({ key, value, label: `${filterKeyLabel(key)}: ${value}` });
+      activeChips.push({
+        key,
+        value,
+        label: `${filterKeyLabel(key)}: ${filterOptionLabel(key, value)}`,
+      });
   }
 
   const removeChip = (chip: (typeof activeChips)[number]) => {

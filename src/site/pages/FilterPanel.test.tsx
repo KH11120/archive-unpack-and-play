@@ -54,6 +54,12 @@ const sampleCourses: CourseRecord[] = [
   },
 ];
 
+function groupTitles() {
+  return [...document.querySelectorAll("summary")].map((summary) =>
+    (summary.textContent ?? "").replace("−", "").trim(),
+  );
+}
+
 describe("catalogue filter controls", () => {
   it("reports counts and sends checkbox state changes to its caller", () => {
     const onChange = vi.fn();
@@ -68,12 +74,41 @@ describe("catalogue filter controls", () => {
     );
 
     expect(screen.getByRole("checkbox", { name: /Live/ })).toBeEnabled();
-    expect(screen.getByRole("checkbox", { name: /Self Learning/ })).toBeDisabled();
+    expect(screen.getByText("Live").nextElementSibling).toHaveTextContent("1");
+    // Options come from the courses themselves: nothing here is Self Learning.
+    expect(screen.queryByRole("checkbox", { name: /Self Learning/ })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("checkbox", { name: /Live/ }));
     expect(onChange).toHaveBeenCalledWith({ ...emptyCatalogueFilters, models: ["Live"] });
   });
 
-  it("omits unsupported Grade filters and keeps an active zero-count option removable", () => {
+  it("hides groups with no known values and only lists options used in the category", () => {
+    const sparse = sampleCourses.map((course) => ({
+      ...course,
+      language: "Not specified",
+      gradeFrom: null,
+      gradeTo: null,
+    }));
+    const webCourse = {
+      ...sampleCourses[0]!,
+      id: "web",
+      category: "Web Development",
+      language: "Tamil",
+    };
+    render(
+      <FilterPanel
+        filters={emptyCatalogueFilters}
+        category="Python"
+        courses={[...sparse, webCourse]}
+        onChange={vi.fn()}
+        onClear={vi.fn()}
+      />,
+    );
+
+    expect(groupTitles()).toEqual(["Learning Model", "Level", "Program Type"]);
+    expect(screen.queryByRole("checkbox", { name: /Tamil/ })).not.toBeInTheDocument();
+  });
+
+  it("keeps a selected value that this page does not use visible so it can be removed", () => {
     const onChange = vi.fn();
     render(
       <FilterPanel
@@ -85,7 +120,7 @@ describe("catalogue filter controls", () => {
       />,
     );
 
-    expect(screen.queryByText("Grade", { selector: "summary" })).not.toBeInTheDocument();
+    expect(groupTitles()).toContain("Grade");
     const selectedSelfLearning = screen.getByRole("checkbox", { name: /Self Learning/ });
     expect(selectedSelfLearning).toBeEnabled();
     fireEvent.click(selectedSelfLearning);

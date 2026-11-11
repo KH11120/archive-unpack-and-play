@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSiteNavigate } from "@/site/useSiteNavigate";
 import {
   getCourseCategorySlug,
@@ -36,6 +36,8 @@ function displayLearningModel(value: string): string | undefined {
 
 export default function CourseDetailPage({ course }: { course: CourseRecord }) {
   const navigate = useSiteNavigate();
+  // Hide the hero image (rather than show a broken one) if its file is missing.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const instructor = approvedInstructor(course);
   const reviews = approvedReviews(course);
   const relatedCourses = useMemo(() => {
@@ -179,11 +181,14 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
               </button>
             </div>
           </div>
-          {course.thumbnailUrl && (
+          {course.thumbnailUrl && failedSrc !== course.thumbnailUrl && (
             <div className="overflow-hidden rounded-3xl bg-white shadow-sm">
               <img
                 src={course.thumbnailUrl}
                 alt={course.title}
+                width={1280}
+                height={720}
+                onError={() => setFailedSrc(course.thumbnailUrl ?? null)}
                 className="aspect-video w-full object-cover"
               />
             </div>
