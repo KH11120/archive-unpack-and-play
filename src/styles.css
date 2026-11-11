@@ -197,6 +197,51 @@ html {
   animation-play-state: paused;
 }
 
+/* Homepage partner logo marquee: two identical groups slide left by exactly one group width,
+   so the loop restarts on an identical frame (no jump). Spacing is padding inside each item,
+   which keeps the two halves exactly equal. */
+@keyframes partner-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+.partner-marquee {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+.partner-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: partner-marquee 45s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.partner-marquee:hover .partner-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partner-marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .partner-marquee-track {
+    animation: none;
+    width: auto;
+  }
+  .partner-marquee-group {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 1rem;
+    flex-shrink: 1;
+  }
+  .partner-marquee-copy {
+    display: none;
+  }
+}
+
 @keyframes possibilities-reveal {
   from {
     opacity: 0;

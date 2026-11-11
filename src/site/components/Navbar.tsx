@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Page } from '../page'
 import { useLanguage } from './LanguageContext'
+import AptcoderLogo from './AptcoderLogo'
 
 interface NavbarProps {
   currentPage: Page
@@ -42,18 +43,11 @@ export default function Navbar({ currentPage, navigate }: NavbarProps) {
           {/* Logo */}
           <button
             onClick={() => navigate('home')}
-            className="flex items-center gap-2 shrink-0"
+            className="flex items-center shrink-0"
+            aria-label="APTCODER home"
           >
-            <div className="w-8 h-8 bg-[#E8401C] rounded-lg flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M2 14L8 4L14 14H2Z" fill="white" />
-                <circle cx="14" cy="6" r="3" fill="white" opacity="0.7" />
-              </svg>
-            </div>
-            <span className="font-black text-xl tracking-tight text-gray-900">
-              apt<span className="text-[#E8401C]">coder</span>
-              <span className="text-[10px] align-top text-[#E8401C]">®</span>
-            </span>
+            {/* Slightly smaller on tablet widths, where the menu items share a tight row. */}
+            <AptcoderLogo className="h-9 md:h-8 lg:h-10" eager />
           </button>
 
           {/* Desktop nav */}

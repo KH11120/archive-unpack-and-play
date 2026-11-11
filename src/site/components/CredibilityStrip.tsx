@@ -1,12 +1,34 @@
-const organizations = [
-  "IIM Lucknow EIC",
-  "FITT IIT Delhi",
-  "Microsoft",
-  "IIT Ropar",
-  "Kotak BizLabs",
-  "DST",
-  "EXIM Bank",
-]
+import { partners } from "@/site/data/partners";
+
+/** One full set of logos. Rendered twice so the loop point is never visible. */
+function LogoGroup({ copy }: { copy: boolean }) {
+  return (
+    <ul
+      className={`partner-marquee-group flex shrink-0 items-center ${copy ? "partner-marquee-copy" : ""}`}
+      aria-hidden={copy || undefined}
+    >
+      {partners.map((partner) => (
+        <li key={partner.name} className="flex shrink-0 items-center px-5 sm:px-7">
+          <img
+            src={partner.src}
+            alt={copy ? "" : partner.fullName}
+            width={partner.width}
+            height={partner.height}
+            // Load up front (lazy loading would make logos pop in mid-scroll), but after the
+            // page's main content.
+            loading="eager"
+            fetchPriority="low"
+            decoding="async"
+            draggable={false}
+            // One shared height; width follows each logo's own proportions. The max widths sit
+            // above the widest logo (Kotak BizLabs, about 5.4 : 1) so none is ever clipped.
+            className="h-6 w-auto max-w-[9rem] object-contain sm:h-7 sm:max-w-[10rem]"
+          />
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function CredibilityStrip() {
   return (
@@ -14,36 +36,22 @@ export default function CredibilityStrip() {
       className="border-y border-gray-100 bg-white"
       aria-labelledby="credibility-strip-heading"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 lg:gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6 lg:gap-8">
           <h2
             id="credibility-strip-heading"
             className="shrink-0 text-[10px] sm:text-xs font-bold tracking-widest text-gray-500"
           >
-            SUPPORTED &amp; ASSOCIATED WITH
+            OUR ECOSYSTEM PARTNERS
           </h2>
-          <ul
-            className="flex flex-1 items-center gap-5 lg:justify-between overflow-x-auto pb-1 sm:pb-0"
-            tabIndex={0}
-            aria-label="Organization logo placeholders"
-          >
-            {organizations.map((organization) => (
-              <li
-                key={organization}
-                className="shrink-0 flex items-center gap-2 text-[11px] font-semibold text-gray-500 whitespace-nowrap"
-                title="Approved logo asset not supplied"
-              >
-                <span
-                  className="w-4 h-4 rounded border border-gray-200 bg-gray-50"
-                  aria-hidden="true"
-                />
-                <span>{organization}</span>
-                <span className="sr-only">logo placeholder</span>
-              </li>
-            ))}
-          </ul>
+          <div className="partner-marquee min-w-0 flex-1 overflow-hidden">
+            <div className="partner-marquee-track">
+              <LogoGroup copy={false} />
+              <LogoGroup copy />
+            </div>
+          </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

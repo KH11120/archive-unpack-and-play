@@ -1,5 +1,6 @@
 import type { Page } from '../page'
 import { useLanguage } from '../components/LanguageContext'
+import { partners } from '../data/partners'
 
 interface Props {
   navigate: (page: Page) => void
@@ -73,18 +74,32 @@ export default function AboutPage({ navigate }: Props) {
       </section>
 
       {/* Partners and supporters */}
-      <section className="py-12 bg-gray-50 border-y border-gray-100">
+      <section className="py-14 bg-gray-50 border-y border-gray-100" aria-labelledby="partners-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-xs font-bold text-[#E8401C] uppercase tracking-widest mb-2">OUR PARTNERS &amp; SUPPORTERS</p>
-          <h2 className="text-2xl font-black text-gray-900 mb-2">Supported by Leading Institutions &amp; Organizations</h2>
-          <p className="text-sm text-gray-500 mb-7">We are supported and associated with leading institutions and organizations.</p>
-          <div className="flex gap-x-8 gap-y-5 items-center overflow-x-auto sm:flex-wrap pb-2 sm:pb-0">
-            {['FITT IIT Delhi', 'Microsoft', 'IIT Ropar', 'Kotak BizLab', 'DST', 'EXIM Bank', 'IIM Lucknow EIC'].map((organization) => (
-              <div key={organization} className="shrink-0" title={`${organization} logo placeholder — approved asset not supplied`}>
-                <span className="text-sm font-bold text-gray-500 whitespace-nowrap">{organization}</span>
-              </div>
+          <h2 id="partners-heading" className="text-2xl font-black text-gray-900 mb-2">Backed &amp; Supported By</h2>
+          <p className="text-sm text-gray-500 mb-8">We are supported and associated with leading institutions and organizations.</p>
+          <ul className="grid grid-cols-1 min-[420px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            {partners.map((partner) => (
+              <li
+                key={partner.name}
+                className="flex flex-col items-center rounded-2xl border border-gray-200 bg-white px-5 pt-6 pb-5 text-center transition-shadow duration-200 hover:border-gray-300 hover:shadow-md"
+              >
+                <div className="flex h-24 w-full items-center justify-center">
+                  <img
+                    src={partner.src}
+                    alt={partner.fullName}
+                    width={partner.width}
+                    height={partner.height}
+                    loading="lazy"
+                    decoding="async"
+                    className="max-h-[4.5rem] w-auto max-w-[85%] object-contain"
+                  />
+                </div>
+                <p className="mt-4 text-sm font-semibold text-gray-800">{partner.name}</p>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 

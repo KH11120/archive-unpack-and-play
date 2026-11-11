@@ -1,5 +1,6 @@
 import type { Page } from '../page'
 import { useLanguage } from './LanguageContext'
+import AptcoderLogo from './AptcoderLogo'
 
 interface FooterProps {
   navigate: (page: Page) => void
@@ -14,17 +15,13 @@ export default function Footer({ navigate }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <button onClick={() => navigate('home')} className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-[#E8401C] rounded-lg flex items-center justify-center">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M2 14L8 4L14 14H2Z" fill="white" />
-                  <circle cx="14" cy="6" r="3" fill="white" opacity="0.7" />
-                </svg>
-              </div>
-              <span className="font-black text-xl tracking-tight">
-                apt<span className="text-[#E8401C]">coder</span>
-                <span className="text-[10px] align-top text-[#E8401C]">®</span>
-              </span>
+            {/* The logo's lettering is dark grey, so it sits on a white panel on the dark footer. */}
+            <button
+              onClick={() => navigate('home')}
+              className="mb-5 inline-flex items-center rounded-xl bg-white px-3 py-2"
+              aria-label="APTCODER home"
+            >
+              <AptcoderLogo className="h-9" />
             </button>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               {t(

@@ -194,7 +194,7 @@ export default function HomePage({ navigate }: Props) {
     <div>
       <section className="relative overflow-hidden bg-white">
         <div className="absolute right-0 top-0 h-full w-1/2 rounded-l-[80px] bg-peach -z-0" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14 md:pt-12 md:pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div>
               <div className="section-label mb-5">
