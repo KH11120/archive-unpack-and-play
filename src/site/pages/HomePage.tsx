@@ -481,8 +481,9 @@ export default function HomePage({ navigate }: Props) {
 
       <CodelyDemo />
 
+      {/* Same background as Try Codely above, so only a modest top padding is needed. */}
       <section
-        className="py-16 sm:py-20 bg-peach"
+        className="pt-8 pb-16 sm:pt-10 sm:pb-20 bg-peach"
         aria-labelledby="offerings-heading"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -508,12 +509,12 @@ export default function HomePage({ navigate }: Props) {
                 <h3 className="text-2xl sm:text-3xl font-black text-dark mb-3">
                   Code a Robot. Watch It Respond.
                 </h3>
-                <p className="text-sm leading-relaxed text-gray-600 mb-6">
+                <p className="text-sm sm:text-base leading-relaxed text-gray-600 mb-7">
                   Program a real robot, control it wirelessly from anywhere,
                   work with sensors and experiment in the language you
                   understand best.
                 </p>
-                <dl className="grid grid-cols-2 gap-4 mb-6">
+                <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:gap-x-10 mb-7">
                   {[
                     ["CODE", "Give it instructions."],
                     ["CONTROL", "Operate it from anywhere."],
@@ -521,10 +522,12 @@ export default function HomePage({ navigate }: Props) {
                     ["CREATE", "Test. Change. Try again."],
                   ].map(([term, detail]) => (
                     <div key={term}>
-                      <dt className="text-[10px] font-black tracking-widest text-primary mb-1">
+                      <dt className="text-sm font-black tracking-[0.12em] text-dark">
                         {term}
                       </dt>
-                      <dd className="text-xs text-gray-600">{detail}</dd>
+                      <dd className="mt-1 text-sm leading-relaxed text-gray-600">
+                        {detail}
+                      </dd>
                     </div>
                   ))}
                 </dl>
@@ -569,22 +572,30 @@ export default function HomePage({ navigate }: Props) {
             </div>
           </article>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
-            <article className="md:col-span-2 lg:col-span-1 rounded-3xl bg-white p-6">
-              <p className="text-xs font-black tracking-widest text-primary mb-2">
-                COURSES &amp; LEARNING PATHS
-              </p>
-              <h3 className="text-2xl font-black text-dark mb-2">
-                Courses &amp; Learning Paths
-              </h3>
-              <p className="text-sm font-black text-dark mb-3">
-                Find a Learning Approach That Works for Your Child.
-              </p>
-              <p className="text-sm leading-relaxed text-gray-600 mb-5">
-                Explore coding, AI and other technology learning opportunities
-                through live instruction, guided support or self-paced lessons.
-              </p>
-              <div className="grid gap-2 mb-5">
+          {/* Primary offering: full-width Courses & Learning Paths */}
+          <article className="mb-5 rounded-3xl bg-white p-6 sm:p-8 lg:p-10">
+            <div className="grid gap-7 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center lg:gap-12">
+              <div>
+                <p className="text-xs font-black tracking-widest text-primary mb-2">
+                  LEARNING PATHS
+                </p>
+                <h3 className="text-2xl sm:text-3xl font-black text-dark mb-3">
+                  Courses &amp; Learning Paths
+                </h3>
+                <p className="text-sm sm:text-base leading-relaxed text-gray-600 mb-3 max-w-md">
+                  Find a learning approach that works for your child. Explore
+                  coding, AI and other technology learning opportunities through
+                  live instruction, guided support or self-paced learning.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate("courses")}
+                  className="inline-flex min-h-11 items-center text-sm font-black text-primary hover:text-primary-dark"
+                >
+                  Explore Learning Paths →
+                </button>
+              </div>
+              <ul className="grid gap-3 sm:grid-cols-3" aria-label="Learning models">
                 {[
                   {
                     name: "LIVE",
@@ -592,7 +603,7 @@ export default function HomePage({ navigate }: Props) {
                     path: "M4 5h16v12H4V5Zm5 15h6M12 17v3M9 9l6 2.5L9 14V9Z",
                   },
                   {
-                    name: "ASSISTED",
+                    name: "ASSISTED LEARNING",
                     copy: "Learn independently with support when needed.",
                     path: "M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM2 20v-2a6 6 0 0 1 12 0v2m2-9 2 2 4-5",
                   },
@@ -602,78 +613,84 @@ export default function HomePage({ navigate }: Props) {
                     path: "M4 5h16v12H4V5Zm6 4 5 2.5-5 2.5V9ZM8 21h8",
                   },
                 ].map((format) => (
-                  <div
+                  <li
                     key={format.name}
-                    className="flex items-center gap-3 rounded-xl border border-red-100 bg-peach p-3"
+                    className="flex items-start gap-3 rounded-2xl border border-red-100 bg-peach p-4 sm:flex-col sm:gap-0 sm:p-5"
                   >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-primary">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-primary sm:mb-4">
                       <LineIcon path={format.path} className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-[10px] font-black tracking-widest text-dark">
+                      <h4 className="text-xs font-black tracking-widest text-dark">
                         {format.name}
                       </h4>
-                      <p className="text-xs leading-relaxed text-gray-600">
+                      <p className="mt-1.5 text-sm leading-relaxed text-gray-600">
                         {format.copy}
                       </p>
                     </div>
-                  </div>
+                  </li>
                 ))}
-              </div>
-              <button
-                type="button"
-                onClick={() => navigate("courses")}
-                className="text-sm font-black text-primary hover:text-primary-dark"
-              >
-                Explore Learning Paths →
-              </button>
-            </article>
+              </ul>
+            </div>
+          </article>
 
-            <article className="rounded-3xl border border-red-100 bg-white p-6">
+          {/* Two complementary parts of the ecosystem, equal width */}
+          <div className="grid gap-5 md:grid-cols-2 items-stretch">
+            <article className="flex flex-col rounded-3xl border border-red-100 bg-white p-6 sm:p-8">
               <p className="text-xs font-black tracking-widest text-primary mb-2">
                 INDIA’S CODING OLYMPIAD
               </p>
               <h3 className="text-3xl font-black text-dark mb-3">C-NAT</h3>
-              <p className="text-sm leading-relaxed text-gray-600 max-w-2xl mb-5">
+              <p className="text-sm sm:text-base leading-relaxed text-gray-600 mb-5">
                 A national coding challenge where young learners test their
                 skills, compete in coding tracks and earn recognition for what
                 they can do.
               </p>
-              <p className="text-xs font-black tracking-wide text-gray-500 mb-5">
+              <p className="text-xs font-black tracking-wide text-gray-500">
                 CHOOSE YOUR TRACK <span className="text-primary">→</span> TAKE
                 THE CHALLENGE <span className="text-primary">→</span> EARN
                 RECOGNITION
               </p>
-              <button
-                type="button"
-                onClick={() => navigate("contact")}
-                className="text-sm font-black text-primary hover:text-primary-dark"
-              >
-                Explore C-NAT →
-              </button>
+              <div className="mt-auto pt-3">
+                <button
+                  type="button"
+                  onClick={() => navigate("contact")}
+                  className="inline-flex min-h-11 items-center text-sm font-black text-primary hover:text-primary-dark"
+                >
+                  Explore C-NAT →
+                </button>
+              </div>
             </article>
 
-            <article className="rounded-3xl bg-dark p-6 text-white">
-              <p className="text-[10px] font-black tracking-widest text-primary mb-2">
+            <article className="flex flex-col rounded-3xl border border-red-100 bg-white p-6 sm:p-8">
+              <p className="text-xs font-black tracking-widest text-primary mb-2">
                 THE KIDS CODING COMMUNITY
               </p>
-              <h3 className="text-3xl font-black mb-3">KCC</h3>
-              <p className="text-sm text-white/70 mb-5">
-                Keep learning long after the class ends.
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-3">
+                <h3 className="text-3xl font-black text-dark">KCC</h3>
+                <p className="inline-flex rounded-full bg-peach px-3 py-1.5 text-xs font-bold text-primary">
+                  Lifetime Free Community
+                </p>
+              </div>
+              <p className="text-sm sm:text-base leading-relaxed text-gray-600 mb-5">
+                Keep learning long after the class ends, in a free community
+                for continued learning, building, sharing and problem-solving.
               </p>
-              <p className="text-xs font-black tracking-wide text-white/70 mb-5">
-                LEARN → BUILD → SHARE → SOLVE → GROW
+              <p className="text-xs font-black tracking-wide text-gray-500">
+                LEARN <span className="text-primary">→</span> BUILD{" "}
+                <span className="text-primary">→</span> SHARE{" "}
+                <span className="text-primary">→</span> SOLVE{" "}
+                <span className="text-primary">→</span> GROW
               </p>
-              <p className="inline-flex rounded-full bg-white/10 px-3 py-2 text-xs font-bold mb-6">
-                Lifetime Free Community
-              </p>
-              <button
-                type="button"
-                onClick={() => navigate("contact")}
-                className="block text-sm font-black text-white hover:text-primary"
-              >
-                Explore KCC →
-              </button>
+              <div className="mt-auto pt-3">
+                <button
+                  type="button"
+                  onClick={() => navigate("contact")}
+                  className="inline-flex min-h-11 items-center text-sm font-black text-primary hover:text-primary-dark"
+                >
+                  Explore KCC →
+                </button>
+              </div>
             </article>
           </div>
         </div>

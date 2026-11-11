@@ -316,7 +316,10 @@ export default function CodelyDemo() {
   const hasNextChallenge = challenges.length > 1;
 
   return (
-    <section className="py-16 sm:py-20 bg-[#FFF5F2]" aria-labelledby="codely-heading">
+    <section
+      className="pt-16 pb-10 sm:pt-20 sm:pb-12 bg-[#FFF5F2]"
+      aria-labelledby="codely-heading"
+    >
       {confettiId !== null && <Confetti burstId={confettiId} />}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-[auto_1fr] gap-8 lg:gap-x-14 lg:gap-y-8">
