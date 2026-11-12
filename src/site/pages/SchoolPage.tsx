@@ -1,5 +1,6 @@
 import type { Page } from '../page'
 import SchoolSalesKit from '../components/SchoolSalesKit'
+import { partnerSchools } from '../data/schools'
 import { useLanguage } from '../components/LanguageContext'
 
 interface Props {
@@ -39,16 +40,16 @@ export default function SchoolPage({ navigate }: Props) {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <div className="section-label mb-4">{t('APTCODER FOR SCHOOLS', 'स्कूलों के लिए APTCODER')}</div>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-2">
-              {t('Future-Ready Students for a', 'भविष्य के लिए तैयार छात्र')}
-            </h1>
-            <h1 className="text-3xl lg:text-4xl font-black text-[#E8401C] leading-tight mb-6">
-              {t('Brighter Tomorrow', 'एक उज्ज्वल कल के लिए')}
+            {/* Two lines on desktop; the offer (Coding, AI & Robotics) is highlighted. */}
+            <h1 className="text-[2rem] sm:text-[2.6rem] lg:text-[2.25rem] xl:text-[2.5rem] font-black text-gray-900 leading-[1.12] tracking-tight text-balance mb-5">
+              {t('Bringing ', 'हर कक्षा में ')}
+              <span className="text-[#E8401C]">{t('Coding, AI & Robotics', 'कोडिंग, AI और रोबोटिक्स')}</span>
+              {t(' into Every Classroom.', ' की शिक्षा।')}
             </h1>
             <p className="text-gray-600 leading-relaxed mb-8 max-w-lg">
               {t(
-                'A complete K-12 coding and technology program for schools to build real skills, confidence and creativity in every student.',
-                'हर छात्र में वास्तविक कौशल, आत्मविश्वास और रचनात्मकता विकसित करने के लिए स्कूलों का संपूर्ण K-12 कोडिंग और तकनीक कार्यक्रम।',
+                'Empowering schools with practical coding, AI and robotics education that builds creativity, problem-solving skills and technological confidence in every student.',
+                'स्कूलों को व्यावहारिक कोडिंग, AI और रोबोटिक्स शिक्षा से सशक्त बनाना, जो हर छात्र में रचनात्मकता, समस्या-समाधान कौशल और तकनीकी आत्मविश्वास विकसित करती है।',
               )}
             </p>
             <div className="flex flex-wrap gap-3 mb-8">
@@ -57,10 +58,11 @@ export default function SchoolPage({ navigate }: Props) {
               </button>
               <SchoolSalesKit compact />
             </div>
-            <div className="flex flex-wrap gap-6">
-              {['Structured Curriculum', 'Teacher Enablement', 'Hands-on Learning', 'Measurable Impact'].map((f) => (
-                <div key={f} className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-[#FFF5F2] rounded-lg flex items-center justify-center text-sm">📚</div>
+            {/* Three highlights in equal columns, each centred in its column. */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+              {['Structured Curriculum', 'Teacher Enablement', 'Hands-on Learning'].map((f) => (
+                <div key={f} className="flex flex-col items-center gap-2 text-center sm:flex-row sm:justify-center sm:text-left">
+                  <div className="w-8 h-8 shrink-0 bg-[#FFF5F2] rounded-lg flex items-center justify-center text-sm">📚</div>
                   <span className="text-xs font-medium text-gray-600">{f}</span>
                 </div>
               ))}
@@ -86,13 +88,26 @@ export default function SchoolPage({ navigate }: Props) {
           <p className="text-xs font-bold text-[#E8401C] uppercase tracking-widest mb-2">SCHOOLS WE WORK WITH</p>
           <h2 className="text-2xl font-black text-gray-900 mb-2">Trusted by Schools</h2>
           <p className="text-sm text-gray-500 mb-7">Supporting technology learning with schools and educators.</p>
-          <div className="flex gap-x-8 gap-y-5 items-center overflow-x-auto sm:flex-wrap pb-2 sm:pb-0">
-            {['Delhi Public School', 'Ryan International School', 'Mount Carmel School', "St. Xavier's School", 'Army International School'].map((school) => (
-              <div key={school} className="shrink-0" title={`${school} logo placeholder — approved asset not supplied`}>
-                <span className="text-sm font-semibold text-gray-500 whitespace-nowrap">{school}</span>
-              </div>
+          {/* Five logos in one row on desktop; 3 + 2 on tablets, 2 + 2 + 1 on phones. */}
+          <ul className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:flex-nowrap">
+            {partnerSchools.map((school) => (
+              <li
+                key={school.id}
+                className="flex h-28 w-[calc(50%-0.375rem)] items-center justify-center rounded-2xl border border-gray-100 bg-white px-4 sm:h-32 sm:w-[calc(33.333%-0.667rem)] lg:w-auto lg:flex-1"
+                title={school.name}
+                data-school-id={school.id}
+              >
+                <img
+                  src={school.logo}
+                  alt={`${school.name} logo`}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  className="h-20 w-full max-w-[9rem] object-contain sm:h-24"
+                />
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 

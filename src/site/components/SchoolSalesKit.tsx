@@ -18,7 +18,7 @@ export default function SchoolSalesKit({ compact = false }: Props) {
             : 'border-2 border-gray-200 text-gray-700 font-bold rounded-full px-8 py-4 hover:border-[#E8401C] transition-colors'
         }
       >
-        Download School Sales Kit
+        Get School Sales Kit
       </button>
 
       {open && (
@@ -38,7 +38,7 @@ export default function SchoolSalesKit({ compact = false }: Props) {
                   FOR SCHOOL LEADERS
                 </p>
                 <h2 id="school-kit-title" className="text-2xl font-black text-gray-900">
-                  Download the School Sales Kit
+                  Get the School Sales Kit
                 </h2>
               </div>
               <button
