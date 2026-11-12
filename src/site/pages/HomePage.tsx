@@ -4,6 +4,7 @@ import CodelyDemo from "../components/CodelyDemo"
 import HeroBackgroundVideo from "../components/HeroBackgroundVideo"
 import SpotlightSection from "../components/spotlight/SpotlightSection"
 import TestimonialsSection from "../components/testimonials/TestimonialsSection"
+import VernaticsVideo from "../components/VernaticsVideo"
 import RecordedClassLead from "../components/RecordedClassLead"
 import { useLanguage } from "../components/LanguageContext"
 import { siteWideFaqs } from "../data/siteFaqs"
@@ -535,22 +536,10 @@ export default function HomePage({ navigate }: Props) {
                   </button>
                 </div>
               </div>
-              <div
-                className="relative min-h-64 bg-peach-mid p-6 flex items-center justify-center text-center lg:min-h-full"
-                role="img"
-                aria-label="Development placeholder for approved Vernatics robot footage"
-              >
-                <div>
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-primary shadow-sm">
-                    <LineIcon
-                      path="M6 7h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2ZM12 3v4M9 12h.01M15 12h.01M9 16h6"
-                      className="h-9 w-9"
-                    />
-                  </div>
-                  <p className="text-xs font-black tracking-widest text-primary">
-                    VERNATICS ROBOT MEDIA
-                  </p>
-                </div>
+              {/* Video panel: edge to edge in 16:9 on small screens; on desktop the full,
+                  uncropped video sits centred as a framed card on the peach panel. */}
+              <div className="relative flex items-center justify-center bg-peach-mid lg:min-h-full lg:p-8">
+                <VernaticsVideo />
               </div>
             </div>
           </article>
