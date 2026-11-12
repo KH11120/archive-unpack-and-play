@@ -2,6 +2,7 @@ import { useState } from "react"
 import type { Page } from "../page"
 import CodelyDemo from "../components/CodelyDemo"
 import HeroBackgroundVideo from "../components/HeroBackgroundVideo"
+import SpotlightSection from "../components/spotlight/SpotlightSection"
 import RecordedClassLead from "../components/RecordedClassLead"
 import { useLanguage } from "../components/LanguageContext"
 import { siteWideFaqs } from "../data/siteFaqs"
@@ -558,7 +559,7 @@ export default function HomePage({ navigate }: Props) {
             <div className="grid gap-7 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center lg:gap-12">
               <div>
                 <p className="text-xs font-black tracking-widest text-primary mb-2">
-                  LEARNING PATHS
+                  EXPLORE OUR COURSES
                 </p>
                 <h3 className="text-2xl sm:text-3xl font-black text-dark mb-3">
                   Courses &amp; Learning Paths
@@ -573,7 +574,7 @@ export default function HomePage({ navigate }: Props) {
                   onClick={() => navigate("courses")}
                   className="inline-flex min-h-11 items-center text-sm font-black text-primary hover:text-primary-dark"
                 >
-                  Explore Learning Paths →
+                  Browse Courses →
                 </button>
               </div>
               <ul className="grid gap-3 sm:grid-cols-3" aria-label="Learning models">
@@ -618,10 +619,12 @@ export default function HomePage({ navigate }: Props) {
           {/* Two complementary parts of the ecosystem, equal width */}
           <div className="grid gap-5 md:grid-cols-2 items-stretch">
             <article className="flex flex-col rounded-3xl border border-red-100 bg-white p-6 sm:p-8">
-              <p className="text-xs font-black tracking-widest text-primary mb-2">
-                INDIA’S CODING OLYMPIAD
-              </p>
-              <h3 className="text-3xl font-black text-dark mb-3">C-NAT</h3>
+              <div className="flex min-h-8 items-center mb-2">
+                <p className="text-xs font-black tracking-widest text-primary">C-NAT</p>
+              </div>
+              <h3 className="text-2xl sm:text-3xl md:min-h-[2.5em] md:text-2xl lg:min-h-0 lg:text-[1.7rem] xl:text-3xl font-black leading-tight text-dark text-balance mb-3">
+                India’s Coding Olympiad
+              </h3>
               <p className="text-sm sm:text-base leading-relaxed text-gray-600 mb-5">
                 A national coding challenge where young learners test their
                 skills, compete in coding tracks and earn recognition for what
@@ -644,15 +647,15 @@ export default function HomePage({ navigate }: Props) {
             </article>
 
             <article className="flex flex-col rounded-3xl border border-red-100 bg-white p-6 sm:p-8">
-              <p className="text-xs font-black tracking-widest text-primary mb-2">
-                THE KIDS CODING COMMUNITY
-              </p>
-              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-3">
-                <h3 className="text-3xl font-black text-dark">KCC</h3>
+              <div className="flex min-h-8 flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-2">
+                <p className="text-xs font-black tracking-widest text-primary">KCC</p>
                 <p className="inline-flex rounded-full bg-peach px-3 py-1.5 text-xs font-bold text-primary">
                   Lifetime Free Community
                 </p>
               </div>
+              <h3 className="text-2xl sm:text-3xl md:min-h-[2.5em] md:text-2xl lg:min-h-0 lg:text-[1.7rem] xl:text-3xl font-black leading-tight text-dark text-balance mb-3">
+                The Kids Coding Community
+              </h3>
               <p className="text-sm sm:text-base leading-relaxed text-gray-600 mb-5">
                 Keep learning long after the class ends, in a free community
                 for continued learning, building, sharing and problem-solving.
@@ -677,82 +680,7 @@ export default function HomePage({ navigate }: Props) {
         </div>
       </section>
 
-      <section
-        className="py-16 sm:py-20 bg-white"
-        aria-labelledby="news-heading"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-9">
-            <div className="section-label mb-3">IN THE NEWS</div>
-            <h2
-              id="news-heading"
-              className="text-3xl sm:text-4xl font-black text-dark"
-            >
-              From India to the World
-            </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              {
-                publication: "London Story",
-                label: "INTERNATIONAL SPOTLIGHT",
-                international: true,
-              },
-              {
-                publication: "Times of India",
-                label: "TIMES OF INDIA",
-                international: false,
-              },
-              {
-                publication: "YourStory",
-                label: "YOURSTORY",
-                international: false,
-              },
-              {
-                publication: "The Hindu",
-                label: "THE HINDU",
-                international: false,
-              },
-            ].map((story) => (
-              <article
-                key={story.publication}
-                className={`flex aspect-[5/6] flex-col rounded-2xl border p-3.5 ${
-                  story.international
-                    ? "border-red-100 bg-peach"
-                    : "border-gray-200 bg-white"
-                }`}
-              >
-                <p
-                  className={`text-[10px] font-black tracking-widest mb-2.5 ${
-                    story.international ? "text-primary" : "text-gray-400"
-                  }`}
-                >
-                  {story.label}
-                </p>
-                <div
-                  className={`min-h-0 flex-1 rounded-xl border border-dashed flex items-center justify-center ${
-                    story.international
-                      ? "border-red-200 bg-white/70"
-                      : "border-gray-200 bg-gray-50"
-                  }`}
-                  role="img"
-                  aria-label={`${story.publication} development media placeholder`}
-                >
-                  <LineIcon
-                    path="M4 5h16v14H4V5Zm3 10 3-3 2 2 3-4 2 3"
-                    className={`h-7 w-7 ${
-                      story.international ? "text-primary" : "text-gray-300"
-                    }`}
-                  />
-                </div>
-                <p className="pt-3 text-sm font-black leading-snug text-dark">
-                  {story.publication}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <SpotlightSection />
 
       <section
         className="py-16 sm:py-20 bg-peach"
