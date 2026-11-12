@@ -3,6 +3,7 @@ import type { Page } from "../page"
 import CodelyDemo from "../components/CodelyDemo"
 import HeroBackgroundVideo from "../components/HeroBackgroundVideo"
 import SpotlightSection from "../components/spotlight/SpotlightSection"
+import TestimonialsSection from "../components/testimonials/TestimonialsSection"
 import RecordedClassLead from "../components/RecordedClassLead"
 import { useLanguage } from "../components/LanguageContext"
 import { siteWideFaqs } from "../data/siteFaqs"
@@ -682,86 +683,7 @@ export default function HomePage({ navigate }: Props) {
 
       <SpotlightSection />
 
-      <section
-        className="py-16 sm:py-20 bg-peach"
-        aria-labelledby="stories-heading"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-9">
-            <div className="section-label mb-3">
-              VOICES FROM THE APTCODER ECOSYSTEM
-            </div>
-            <h2
-              id="stories-heading"
-              className="text-3xl sm:text-4xl font-black text-dark mb-3"
-            >
-              Different Perspectives. One Shared Journey.
-            </h2>
-            <p className="text-sm sm:text-base text-gray-500 max-w-3xl">
-              Hear from the learners, families, educators, schools and partners
-              who experience APTCODER in different ways.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              {
-                label: "STUDENT",
-                description: "Student project or experience",
-                path: "M4 5h16v12H4V5Zm5 15h6M12 17v3M9 9l6 2.5L9 14V9Z",
-                tone: "bg-dark text-white",
-              },
-              {
-                label: "FAMILY",
-                description: "Parent testimonial or family experience",
-                path: "M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8 1a3 3 0 1 0 0-6M2 21v-2a6 6 0 0 1 12 0v2m2-6a5 5 0 0 1 6 4v2",
-                tone: "bg-white text-dark",
-              },
-              {
-                label: "SCHOOL / EDUCATOR",
-                description: "Principal or teacher story",
-                path: "M3 10 12 5l9 5-9 5-9-5Zm3 3v5c4 2 8 2 12 0v-5",
-                tone: "bg-white text-dark",
-              },
-              {
-                label: "PARTNER",
-                description: "Collaboration or impact story",
-                path: "M8 12 4 8l4-4 4 4m4 4 4-4-4-4-4 4m-4 4 4 4 4-4m-8 4-4 4 4 4 4-4m4 0 4 4-4 4-4-4",
-                tone: "bg-white text-dark",
-              },
-            ].map((story) => (
-              <article
-                key={story.label}
-                className={`flex min-h-48 flex-col rounded-2xl border border-red-100 p-5 ${story.tone}`}
-              >
-                <p className="text-[10px] font-black tracking-widest text-primary mb-5">
-                  {story.label}
-                </p>
-                <div
-                  className={`mb-5 flex h-11 w-11 items-center justify-center rounded-xl ${
-                    story.label === "STUDENT"
-                      ? "bg-white/10"
-                      : "bg-peach"
-                  }`}
-                >
-                  <LineIcon
-                    path={story.path}
-                    className="h-6 w-6 text-primary"
-                  />
-                </div>
-                <p
-                  className={`mt-auto text-sm font-bold leading-relaxed ${
-                    story.label === "STUDENT"
-                      ? "text-white/75"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {story.description}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialsSection />
 
       <RecordedClassLead />
 
