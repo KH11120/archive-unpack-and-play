@@ -1,6 +1,14 @@
 import type { Page } from '../page'
 import { useLanguage } from './LanguageContext'
 import AptcoderLogo from './AptcoderLogo'
+import SocialLinks from './SocialLinks'
+import {
+  CONTACT_EMAIL,
+  CONTACT_PHONE,
+  CONTACT_PHONE_HREF,
+  OFFICE_ADDRESS_LINES,
+  OFFICE_MAPS_URL,
+} from '../data/contact'
 
 interface FooterProps {
   navigate: (page: Page) => void
@@ -29,17 +37,7 @@ export default function Footer({ navigate }: FooterProps) {
                 'भारत भर के बच्चों को उनकी पसंदीदा भाषा में कोडिंग और तकनीक सीखने में मदद करना।',
               )}
             </p>
-            <div className="flex gap-3">
-              {['linkedin', 'youtube', 'instagram', 'facebook', 'twitter'].map((s) => (
-                <a
-                  key={s}
-                  href="#"
-                  className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-[#E8401C] hover:text-white transition-colors"
-                >
-                  <span className="text-xs font-bold">{s[0]!.toUpperCase()}</span>
-                </a>
-              ))}
-            </div>
+            <SocialLinks variant="dark" />
           </div>
 
           {/* Programs */}
@@ -86,15 +84,23 @@ export default function Footer({ navigate }: FooterProps) {
             <h3 className="font-bold text-sm uppercase tracking-widest text-gray-300 mb-5">{t('Get In Touch', 'संपर्क करें')}</h3>
             <div className="space-y-4">
               <div>
-                <p className="text-gray-400 text-sm">hello@aptcoder.com</p>
-                <p className="text-gray-400 text-sm mt-1">+91 98765 43210</p>
+                <p className="text-gray-400 text-sm">{CONTACT_EMAIL}</p>
+                <a href={CONTACT_PHONE_HREF} className="mt-1 inline-block text-gray-400 text-sm hover:text-white transition-colors">
+                  {CONTACT_PHONE}
+                </a>
               </div>
               <div>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  IML-INCUBATOR, IIM Lucknow<br />
-                  Prabandh Nagar, Lucknow<br />
-                  Uttar Pradesh, India – 226013
-                </p>
+                <a
+                  href={OFFICE_MAPS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${OFFICE_ADDRESS_LINES.join(', ')} (opens Google Maps in a new tab)`}
+                  className="block text-gray-400 text-sm leading-relaxed hover:text-white transition-colors"
+                >
+                  {OFFICE_ADDRESS_LINES.map((line) => (
+                    <span key={line} className="block">{line}</span>
+                  ))}
+                </a>
               </div>
               <button
                 onClick={() => navigate('courses')}

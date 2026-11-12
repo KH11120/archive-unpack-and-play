@@ -2,6 +2,7 @@ import type { Page } from '../page'
 import { useLanguage } from '../components/LanguageContext'
 import { partners } from '../data/partners'
 import { team } from '../data/team'
+import SocialLinks from '../components/SocialLinks'
 
 interface Props {
   navigate: (page: Page) => void
@@ -236,6 +237,10 @@ export default function AboutPage({ navigate }: Props) {
               <p className="text-gray-600 text-sm leading-relaxed">
                 Be a part of a movement to make technology education accessible, practical and meaningful for every child.
               </p>
+              <div className="mt-6">
+                <p className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-3">Follow our journey</p>
+                <SocialLinks variant="brand" />
+              </div>
             </div>
             <div className="flex flex-col gap-3">
               <button
