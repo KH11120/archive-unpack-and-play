@@ -428,3 +428,109 @@ html {
 .nav-link:hover::after {
   width: 100%;
 }
+
+/* Floating WhatsApp button (src/site/components/WhatsAppButton.tsx), on every page.
+   z-index 40 keeps it under the sticky navbar and every modal/viewer (z-50 and above). */
+.whatsapp-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 9999px;
+  background: #25D366;
+  color: #fff;
+  box-shadow: 0 8px 22px -6px rgba(17, 24, 39, 0.4), 0 2px 6px rgba(17, 24, 39, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, bottom 0.2s ease;
+}
+
+.whatsapp-fab:hover {
+  background: #1EBE5A;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 14px 30px -8px rgba(17, 24, 39, 0.45), 0 3px 8px rgba(17, 24, 39, 0.14);
+}
+
+.whatsapp-fab:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 0;
+  box-shadow: 0 0 0 6px #128C7E, 0 8px 22px -6px rgba(17, 24, 39, 0.4);
+}
+
+.whatsapp-fab-tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  white-space: nowrap;
+  border-radius: 8px;
+  background: #111827;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 9px 12px;
+  box-shadow: 0 6px 18px -6px rgba(17, 24, 39, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(6px, -50%);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.whatsapp-fab-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: #111827;
+}
+
+.whatsapp-fab:hover .whatsapp-fab-tooltip,
+.whatsapp-fab:focus-visible .whatsapp-fab-tooltip {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+/* Phones: slightly smaller and closer to the edge. Touch screens have no hover, so the
+   tooltip stays hidden there (the link keeps its accessible label). */
+@media (max-width: 639px) {
+  .whatsapp-fab {
+    right: 18px;
+    bottom: 18px;
+    width: 54px;
+    height: 54px;
+  }
+}
+
+@media (hover: none) {
+  .whatsapp-fab-tooltip {
+    display: none;
+  }
+}
+
+/* Extra room under the footer's last line so, scrolled to the very bottom, the button sits
+   below the copyright/partners line instead of on top of it (Footer.tsx is unchanged). */
+footer:has(~ .whatsapp-fab) {
+  padding-bottom: 40px;
+}
+
+/* Sit above a fixed bottom bar (marked data-fixed-bottom-bar) instead of covering it. */
+@media (max-width: 767px) {
+  body:has([data-fixed-bottom-bar]) .whatsapp-fab {
+    bottom: calc(var(--fixed-bottom-bar-height, 69px) + 14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-fab,
+  .whatsapp-fab-tooltip {
+    transition: none;
+  }
+  .whatsapp-fab:hover {
+    transform: none;
+  }
+}

@@ -11,6 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 import Navbar from "@/site/components/Navbar";
 import Footer from "@/site/components/Footer";
+import WhatsAppButton from "@/site/components/WhatsAppButton";
 import { LanguageProvider } from "@/site/components/LanguageContext";
 import { useSiteNavigate } from "@/site/useSiteNavigate";
 import { pagePaths, type Page } from "@/site/page";
@@ -95,7 +96,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      // APTCODER favicon (public/images/brand/favicon.png, squared by scripts/build-favicons.py).
+      // Bump ?v= when the icon changes so browsers drop their cached copy.
+      { rel: "icon", href: "/favicon.ico?v=2", sizes: "48x48" },
+      {
+        rel: "icon",
+        href: "/images/brand/favicon-32x32.png?v=2",
+        type: "image/png",
+        sizes: "32x32",
+      },
+      {
+        rel: "icon",
+        href: "/images/brand/favicon-192x192.png?v=2",
+        type: "image/png",
+        sizes: "192x192",
+      },
+      { rel: "apple-touch-icon", href: "/images/brand/apple-touch-icon.png?v=2", sizes: "180x180" },
     ],
   }),
   shellComponent: RootShell,
@@ -143,6 +159,8 @@ function SiteLayout() {
       <Navbar currentPage={current} navigate={navigate} />
       <Outlet />
       <Footer navigate={navigate} />
+      {/* Global: appears on every route; pages must not add their own. */}
+      <WhatsAppButton />
     </div>
   );
 }

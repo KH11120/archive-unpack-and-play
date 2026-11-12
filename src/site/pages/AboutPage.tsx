@@ -1,18 +1,11 @@
 import type { Page } from '../page'
 import { useLanguage } from '../components/LanguageContext'
 import { partners } from '../data/partners'
+import { team } from '../data/team'
 
 interface Props {
   navigate: (page: Page) => void
 }
-
-const team = [
-  { name: 'Gaurav Aggarwal', role: 'Founder & CEO', desc: 'Driving the vision to make coding and technology education accessible for every child.' },
-  { name: 'Ashish Bhatt', role: 'Co-Founder & CTO', desc: 'Leads product and technology development to create engaging and scalable learning solutions.' },
-  { name: 'Priya Sharma', role: 'Product & Learning', desc: 'Designing structured curriculum and meaningful learning experiences for all grade levels.' },
-  { name: 'Rahul Verma', role: 'Product & Success', desc: 'Supporting teachers, mentors and students across all programs.' },
-  { name: 'Neha Singh', role: 'Community & Outreach', desc: 'Building a strong community of learners, schools and partner organizations.' },
-]
 
 const journey = [
   { year: '2020', title: 'The Beginning', desc: 'Started with a mission to make coding accessible for children across India.' },
@@ -196,36 +189,38 @@ export default function AboutPage({ navigate }: Props) {
       </section>
 
       {/* Team */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white" aria-labelledby="team-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-black text-gray-900 mb-2">Meet Our Team</h2>
-              <p className="text-gray-500">A passionate team working to make technology education easy, practical and impactful for every child.</p>
-            </div>
-            <button className="hidden sm:flex border border-gray-200 text-gray-700 font-semibold rounded-full px-5 py-2 text-sm hover:border-gray-400 transition-colors items-center gap-2">
-              View All Team Members →
-            </button>
+          <div className="mb-10 text-center">
+            <h2 id="team-heading" className="text-3xl font-black text-gray-900 mb-2">Meet Our Team</h2>
+            <p className="text-gray-500">A passionate team working to make technology education easy, practical and impactful for every child.</p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-            {team.map((member, i) => (
-              <div key={member.name} className="text-center">
-                <div
-                  className="w-full aspect-square rounded-2xl overflow-hidden bg-gray-100 mb-4"
-                >
+          {/* Two leaders: equal cards, centred, never stretched across the full width. */}
+          <ul className="mx-auto grid max-w-4xl grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2">
+            {team.map((member) => (
+              <li
+                key={member.id}
+                className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white px-6 pb-8 pt-8 text-center shadow-[0_2px_14px_-6px_rgba(17,24,39,0.18)] sm:px-8"
+                data-team-id={member.id}
+              >
+                <div className="mb-6 rounded-full bg-[#FFF5F2] p-2.5 ring-1 ring-[#FBD9CE]">
                   <img
-                    src={`https://images.unsplash.com/photo-${['1507003211169-0a1dd7228f2d', '1472099645785-5658abf4ff4e', '1438761681033-6461ffad8d80', '1500648767791-00dcc994a43e', '1487412720507-e7ab37603c6f'][i]}?w=300&h=300&fit=crop&auto=format&face`}
-                    alt={member.name}
-                    className="w-full h-full object-cover"
+                    src={member.photo}
+                    alt={`Portrait of ${member.name}`}
+                    width={560}
+                    height={560}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-40 w-40 rounded-full object-cover sm:h-48 sm:w-48"
                   />
                 </div>
-                <h3 className="font-black text-gray-900 text-sm mb-0.5">{member.name}</h3>
-                <p className="text-xs text-[#E8401C] font-semibold mb-2">{member.role}</p>
-                <p className="text-xs text-gray-500 leading-relaxed">{member.desc}</p>
-              </div>
+                <h3 className="text-xl font-black text-gray-900 mb-1">{member.name}</h3>
+                <p className="text-sm font-bold text-[#E8401C] mb-4">{member.role}</p>
+                <p className="max-w-sm text-sm leading-relaxed text-gray-500">{member.description}</p>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 

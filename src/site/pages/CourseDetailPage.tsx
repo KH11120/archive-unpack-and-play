@@ -413,7 +413,10 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
         </aside>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white p-3 shadow-lg md:hidden">
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white p-3 shadow-lg md:hidden"
+        data-fixed-bottom-bar
+      >
         <div className="mx-auto flex max-w-7xl items-center gap-3">
           <span className="min-w-0 flex-1 truncate text-sm font-bold text-gray-900">
             {course.title}
