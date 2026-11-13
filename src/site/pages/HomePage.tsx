@@ -521,18 +521,10 @@ export default function HomePage({ navigate }: Props) {
                 <div className="flex flex-wrap items-center gap-4">
                   <button
                     type="button"
-                    onClick={() => navigate("courses")}
+                    onClick={() => navigate("vernatics")}
                     className="rounded-full bg-primary px-5 py-3 text-sm font-black text-white hover:bg-primary-dark"
                   >
                     Explore Vernatics →
-                  </button>
-                  <button
-                    type="button"
-                    disabled
-                    title="Approved Vernatics video is not yet available"
-                    className="text-sm font-bold text-gray-400 cursor-not-allowed"
-                  >
-                    Watch it in action
                   </button>
                 </div>
               </div>

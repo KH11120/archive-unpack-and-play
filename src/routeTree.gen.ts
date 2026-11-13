@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CoursesRouteRouteImport } from './routes/courses/route'
 import { Route as SchoolRouteImport } from './routes/school'
+import { Route as VernaticsRouteImport } from './routes/vernatics'
 import { Route as CoursesIndexRouteImport } from './routes/courses/index'
 import { Route as CoursesSlugRouteImport } from './routes/courses/$slug'
 import { Route as CoursesCategoryCategoryRouteImport } from './routes/courses/category/$category'
@@ -43,6 +44,11 @@ const SchoolRoute = SchoolRouteImport.update({
   path: '/school',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VernaticsRoute = VernaticsRouteImport.update({
+  id: '/vernatics',
+  path: '/vernatics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CoursesIndexRoute = CoursesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/school': typeof SchoolRoute
+  '/vernatics': typeof VernaticsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses/': typeof CoursesIndexRoute
   '/courses/category/$category': typeof CoursesCategoryCategoryRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/school': typeof SchoolRoute
+  '/vernatics': typeof VernaticsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses': typeof CoursesIndexRoute
   '/courses/category/$category': typeof CoursesCategoryCategoryRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/school': typeof SchoolRoute
+  '/vernatics': typeof VernaticsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses/': typeof CoursesIndexRoute
   '/courses/category/$category': typeof CoursesCategoryCategoryRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/school'
+    | '/vernatics'
     | '/courses/$slug'
     | '/courses/'
     | '/courses/category/$category'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/school'
+    | '/vernatics'
     | '/courses/$slug'
     | '/courses'
     | '/courses/category/$category'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/school'
+    | '/vernatics'
     | '/courses/$slug'
     | '/courses/'
     | '/courses/category/$category'
@@ -127,6 +139,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
   SchoolRoute: typeof SchoolRoute
+  VernaticsRoute: typeof VernaticsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -164,6 +177,13 @@ declare module '@tanstack/react-router' {
       path: '/school'
       fullPath: '/school'
       preLoaderRoute: typeof SchoolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vernatics': {
+      id: '/vernatics'
+      path: '/vernatics'
+      fullPath: '/vernatics'
+      preLoaderRoute: typeof VernaticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/courses/': {
@@ -212,6 +232,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
   SchoolRoute: SchoolRoute,
+  VernaticsRoute: VernaticsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
