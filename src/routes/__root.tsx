@@ -85,6 +85,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      // Fallback tab title; every page sets its own ("APTCODER | Home", "APTCODER | About Us"…).
+      { title: "APTCODER" },
     ],
     links: [
       {
@@ -154,6 +156,8 @@ function SiteLayout() {
     pathname === "/courses" || pathname.startsWith("/courses/")
       ? "courses"
       : ((Object.keys(pagePaths) as Page[]).find((p) => pagePaths[p] === pathname) ?? "home");
+  // Legal documents open in their own tab as simple standalone pages (no menu or footer).
+  if (pathname === pagePaths.privacy || pathname === pagePaths.terms) return <Outlet />;
   return (
     <div className="min-h-screen bg-white">
       <Navbar currentPage={current} navigate={navigate} />

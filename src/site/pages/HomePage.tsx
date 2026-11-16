@@ -6,6 +6,7 @@ import SpotlightSection from "../components/spotlight/SpotlightSection"
 import TestimonialsSection from "../components/testimonials/TestimonialsSection"
 import VernaticsVideo from "../components/VernaticsVideo"
 import RecordedClassLead from "../components/RecordedClassLead"
+import KccJoinModal from "../components/kcc/KccJoinModal"
 import { useLanguage } from "../components/LanguageContext"
 import { siteWideFaqs } from "../data/siteFaqs"
 
@@ -191,6 +192,7 @@ export default function HomePage({ navigate }: Props) {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [activeProject, setActiveProject] = useState(0)
   const [showMorePossibilities, setShowMorePossibilities] = useState(false)
+  const [kccOpen, setKccOpen] = useState(false)
   const { t } = useLanguage()
   const selectedProject = projects[activeProject]!
 
@@ -198,8 +200,11 @@ export default function HomePage({ navigate }: Props) {
     <div>
       <section className="relative isolate overflow-hidden bg-white">
         <HeroBackgroundVideo />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14 md:pt-12 md:pb-20 lg:flex lg:min-h-[34rem] lg:items-center">
-          <div className="grid w-full grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] gap-10 lg:gap-14 items-center">
+        {/* Compact hero: content is vertically centred with equal room above and below, and
+            the next section follows closely (its own top padding is reduced to match). On wide
+            screens the card column is fixed at the card's width so the text column gets the rest. */}
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 md:pt-10 md:pb-14 lg:py-12">
+          <div className="grid w-full grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] xl:grid-cols-[minmax(0,1fr)_28rem] gap-8 lg:gap-14 items-center">
             <div>
               <div className="section-label mb-5">
                 {t(
@@ -214,18 +219,19 @@ export default function HomePage({ navigate }: Props) {
                   {t("to Confident Creators.", "आत्मविश्वासी रचनाकार तक।")}
                 </span>
               </h1>
-              <div className="relative mb-5 max-w-xl overflow-hidden rounded-r-2xl border-l-4 border-primary bg-peach px-5 py-4">
-                <p className="text-xl sm:text-2xl font-black leading-snug text-primary">
+              {/* Positioning line: one line from 1280px wide (the box grows to fit); wraps on smaller screens. */}
+              <div className="relative mb-5 max-w-xl overflow-hidden rounded-r-2xl border-l-4 border-primary bg-peach px-5 py-4 xl:w-fit xl:max-w-none">
+                <p className="text-xl sm:text-2xl xl:text-[1.375rem] xl:tracking-[-0.025em] xl:whitespace-nowrap font-black leading-snug text-primary">
                   {t(
-                    "Technology Makes More Sense in Your Own Language.",
-                    "तकनीक अपनी भाषा में बेहतर समझ आती है।",
+                    "AI, Robotics & Coding — Made Understandable for Every Child.",
+                    "एआई, रोबोटिक्स और कोडिंग — हर बच्चे के लिए आसान समझ में।",
                   )}
                 </p>
               </div>
               <p className="text-base leading-relaxed text-gray-700 max-w-xl mb-8">
                 {t(
-                  "Children learn coding, AI and robotics through a language they understand best — so they can focus on understanding ideas, solving problems and creating with technology.",
-                  "बच्चे कोडिंग, एआई और रोबोटिक्स उस भाषा में सीखते हैं जिसे वे सबसे अच्छी तरह समझते हैं — ताकि वे विचारों को समझने, समस्याओं को हल करने और तकनीक के साथ रचना करने पर ध्यान दे सकें।",
+                  "Children explore AI, robotics and coding through a language they understand best — so they can focus on understanding ideas, solving problems and creating with technology.",
+                  "बच्चे एआई, रोबोटिक्स और कोडिंग उस भाषा में सीखते हैं जिसे वे सबसे अच्छी तरह समझते हैं — ताकि वे विचारों को समझने, समस्याओं को हल करने और तकनीक के साथ रचना करने पर ध्यान दे सकें।",
                 )}
               </p>
               <div className="flex flex-wrap gap-3">
@@ -237,40 +243,35 @@ export default function HomePage({ navigate }: Props) {
                   {t("Book a Free Class", "मुफ़्त क्लास बुक करें")}{" "}
                   <span aria-hidden="true">→</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("courses")}
-                  className="rounded-full border-2 border-gray-200 bg-white px-7 py-3.5 text-sm font-bold text-dark hover:border-primary transition-colors"
-                >
-                  {t("Explore How We Teach", "हम कैसे सिखाते हैं")}{" "}
-                  <span aria-hidden="true">→</span>
-                </button>
               </div>
             </div>
 
             {/* Featured programme card, floating over the video */}
             <div className="relative w-full max-w-md lg:justify-self-end">
-              <div className="rounded-3xl border border-red-100 bg-white p-5 shadow-[0_12px_40px_-12px_rgba(17,24,39,0.25)]">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-black tracking-widest text-primary mb-1">
-                      ENROLLING NOW
-                    </p>
-                    <p className="text-lg font-black text-dark">
-                      Summer Coding Camp
-                    </p>
-                    <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                      Build, code and create through a hands-on coding program.
-                    </p>
-                  </div>
+              <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_24px_60px_-24px_rgba(17,24,39,0.4),0_2px_6px_rgba(17,24,39,0.04)] sm:p-6">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="flex items-center gap-2 text-[11px] font-black tracking-[0.16em] text-primary">
+                    <span className="enrolling-dot" aria-hidden="true" />
+                    ENROLLING NOW
+                  </p>
                   <button
                     type="button"
                     onClick={() => navigate("courses")}
-                    className="self-start shrink-0 text-sm font-bold text-primary hover:text-primary-dark"
+                    className="group inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-sm font-bold text-primary hover:text-primary-dark"
                   >
-                    Explore Camp →
+                    Explore Programs
+                    <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
+                      →
+                    </span>
                   </button>
                 </div>
+                <div className="my-4 h-px bg-gray-100" aria-hidden="true" />
+                <p className="text-xl font-black leading-tight tracking-tight text-dark">
+                  AI &amp; Robotics Programs
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                  Explore AI, robotics and technology through engaging, hands-on learning experiences.
+                </p>
               </div>
             </div>
           </div>
@@ -278,7 +279,7 @@ export default function HomePage({ navigate }: Props) {
       </section>
 
       <section
-        className="py-16 sm:py-20 bg-white"
+        className="pt-14 pb-16 sm:pt-16 sm:pb-20 bg-white"
         aria-labelledby="project-builder-heading"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -620,7 +621,7 @@ export default function HomePage({ navigate }: Props) {
               <div className="mt-auto pt-3">
                 <button
                   type="button"
-                  onClick={() => navigate("contact")}
+                  onClick={() => navigate("cnat")}
                   className="inline-flex min-h-11 items-center text-sm font-black text-primary hover:text-primary-dark"
                 >
                   Explore C-NAT →
@@ -651,16 +652,19 @@ export default function HomePage({ navigate }: Props) {
               <div className="mt-auto pt-3">
                 <button
                   type="button"
-                  onClick={() => navigate("contact")}
+                  onClick={() => setKccOpen(true)}
+                  aria-haspopup="dialog"
                   className="inline-flex min-h-11 items-center text-sm font-black text-primary hover:text-primary-dark"
                 >
-                  Explore KCC →
+                  Join KCC →
                 </button>
               </div>
             </article>
           </div>
         </div>
       </section>
+
+      <KccJoinModal open={kccOpen} onOpenChange={setKccOpen} />
 
       <SpotlightSection />
 
@@ -712,11 +716,12 @@ export default function HomePage({ navigate }: Props) {
       </section>
 
       <section className="py-16 bg-peach">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-xs font-black tracking-widest text-primary mb-3">
             READY TO BEGIN?
           </p>
-          <h2 className="text-3xl sm:text-4xl font-black text-dark mb-4">
+          {/* One line on desktop (about 980px at 40px); wraps naturally on smaller screens. */}
+          <h2 className="text-3xl sm:text-4xl xl:text-[2.5rem] lg:tracking-[-0.025em] lg:whitespace-nowrap font-black text-dark mb-4">
             Turn Curiosity Into Something Your Child Can Build.
           </h2>
           <p className="text-sm text-gray-500 max-w-2xl mx-auto mb-7">

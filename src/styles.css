@@ -242,51 +242,28 @@ html {
   }
 }
 
-/* Homepage "APTCODER in the Spotlight" strip. Same seamless technique as the partner marquee
-   (two identical groups, -50%), reusing its keyframes. It pauses on hover and while a card has
-   keyboard focus so every card can be clicked. On touch screens, narrow screens and for reduced
-   motion it is a swipeable, snap-scrolling row instead (an animated strip cannot be swiped). */
-.spotlight-marquee {
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
-}
-
-.spotlight-marquee-track {
+/* Homepage "APTCODER in the Spotlight" carousel (SpotlightSection.tsx): a continuously
+   moving, swipeable row (moved frame by frame in JS so the Previous/Next arrows and swipes can
+   work alongside it). Two identical card sets make the loop seamless. Faded edges on desktop. */
+.spotlight-strip {
   display: flex;
-  width: max-content;
-  animation: partner-marquee 70s linear infinite;
-  will-change: transform;
-  backface-visibility: hidden;
+  overflow-x: auto;
+  scroll-behavior: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
 }
 
-.spotlight-marquee:hover .spotlight-marquee-track,
-.spotlight-marquee:focus-within .spotlight-marquee-track {
-  animation-play-state: paused;
+.spotlight-strip::-webkit-scrollbar {
+  display: none;
 }
 
-@media (hover: none), (max-width: 767px), (prefers-reduced-motion: reduce) {
-  .spotlight-marquee {
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: 1rem;
-    scrollbar-width: none;
+@media (max-width: 767px) {
+  .spotlight-strip {
     -webkit-mask-image: none;
     mask-image: none;
-  }
-  .spotlight-marquee::-webkit-scrollbar {
-    display: none;
-  }
-  .spotlight-marquee-track {
-    animation: none;
     padding-inline: 0.5rem;
-  }
-  .spotlight-marquee-copy {
-    display: none;
-  }
-  .spotlight-marquee-item {
-    scroll-snap-align: start;
   }
 }
 
@@ -532,5 +509,46 @@ footer:has(~ .whatsapp-fab) {
   }
   .whatsapp-fab:hover {
     transform: none;
+  }
+}
+
+/* Green "enrolments open" dot beside ENROLLING NOW on the homepage hero card: a soft pulse
+   ring, slow enough not to distract. Reduced motion keeps a still dot with a faint glow. */
+.enrolling-dot {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #22C55E;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+}
+
+.enrolling-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #22C55E;
+  animation: enrolling-pulse 2s ease-out infinite;
+}
+
+@keyframes enrolling-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  80%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enrolling-dot::after {
+    animation: none;
+    opacity: 0;
   }
 }

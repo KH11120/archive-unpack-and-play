@@ -11,9 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as CNatRouteImport } from './routes/c-nat'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CoursesRouteRouteImport } from './routes/courses/route'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as SchoolRouteImport } from './routes/school'
+import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as VernaticsRouteImport } from './routes/vernatics'
 import { Route as CoursesIndexRouteImport } from './routes/courses/index'
 import { Route as CoursesSlugRouteImport } from './routes/courses/$slug'
@@ -29,6 +32,11 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CNatRoute = CNatRouteImport.update({
+  id: '/c-nat',
+  path: '/c-nat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -39,9 +47,19 @@ const CoursesRouteRoute = CoursesRouteRouteImport.update({
   path: '/courses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SchoolRoute = SchoolRouteImport.update({
   id: '/school',
   path: '/school',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
+  id: '/terms-and-conditions',
+  path: '/terms-and-conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VernaticsRoute = VernaticsRouteImport.update({
@@ -69,8 +87,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/courses': typeof CoursesRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/c-nat': typeof CNatRoute
   '/contact': typeof ContactRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/school': typeof SchoolRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/vernatics': typeof VernaticsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses/': typeof CoursesIndexRoute
@@ -79,8 +100,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/c-nat': typeof CNatRoute
   '/contact': typeof ContactRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/school': typeof SchoolRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/vernatics': typeof VernaticsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses': typeof CoursesIndexRoute
@@ -91,8 +115,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/courses': typeof CoursesRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/c-nat': typeof CNatRoute
   '/contact': typeof ContactRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/school': typeof SchoolRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/vernatics': typeof VernaticsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses/': typeof CoursesIndexRoute
@@ -104,8 +131,11 @@ export interface FileRouteTypes {
     | '/'
     | '/courses'
     | '/about'
+    | '/c-nat'
     | '/contact'
+    | '/privacy-policy'
     | '/school'
+    | '/terms-and-conditions'
     | '/vernatics'
     | '/courses/$slug'
     | '/courses/'
@@ -114,8 +144,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/c-nat'
     | '/contact'
+    | '/privacy-policy'
     | '/school'
+    | '/terms-and-conditions'
     | '/vernatics'
     | '/courses/$slug'
     | '/courses'
@@ -125,8 +158,11 @@ export interface FileRouteTypes {
     | '/'
     | '/courses'
     | '/about'
+    | '/c-nat'
     | '/contact'
+    | '/privacy-policy'
     | '/school'
+    | '/terms-and-conditions'
     | '/vernatics'
     | '/courses/$slug'
     | '/courses/'
@@ -137,8 +173,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CoursesRouteRoute: typeof CoursesRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  CNatRoute: typeof CNatRoute
   ContactRoute: typeof ContactRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   SchoolRoute: typeof SchoolRoute
+  TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   VernaticsRoute: typeof VernaticsRoute
 }
 
@@ -158,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/c-nat': {
+      id: '/c-nat'
+      path: '/c-nat'
+      fullPath: '/c-nat'
+      preLoaderRoute: typeof CNatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -172,11 +218,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/school': {
       id: '/school'
       path: '/school'
       fullPath: '/school'
       preLoaderRoute: typeof SchoolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-and-conditions': {
+      id: '/terms-and-conditions'
+      path: '/terms-and-conditions'
+      fullPath: '/terms-and-conditions'
+      preLoaderRoute: typeof TermsAndConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vernatics': {
@@ -230,8 +290,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CoursesRouteRoute: CoursesRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  CNatRoute: CNatRoute,
   ContactRoute: ContactRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   SchoolRoute: SchoolRoute,
+  TermsAndConditionsRoute: TermsAndConditionsRoute,
   VernaticsRoute: VernaticsRoute,
 }
 export const routeTree = rootRouteImport

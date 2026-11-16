@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowUpRight, Newspaper, ZoomIn } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Newspaper, ZoomIn } from "lucide-react";
 import { newsEntries, type ImageNewsEntry, type NewsEntry } from "@/site/data/news";
 import PressViewer from "./PressViewer";
 
@@ -63,12 +63,12 @@ function CardBody({ entry }: { entry: NewsEntry }) {
 
 function NewsCard({
   entry,
-  hidden,
+  hidden = false,
   onOpen,
 }: {
   entry: NewsEntry;
   /** The duplicate set that makes the loop seamless: clickable, but skipped by keyboard and screen readers. */
-  hidden: boolean;
+  hidden?: boolean;
   onOpen: (entry: ImageNewsEntry) => void;
 }) {
   const a11y = hidden ? { tabIndex: -1 } : {};
@@ -109,11 +109,12 @@ function NewsCard({
 function CardGroup({ copy, onOpen }: { copy: boolean; onOpen: (entry: ImageNewsEntry) => void }) {
   return (
     <ul
-      className={`spotlight-marquee-group flex shrink-0 items-stretch ${copy ? "spotlight-marquee-copy" : ""}`}
+      className="spotlight-strip-group flex shrink-0 items-stretch"
       aria-hidden={copy || undefined}
+      data-copy={copy || undefined}
     >
       {newsEntries.map((entry) => (
-        <li key={entry.id} className="spotlight-marquee-item flex shrink-0 px-2.5 py-3">
+        <li key={entry.id} className="spotlight-strip-item flex shrink-0 px-2.5 py-3">
           <NewsCard entry={entry} hidden={copy} onOpen={onOpen} />
         </li>
       ))}
@@ -121,33 +122,152 @@ function CardGroup({ copy, onOpen }: { copy: boolean; onOpen: (entry: ImageNewsE
   );
 }
 
+/** Continuous movement speed, in pixels per second (one full lap of six cards ≈ 70 s). */
+const SPEED_PX_PER_S = 27;
+/** After a swipe or an arrow press, carry on moving after this long. */
+const RESUME_AFTER_MS = 2500;
+
+/** Width of one full set of cards: scrolling past it wraps back seamlessly onto the copy. */
+function lapWidth(el: HTMLElement | null) {
+  return el?.querySelector<HTMLElement>(".spotlight-strip-group")?.offsetWidth ?? 0;
+}
+
+/** One card plus its spacing: one arrow step. */
+function cardWidth(el: HTMLElement | null) {
+  return el?.querySelector<HTMLElement>(".spotlight-strip-item")?.offsetWidth || 300;
+}
+
+/** Keep a position inside the first lap (the second set looks identical, so there is no jump). */
+function wrap(el: HTMLElement | null, value: number) {
+  const lap = lapWidth(el);
+  if (!lap) return value;
+  return ((value % lap) + lap) % lap;
+}
+
 export default function SpotlightSection() {
   const [open, setOpen] = useState<ImageNewsEntry | null>(null);
+  const scroller = useRef<HTMLDivElement>(null);
+  /** Exact scroll position (fractional), so slow movement is smooth rather than rounded away. */
+  const position = useRef(0);
+  const hovered = useRef(false);
+  const holdUntil = useRef(0);
+
+  const hold = (ms = RESUME_AFTER_MS) => {
+    holdUntil.current = performance.now() + ms;
+  };
+
+  const onArrow = (direction: 1 | -1) => {
+    const el = scroller.current;
+    if (!el) return;
+    const step = cardWidth(el);
+    // Start from a wrapped position so "previous" works from the very first card too.
+    const from = wrap(el, el.scrollLeft);
+    const start = direction === -1 && from < step ? from + lapWidth(el) : from;
+    el.scrollLeft = start;
+    position.current = start;
+    const target = (Math.round(start / step) + direction) * step;
+    hold(RESUME_AFTER_MS + 600);
+    el.scrollTo({ left: target, behavior: "smooth" });
+  };
+
+  // Continuous movement, driven frame by frame so arrows and swipes can work alongside it.
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el) return;
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    if (reduceMotion) return;
+    let frame = 0;
+    let last = performance.now();
+    let visible = true;
+    const observer =
+      typeof IntersectionObserver === "undefined"
+        ? null
+        : new IntersectionObserver(([entry]) => {
+            visible = entry?.isIntersecting ?? true;
+          });
+    observer?.observe(el);
+
+    const tick = (now: number) => {
+      const dt = Math.min(now - last, 100);
+      last = now;
+      if (visible && !hovered.current && now >= holdUntil.current) {
+        // Pick up from wherever an arrow or swipe left the strip.
+        if (Math.abs(el.scrollLeft - position.current) > 2) position.current = el.scrollLeft;
+        position.current = wrap(el, position.current + (SPEED_PX_PER_S * dt) / 1000);
+        el.scrollLeft = position.current;
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+    };
+  }, []);
+
+  const arrowClass =
+    "flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-dark shadow-sm transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
 
   return (
     <section className="bg-white py-16 sm:py-20" aria-labelledby="spotlight-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-7 sm:mb-8">
-          <div className="section-label mb-3">APTCODER IN THE SPOTLIGHT</div>
-          <h2 id="spotlight-heading" className="mb-3 text-3xl font-black text-dark sm:text-4xl">
-            From India to the World
-          </h2>
-          {/* One line on desktop (about 790px at 16px); wraps naturally on smaller screens. */}
-          <p className="max-w-4xl text-sm text-gray-500 sm:text-base">
-            Discover APTCODER’s media features, institutional milestones and growing impact in
-            technology education.
-          </p>
+        <div className="mb-7 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 sm:mb-8">
+          <div className="min-w-0">
+            <div className="section-label mb-3">APTCODER IN THE SPOTLIGHT</div>
+            <h2 id="spotlight-heading" className="mb-3 text-3xl font-black text-dark sm:text-4xl">
+              From India to the World
+            </h2>
+            {/* One line on desktop (about 790px at 16px); wraps naturally on smaller screens. */}
+            <p className="max-w-4xl text-sm text-gray-500 sm:text-base">
+              Discover APTCODER’s media features, institutional milestones and growing impact in
+              technology education.
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-2.5">
+            <button
+              type="button"
+              onClick={() => onArrow(-1)}
+              aria-label="Previous article"
+              aria-controls="spotlight-strip"
+              className={arrowClass}
+            >
+              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onArrow(1)}
+              aria-label="Next article"
+              aria-controls="spotlight-strip"
+              className={arrowClass}
+            >
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Full-width strip: scrolls on its own, pauses on hover or keyboard focus. On touch
-          screens and for reduced motion it becomes a swipeable row instead. */}
+      {/* Continuously moving strip (two identical sets of cards, so the loop has no jump or
+          gap). Pauses while hovered or focused; arrows and swipes move it by hand and it then
+          carries on. For reduced motion it stays still and moves only with the arrows/swipes. */}
       <div className="mx-auto max-w-7xl sm:px-4 lg:px-6">
-        <div className="spotlight-marquee" data-testid="spotlight-strip">
-          <div className="spotlight-marquee-track">
-            <CardGroup copy={false} onOpen={setOpen} />
-            <CardGroup copy onOpen={setOpen} />
-          </div>
+        <div
+          id="spotlight-strip"
+          ref={scroller}
+          className="spotlight-strip"
+          data-testid="spotlight-strip"
+          role="region"
+          aria-label="APTCODER news and coverage"
+          onMouseEnter={() => (hovered.current = true)}
+          onMouseLeave={() => (hovered.current = false)}
+          onFocus={() => (hovered.current = true)}
+          onBlur={() => (hovered.current = false)}
+          onPointerDown={() => hold()}
+          onTouchStart={() => hold(60_000)}
+          onTouchEnd={() => hold()}
+          onWheel={() => hold()}
+        >
+          <CardGroup copy={false} onOpen={setOpen} />
+          <CardGroup copy onOpen={setOpen} />
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import type { Page } from '../page'
+import { pagePaths, type Page } from '../page'
 import { useLanguage } from './LanguageContext'
 import AptcoderLogo from './AptcoderLogo'
 import SocialLinks from './SocialLinks'
@@ -33,8 +33,8 @@ export default function Footer({ navigate }: FooterProps) {
             </button>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               {t(
-                'Helping children across India learn coding and technology in the language they understand best.',
-                'भारत भर के बच्चों को उनकी पसंदीदा भाषा में कोडिंग और तकनीक सीखने में मदद करना।',
+                'Helping children across India explore AI, robotics and coding in a language they understand best.',
+                'भारत भर के बच्चों को उनकी सबसे अच्छी समझ वाली भाषा में एआई, रोबोटिक्स और कोडिंग सीखने में मदद करना।',
               )}
             </p>
             <SocialLinks variant="dark" />
@@ -42,11 +42,34 @@ export default function Footer({ navigate }: FooterProps) {
 
           {/* Programs */}
           <div>
-            <h3 className="font-bold text-sm uppercase tracking-widest text-gray-300 mb-5">{t('Programs', 'कार्यक्रम')}</h3>
+            <h3 className="font-bold text-sm uppercase tracking-widest text-gray-300 mb-5">{t('Our Offerings', 'हमारी पेशकश')}</h3>
             <ul className="space-y-3">
-              {['Coding Courses', 'Vernatics (Robotics)', 'C-NAT Olympiad', 'Kids Coding Community', 'School Programs', 'Codely Platform'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-gray-400 text-sm hover:text-white transition-colors">{item}</a>
+              {[
+                { label: 'Our Courses' },
+                { label: 'Vernatics (Robotics)' },
+                { label: 'C-NAT Olympiad', page: 'cnat' as const },
+                { label: 'Kids Coding Community' },
+                { label: 'School Programs' },
+                { label: 'Codely Platform', href: 'https://portal.aptcoder.com/dist/home.html', external: true },
+              ].map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.page ? pagePaths[item.page] : (item.href ?? '#')}
+                    onClick={
+                      item.page
+                        ? (event) => {
+                            event.preventDefault()
+                            navigate(item.page)
+                          }
+                        : undefined
+                    }
+                    {...(item.external
+                      ? { target: '_blank', rel: 'noopener noreferrer', 'aria-label': `${item.label} (opens in a new tab)` }
+                      : {})}
+                    className="text-gray-400 text-sm hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -71,9 +94,19 @@ export default function Footer({ navigate }: FooterProps) {
                   </button>
                 </li>
               ))}
-              {['Privacy Policy', 'Terms of Service'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-gray-400 text-sm hover:text-white transition-colors">{item}</a>
+              {[
+                { label: 'Privacy Policy', page: 'privacy' as Page },
+                { label: 'Terms & Conditions', page: 'terms' as Page },
+              ].map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={pagePaths[item.page]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 text-sm hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </a>
                 </li>
               ))}
             </ul>

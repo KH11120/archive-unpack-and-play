@@ -3,7 +3,7 @@ import VernaticsPage from "@/site/pages/VernaticsPage";
 
 import { useSiteNavigate } from "@/site/useSiteNavigate";
 
-const TITLE = "Vernatics Robotics by APTCODER — Meet Your First Coding Robot";
+const TITLE = "APTCODER | Vernatics Robotics";
 const DESCRIPTION =
   "With Vernatics by APTCODER, children learn coding by programming a real robot: make it move, explore sensors, light up its LED matrix and watch their instructions come to life.";
 

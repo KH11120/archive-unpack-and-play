@@ -6,9 +6,9 @@ import { useSiteNavigate } from "@/site/useSiteNavigate"
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — APTCODER" },
+      { title: "APTCODER | About Us" },
       { name: "description", content: "Learn about APTCODER's mission to teach kids coding and future-ready skills." },
-      { property: "og:title", content: "About — APTCODER" },
+      { property: "og:title", content: "APTCODER | About Us" },
       { property: "og:description", content: "Learn about APTCODER's mission to teach kids coding and future-ready skills." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

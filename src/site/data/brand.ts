@@ -1,8 +1,8 @@
 /** Official APTCODER logo (transparent PNG). Use this everywhere the logo appears. */
 export const aptcoderLogo = {
-  src: "/images/brand/aptcoder_logo_transparent.png",
+  src: "/images/brand/aptcoder_logo.png",
   alt: "APTCODER – access the potential",
-  /** Intrinsic size of the file; keeps the aspect ratio exact (about 3.6 : 1). */
-  width: 1344,
-  height: 372,
+  /** Intrinsic size of the file; keeps the aspect ratio exact (about 3.5 : 1; includes the ® mark). */
+  width: 1463,
+  height: 413,
 } as const;

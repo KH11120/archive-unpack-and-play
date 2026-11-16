@@ -13,13 +13,13 @@ export const Route = createFileRoute("/courses/")({
   loader: ({ deps }) => ({ noindex: hasSearchState(deps.query) }),
   head: ({ loaderData }) => ({
     meta: [
-      { title: "Courses — APTCODER" },
+      { title: "APTCODER | Courses" },
       {
         name: "description",
         content:
           "Explore APTCODER technology courses by category, learning model, level, language, and program type.",
       },
-      { property: "og:title", content: "Courses — APTCODER" },
+      { property: "og:title", content: "APTCODER | Courses" },
       {
         property: "og:description",
         content:

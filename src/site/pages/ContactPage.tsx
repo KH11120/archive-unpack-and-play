@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Page } from '../page'
+import { pagePaths, type Page } from '../page'
 import { useLanguage } from '../components/LanguageContext'
 import SocialLinks from '../components/SocialLinks'
 import {
@@ -14,7 +14,7 @@ interface Props {
   navigate: (page: Page) => void
 }
 
-// Pages receive `navigate` (see AGENTS.md); this page no longer links anywhere itself.
+// Pages receive `navigate` (see AGENTS.md); this page no longer needs it.
 export default function ContactPage(_props: Props) {
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', role: '', topic: '', message: '',
@@ -162,8 +162,24 @@ export default function ContactPage(_props: Props) {
                   </button>
                   <p className="text-xs text-gray-400">
                     By clicking send, you agree to our{' '}
-                    <a href="#" className="text-[#E8401C] hover:underline">Privacy Policy</a>
-                    {' '}and Terms of Service.
+                    <a
+                      href={pagePaths.privacy}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#E8401C] hover:underline"
+                    >
+                      Privacy Policy
+                    </a>
+                    {' '}and{' '}
+                    <a
+                      href={pagePaths.terms}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#E8401C] hover:underline"
+                    >
+                      Terms &amp; Conditions
+                    </a>
+                    .
                   </p>
                 </div>
               </form>
