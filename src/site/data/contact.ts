@@ -5,6 +5,9 @@
 
 export const CONTACT_EMAIL = "hello@aptcoder.com";
 
+/** APTCODER’s learning platform (Codely). */
+export const CODELY_PORTAL_URL = "https://portal.aptcoder.com/dist/home.html";
+
 export const CONTACT_PHONE = "+91-9318497057";
 /** `tel:` link (digits only, with country code) so phones open the dialler. */
 export const CONTACT_PHONE_HREF = "tel:+919318497057";

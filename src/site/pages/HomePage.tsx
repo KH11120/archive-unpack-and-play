@@ -6,7 +6,7 @@ import SpotlightSection from "../components/spotlight/SpotlightSection"
 import TestimonialsSection from "../components/testimonials/TestimonialsSection"
 import VernaticsVideo from "../components/VernaticsVideo"
 import RecordedClassLead from "../components/RecordedClassLead"
-import KccJoinModal from "../components/kcc/KccJoinModal"
+import { useKccJoin } from "../components/kcc/KccContext"
 import { useLanguage } from "../components/LanguageContext"
 import { siteWideFaqs } from "../data/siteFaqs"
 
@@ -192,7 +192,7 @@ export default function HomePage({ navigate }: Props) {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [activeProject, setActiveProject] = useState(0)
   const [showMorePossibilities, setShowMorePossibilities] = useState(false)
-  const [kccOpen, setKccOpen] = useState(false)
+  const openKccJoin = useKccJoin()
   const { t } = useLanguage()
   const selectedProject = projects[activeProject]!
 
@@ -652,7 +652,7 @@ export default function HomePage({ navigate }: Props) {
               <div className="mt-auto pt-3">
                 <button
                   type="button"
-                  onClick={() => setKccOpen(true)}
+                  onClick={openKccJoin}
                   aria-haspopup="dialog"
                   className="inline-flex min-h-11 items-center text-sm font-black text-primary hover:text-primary-dark"
                 >
@@ -663,8 +663,6 @@ export default function HomePage({ navigate }: Props) {
           </div>
         </div>
       </section>
-
-      <KccJoinModal open={kccOpen} onOpenChange={setKccOpen} />
 
       <SpotlightSection />
 

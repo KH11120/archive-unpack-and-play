@@ -1,9 +1,15 @@
 import { useNavigate } from "@tanstack/react-router"
-import { pagePaths, type Page } from "./page"
+import { pagePaths, type SiteNavigate } from "./page"
 
-export function useSiteNavigate() {
+export function useSiteNavigate(): SiteNavigate {
   const nav = useNavigate()
-  return (page: Page) => {
+  return (page, section) => {
+    if (section) {
+      // Jump straight to the section (like a normal anchor link); its scroll-margin keeps it clear of the
+      // sticky header. SectionScroller (root layout) repeats this once the page has rendered.
+      nav({ to: pagePaths[page], hash: section, hashScrollIntoView: { behavior: "instant" } })
+      return
+    }
     nav({ to: pagePaths[page] })
     window.scrollTo({ top: 0, behavior: "smooth" })
   }

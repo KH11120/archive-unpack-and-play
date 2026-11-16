@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import Navbar from "@/site/components/Navbar";
 import Footer from "@/site/components/Footer";
 import WhatsAppButton from "@/site/components/WhatsAppButton";
+import SectionScroller from "@/site/components/SectionScroller";
+import { KccJoinProvider } from "@/site/components/kcc/KccContext";
 import { LanguageProvider } from "@/site/components/LanguageContext";
 import { useSiteNavigate } from "@/site/useSiteNavigate";
 import { pagePaths, type Page } from "@/site/page";
@@ -159,12 +161,15 @@ function SiteLayout() {
   // Legal documents open in their own tab as simple standalone pages (no menu or footer).
   if (pathname === pagePaths.privacy || pathname === pagePaths.terms) return <Outlet />;
   return (
+    <KccJoinProvider>
     <div className="min-h-screen bg-white">
+      <SectionScroller />
       <Navbar currentPage={current} navigate={navigate} />
       <Outlet />
       <Footer navigate={navigate} />
       {/* Global: appears on every route; pages must not add their own. */}
       <WhatsAppButton />
     </div>
+    </KccJoinProvider>
   );
 }

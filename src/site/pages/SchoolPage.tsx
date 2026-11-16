@@ -1,10 +1,10 @@
-import type { Page } from '../page'
+import { sectionIds, type SiteNavigate } from '../page'
 import SchoolSalesKit from '../components/SchoolSalesKit'
 import { partnerSchools } from '../data/schools'
 import { useLanguage } from '../components/LanguageContext'
 
 interface Props {
-  navigate: (page: Page) => void
+  navigate: SiteNavigate
 }
 
 const schoolTestimonials = [
@@ -53,7 +53,11 @@ export default function SchoolPage({ navigate }: Props) {
               )}
             </p>
             <div className="flex flex-wrap gap-3 mb-8">
-              <button className="bg-[#E8401C] text-white font-semibold rounded-full px-7 py-3.5 hover:bg-[#C73516] transition-colors flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => navigate('contact', sectionIds.contactForm)}
+                className="bg-[#E8401C] text-white font-semibold rounded-full px-7 py-3.5 hover:bg-[#C73516] transition-colors flex items-center gap-2"
+              >
                 Partner with Us →
               </button>
               <SchoolSalesKit compact />
@@ -180,11 +184,8 @@ export default function SchoolPage({ navigate }: Props) {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="section-label mb-3">HOW IT WORKS</div>
-          <div className="flex items-center justify-between mb-10">
+          <div className="mb-10">
             <h2 className="text-3xl font-black text-gray-900">Simple and Seamless Implementation</h2>
-            <button className="hidden sm:flex text-sm text-[#E8401C] font-semibold items-center gap-1 hover:opacity-70">
-              View Detailed Process →
-            </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
@@ -240,7 +241,11 @@ export default function SchoolPage({ navigate }: Props) {
             Partner with AptCoder and empower your students with real skills for tomorrow.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="bg-[#E8401C] text-white font-bold rounded-full px-8 py-4 hover:bg-[#C73516] transition-colors">
+            <button
+              type="button"
+              onClick={() => navigate('contact', sectionIds.contactForm)}
+              className="bg-[#E8401C] text-white font-bold rounded-full px-8 py-4 hover:bg-[#C73516] transition-colors"
+            >
               Partner with Us →
             </button>
             <SchoolSalesKit />

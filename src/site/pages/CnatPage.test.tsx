@@ -50,7 +50,7 @@ describe("homepage and footer links", () => {
   it("send Explore C-NAT to /c-nat and turn Explore KCC into Join KCC", () => {
     const home = readFileSync(resolve(__dirname, "HomePage.tsx"), "utf8");
     expect(home).toMatch(/navigate\("cnat"\)\}[\s\S]{0,200}Explore C-NAT →/);
-    expect(home).toMatch(/setKccOpen\(true\)\}[\s\S]{0,200}Join KCC →/);
+    expect(home).toMatch(/openKccJoin\}[\s\S]{0,200}Join KCC →/);
     expect(home).not.toContain("Explore KCC");
   });
 });

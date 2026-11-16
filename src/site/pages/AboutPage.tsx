@@ -190,7 +190,7 @@ export default function AboutPage({ navigate }: Props) {
       </section>
 
       {/* Team */}
-      <section className="py-20 bg-white" aria-labelledby="team-heading">
+      <section id="meet-our-team" className="scroll-mt-16 py-20 bg-white" aria-labelledby="team-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10 text-center">
             <h2 id="team-heading" className="text-3xl font-black text-gray-900 mb-2">Meet Our Team</h2>

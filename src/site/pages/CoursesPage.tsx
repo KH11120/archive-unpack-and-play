@@ -270,13 +270,14 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
               className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
             />
             <input
+              id="course-search"
               type="search"
               value={filters.q}
               onChange={(event) => {
                 updateFilters({ ...filters, q: event.target.value }, true);
               }}
               placeholder="Search courses..."
-              className="min-h-12 w-full rounded-full border border-gray-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-900 outline-none transition focus:border-[#E8401C] focus:ring-2 focus:ring-[#E8401C]/15"
+              className="scroll-mt-40 min-h-12 w-full rounded-full border border-gray-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-900 outline-none transition focus:border-[#E8401C] focus:ring-2 focus:ring-[#E8401C]/15"
             />
             <span className="sr-only" aria-live="polite">
               {filters.q.trim().length === 1 ? "Enter at least 2 characters to search." : ""}
