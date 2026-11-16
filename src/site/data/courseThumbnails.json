@@ -1,180 +1,280 @@
 {
-  "about": "Course thumbnail mapping. Keys are course IDs from the Website Courses sheet (COURSE-### from S.No.). 'source' is the original file in public/Thumbnail Samples; the website serves a resized copy from public/course-thumbnails/<id>.jpg, made by scripts/build-course-thumbnails.py. Only High and Medium confidence matches are listed; see docs/course-thumbnails.md for unmapped courses, unused images and open decisions.",
+  "about": "Course thumbnails for docs/Course_Catalogue_Website.xlsx (Course Master record IDs). Each image in public/Thumbnail Samples is named after an LMS course name and its printed title was checked against the course. An image is shared only by records the workbook groups under the same LMS name (Name Key). Courses without a confirmed image keep the placeholder. Build: python3 scripts/build-course-thumbnails.py",
   "thumbnails": {
-    "COURSE-001": {
+    "CRS-001": {
       "source": "Python Transition Program - Hindi Adaptive Learning.jpg",
       "confidence": "High",
-      "reason": "Image title in Hindi reads 'Python Transition Program (Hindi / Adaptive Learning)'."
+      "reason": "Image reads 'Python Transition Program (Hindi / Adaptive Learning)' in Hindi; CRS-001 is the Hindi, Assisted Learning Python Transition Program."
     },
-    "COURSE-002": {
+    "CRS-002": {
       "source": "Programming Fundamentals with Codely (EnglishSelf Learning).jpg",
       "confidence": "High",
-      "reason": "Image reads 'Programming Fundamentals with Codely', 'Self Learning', 'English'."
+      "reason": "Image reads 'Programming Fundamentals with Codely', 'Self Learning', 'English'; CRS-002 is Codely Course SL (English)."
     },
-    "COURSE-003": {
+    "CRS-003": {
       "source": "Intellectual property Thumbnail-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Intellectual Property' with copyright, trademark and patent icons."
+      "reason": "Image reads 'Intellectual Property'; CRS-003 is the Intellectual Property Course."
     },
-    "COURSE-004": {
+    "CRS-004": {
       "source": "Art and Music with Coding Camp.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Art and Music with Coding Camp'."
+      "reason": "Image reads 'Art and Music with Coding Camp', the course's original New Lesson Name. Shared by the 2 active records the workbook lists under the same LMS name (CRS-004, CRS-031)."
     },
-    "COURSE-005": {
+    "CRS-005": {
       "source": "Artificial Intelligence & Machine Learning Camp .jpg",
       "confidence": "High",
-      "reason": "Image reads 'Artificial Intelligence & Machine Learning Camp'."
+      "reason": "Image reads 'Artificial Intelligence & Machine Learning Camp', the course's original New Lesson Name. Shared by the 3 active records the workbook lists under the same LMS name (CRS-005, CRS-018, CRS-032)."
     },
-    "COURSE-007": {
+    "CRS-007": {
       "source": "Block Chain and Cryptography CAMP-page-00001.jpg",
-      "confidence": "Medium",
-      "reason": "Image reads 'Block Chain and Cryptography Camp'; this course's Subject is 'Blockchain & Cryptography'. Could also suit 'Block Chain Camp - Live' (COURSE-070) or 'Cryptography Camp - Live' (COURSE-071)."
+      "confidence": "High",
+      "reason": "Image reads 'Block Chain and Cryptography Camp'; file name equals the LMS name. Shared by the 2 active records the workbook lists under the same LMS name (CRS-007, CRS-047)."
     },
-    "COURSE-010": {
+    "CRS-018": {
+      "source": "Artificial Intelligence & Machine Learning Camp .jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Artificial Intelligence & Machine Learning Camp', the course's original New Lesson Name. Shared by the 3 active records the workbook lists under the same LMS name (CRS-005, CRS-018, CRS-032)."
+    },
+    "CRS-021": {
       "source": "Block Coding(VE) - AL-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Block Coding (Very Easy) | AL'."
+      "reason": "Image reads 'Block Coding (Very Easy) | AL'; file name equals the LMS name."
     },
-    "COURSE-011": {
+    "CRS-024": {
       "source": "Grade 1 Assisted Learning Easy-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Grade 1 Assisted Learning Easy'."
+      "reason": "Image reads 'Grade 1 Assisted Learning Easy'; file name equals the LMS name."
     },
-    "COURSE-012": {
+    "CRS-025": {
       "source": "Block Coding(M) -AL (Level 2)-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Block Coding (Moderate) - AL Level 2'."
+      "reason": "Image reads 'Block Coding (Moderate) - AL, Level 2'; file name equals the LMS name."
     },
-    "COURSE-013": {
+    "CRS-026": {
       "source": "Grade 1 Assisted Learning Hard-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Grade 1 Assisted Learning Hard'."
+      "reason": "Image reads 'Grade 1 Assisted Learning Hard'; file name equals the LMS name."
     },
-    "COURSE-014": {
+    "CRS-027": {
       "source": "Grade 1 Assisted Learning Moderate-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Grade 1 Assisted Learning Moderate'."
+      "reason": "Image reads 'Grade 1 Assisted Learning Moderate'; file name equals the LMS name."
     },
-    "COURSE-015": {
+    "CRS-028": {
       "source": "Grade 1 Assisted Learning Very Easy-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Grade 1 Assisted Learning Very Easy'."
+      "reason": "Image reads 'Grade 1 Assisted Learning Very Easy'; file name equals the LMS name."
     },
-    "COURSE-017": {
+    "CRS-030": {
       "source": "Grade 6 Assisted Learning-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Grade 6 Assisted Learning'."
+      "reason": "Image reads 'Grade 6 Assisted Learning'; file name equals the LMS name."
     },
-    "COURSE-019": {
+    "CRS-031": {
+      "source": "Art and Music with Coding Camp.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Art and Music with Coding Camp', the course's original New Lesson Name. Shared by the 2 active records the workbook lists under the same LMS name (CRS-004, CRS-031)."
+    },
+    "CRS-032": {
+      "source": "Artificial Intelligence & Machine Learning Camp .jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Artificial Intelligence & Machine Learning Camp', the course's original New Lesson Name. Shared by the 3 active records the workbook lists under the same LMS name (CRS-005, CRS-018, CRS-032)."
+    },
+    "CRS-047": {
+      "source": "Block Chain and Cryptography CAMP-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Chain and Cryptography Camp'; file name equals the LMS name. Shared by the 2 active records the workbook lists under the same LMS name (CRS-007, CRS-047)."
+    },
+    "CRS-049": {
       "source": "Block Coding Hindi (M)-page-00001.jpg",
-      "confidence": "Medium",
-      "reason": "Image reads 'Block Coding Hindi (Medium)'; course is Hindi block coding at Moderate level, but the image does not say 'Fundamentals'."
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding Hindi (Medium)'; file name equals the LMS name."
     },
-    "COURSE-026": {
+    "CRS-052": {
+      "source": "Web Development (Completed)-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Web Development'; file name equals the LMS name 'Web Development (Completed)'."
+    },
+    "CRS-058": {
       "source": "Art With Coding - AL-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Art with Coding AL'; course is 'Creative Art with Coding', Assisted Learning."
+      "reason": "Image reads 'Art with Coding AL'; file name equals the LMS name."
     },
-    "COURSE-029": {
+    "CRS-061": {
       "source": "Javascript( E) - AL-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'JavaScript (Easy) - AL'; course is JavaScript Fundamentals, Easy, Assisted Learning."
+      "reason": "Image reads 'JavaScript (Easy) - AL'; LMS name is 'Javascript(E) - AL'."
     },
-    "COURSE-030": {
+    "CRS-069": {
       "source": "AIML Level-1 - AL-page-00001.jpg",
-      "confidence": "Medium",
-      "reason": "Image reads 'AIML Level-1 Assisted Learning'; the only Assisted Learning AI course is 'Foundations of AI & ML', but the image does not use that name."
+      "confidence": "High",
+      "reason": "Image reads 'AIML Level-1 Assisted Learning'; file name equals the LMS name."
     },
-    "COURSE-031": {
+    "CRS-070": {
       "source": "Block Coding Capstone - Live-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Block Coding Capstone LIVE'. A second design for the same course exists (unused)."
+      "reason": "Image reads 'Block Coding Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
     },
-    "COURSE-032": {
+    "CRS-071": {
       "source": "Web Development Capstone - Live-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Web Development Capstone LIVE'. A second design for the same course exists (unused)."
+      "reason": "Image reads 'Web Development Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
     },
-    "COURSE-033": {
+    "CRS-072": {
       "source": "Python Capstone - Live-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Python Capstone LIVE'. A second design ('copy') exists (unused)."
+      "reason": "Image reads 'Python Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
     },
-    "COURSE-034": {
+    "CRS-073": {
       "source": "Cloud Computing Capstone - Live-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Cloud Computing Capstone LIVE'. A second design ('copy') exists (unused)."
+      "reason": "Image reads 'Cloud Computing Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
     },
-    "COURSE-035": {
+    "CRS-074": {
       "source": "App Development Capstone - Live-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'App Development Capstone LIVE'. A second design ('copy') exists (unused)."
+      "reason": "Image reads 'App Development Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
     },
-    "COURSE-036": {
+    "CRS-075": {
       "source": "Web Development(H) - ALTS-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Web Development Hard ALTS'; course is Advanced Web Development, Hard, ALTS."
+      "reason": "Image reads 'Web Development Hard ALTS'; file name equals the LMS name. Shared by the 2 active records the workbook lists under the same LMS name (CRS-075, CRS-092)."
     },
-    "COURSE-037": {
+    "CRS-076": {
       "source": "Python(Hard) - ALTS-page-00001.jpg",
-      "confidence": "Medium",
-      "reason": "Image reads 'Python Hard ALTS'; course is Advanced Python, Hard, ALTS, but the image does not mention block coding."
+      "confidence": "High",
+      "reason": "Image reads 'Python Hard ALTS'; LMS name is 'Python(H) - ALTS'."
     },
-    "COURSE-038": {
+    "CRS-079": {
       "source": "Block Coding(Hard) - AL-page-00001.jpg",
-      "confidence": "Medium",
-      "reason": "Image reads 'Block Coding (Hard) - AL'; this is the only Hard, Assisted Learning block-coding course, but its title is 'Block-Based Coding Applications'."
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding (Hard) - AL'; LMS name is 'Block Coding(H) - AL'. Shared by the 4 active records the workbook lists under the same LMS name (CRS-079, CRS-084, CRS-154, CRS-210)."
     },
-    "COURSE-039": {
+    "CRS-080": {
       "source": "Block Coding(M) - AL-page-00001.jpg",
-      "confidence": "Medium",
-      "reason": "Image reads 'Block Coding (Medium)' (file says AL); course is Block-Based Coding Advance, Assisted Learning, Moderate."
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding (Medium)'; file name equals the LMS name 'Block Coding(M) - AL'. Shared by the 3 active records the workbook lists under the same LMS name (CRS-080, CRS-123, CRS-207)."
     },
-    "COURSE-040": {
+    "CRS-082": {
       "source": "Codely Course - AL(TM)  -page-00001.jpg",
-      "confidence": "Medium",
-      "reason": "Image reads 'Codely Course - AL (TM)'. COURSE-040 and COURSE-041 are identical rows in the workbook, so both use this image."
+      "confidence": "High",
+      "reason": "Image reads 'Codely Course - AL (TM)'; file name equals the LMS name."
     },
-    "COURSE-041": {
-      "source": "Codely Course - AL(TM)  -page-00001.jpg",
-      "confidence": "Medium",
-      "reason": "Duplicate of COURSE-040 (identical workbook row); same image."
+    "CRS-084": {
+      "source": "Block Coding(Hard) - AL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding (Hard) - AL'; LMS name is 'Block Coding(H) - AL'. Shared by the 4 active records the workbook lists under the same LMS name (CRS-079, CRS-084, CRS-154, CRS-210)."
     },
-    "COURSE-044": {
+    "CRS-092": {
+      "source": "Web Development(H) - ALTS-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Web Development Hard ALTS'; file name equals the LMS name. Shared by the 2 active records the workbook lists under the same LMS name (CRS-075, CRS-092)."
+    },
+    "CRS-098": {
       "source": "Block Coding Level-1 - Live(TM)-page-00001.jpg",
       "confidence": "Medium",
-      "reason": "File name says '(TM)'; the image itself reads 'Block Coding Level-1 LIVE', which also fits 'Block Coding Level-1 - Live' (COURSE-059)."
+      "reason": "Image reads 'Block Coding Level-1 Live' (no TM on the image); matched by its file name, which equals this LMS name."
     },
-    "COURSE-045": {
+    "CRS-101": {
       "source": "Web Development(M) - SL-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Web Development Medium SL'; course is Intermediate Web Development, Moderate, Self Learning."
+      "reason": "Image reads 'Web Development Medium SL'; file name equals the LMS name."
     },
-    "COURSE-046": {
+    "CRS-102": {
       "source": "Block Coding(VE) - SL-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Block Coding Very Easy SL'; course is Block-Based Coding Fundamentals, Very Easy, Self Learning, English."
+      "reason": "Image reads 'Block Coding Very Easy SL'; file name equals the LMS name. Shared by the 5 active records the workbook lists under the same LMS name (CRS-102, CRS-171, CRS-172, CRS-203, CRS-204)."
     },
-    "COURSE-047": {
+    "CRS-122": {
       "source": "ब्लॉक कोडिंग(VE) - SL-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image title matches the course title exactly: 'ब्लॉक कोडिंग (Very Easy) - SL'."
+      "reason": "Image reads 'ब्लॉक कोडिंग (Very Easy) - SL'; file name equals the LMS name. Shared by the 2 active records the workbook lists under the same LMS name (CRS-122, CRS-170)."
     },
-    "COURSE-066": {
+    "CRS-123": {
+      "source": "Block Coding(M) - AL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding (Medium)'; file name equals the LMS name 'Block Coding(M) - AL'. Shared by the 3 active records the workbook lists under the same LMS name (CRS-080, CRS-123, CRS-207)."
+    },
+    "CRS-143": {
       "source": "Cloud Computing Level-1 - Live(N)-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Cloud Computing Level-1 LIVE (N)'."
+      "reason": "Image reads 'Cloud Computing Level-1 | Live (N)'; file name equals the LMS name."
     },
-    "COURSE-067": {
+    "CRS-144": {
       "source": "Block Coding Level-1 - Live(N)-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'Block Coding Level-1 LIVE (N)'."
+      "reason": "Image reads 'Block Coding Level-1 | Live (N)'; file name equals the LMS name."
     },
-    "COURSE-068": {
+    "CRS-145": {
       "source": "App Development Level-1 - Live(N)-page-00001.jpg",
       "confidence": "High",
-      "reason": "Image reads 'App Development Level-1 LIVE (N)'."
+      "reason": "Image reads 'App Development Level-1 | Live (N)'; file name equals the LMS name."
+    },
+    "CRS-147": {
+      "source": "Cloud Computing Capstone - Live copy-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Cloud Computing Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
+    },
+    "CRS-148": {
+      "source": "Block Coding Capstone - Live  -page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
+    },
+    "CRS-149": {
+      "source": "Web Development Capstone - Live  -page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Web Development Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
+    },
+    "CRS-150": {
+      "source": "Python Capstone - Live copy-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Python Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
+    },
+    "CRS-151": {
+      "source": "App Development Capstone - Live copy-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'App Development Capstone Live'. This capstone has two LMS records and two designs; each record gets its own design."
+    },
+    "CRS-154": {
+      "source": "Block Coding(Hard) - AL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding (Hard) - AL'; LMS name is 'Block Coding(H) - AL'. Shared by the 4 active records the workbook lists under the same LMS name (CRS-079, CRS-084, CRS-154, CRS-210)."
+    },
+    "CRS-170": {
+      "source": "ब्लॉक कोडिंग(VE) - SL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'ब्लॉक कोडिंग (Very Easy) - SL'; file name equals the LMS name. Shared by the 2 active records the workbook lists under the same LMS name (CRS-122, CRS-170)."
+    },
+    "CRS-171": {
+      "source": "Block Coding(VE) - SL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding Very Easy SL'; file name equals the LMS name. Shared by the 5 active records the workbook lists under the same LMS name (CRS-102, CRS-171, CRS-172, CRS-203, CRS-204)."
+    },
+    "CRS-172": {
+      "source": "Block Coding(VE) - SL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding Very Easy SL'; file name equals the LMS name. Shared by the 5 active records the workbook lists under the same LMS name (CRS-102, CRS-171, CRS-172, CRS-203, CRS-204)."
+    },
+    "CRS-203": {
+      "source": "Block Coding(VE) - SL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding Very Easy SL'; file name equals the LMS name. Shared by the 5 active records the workbook lists under the same LMS name (CRS-102, CRS-171, CRS-172, CRS-203, CRS-204)."
+    },
+    "CRS-204": {
+      "source": "Block Coding(VE) - SL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding Very Easy SL'; file name equals the LMS name. Shared by the 5 active records the workbook lists under the same LMS name (CRS-102, CRS-171, CRS-172, CRS-203, CRS-204)."
+    },
+    "CRS-207": {
+      "source": "Block Coding(M) - AL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding (Medium)'; file name equals the LMS name 'Block Coding(M) - AL'. Shared by the 3 active records the workbook lists under the same LMS name (CRS-080, CRS-123, CRS-207)."
+    },
+    "CRS-210": {
+      "source": "Block Coding(Hard) - AL-page-00001.jpg",
+      "confidence": "High",
+      "reason": "Image reads 'Block Coding (Hard) - AL'; LMS name is 'Block Coding(H) - AL'. Shared by the 4 active records the workbook lists under the same LMS name (CRS-079, CRS-084, CRS-154, CRS-210)."
     }
   }
 }

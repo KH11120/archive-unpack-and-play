@@ -1,89 +1,93 @@
 # Course thumbnails: mapping report
 
-- **Thumbnails found:** 79 JPEGs in `public/Thumbnail Samples` (mostly 2000×1126; a few 3000×1688 and 4000×2250, all 16:9)
-- **Courses in the catalogue:** 86
-- **Mapped:** 35 courses using 34 images. 26 are High confidence and 9 Medium.
-- **Courses without a thumbnail:** 51. They keep the existing neutral placeholder.
-- **Unused images:** 45
+- **Source:** 79 images in `public/Thumbnail Samples`, named after LMS course names (the `LMS Course Name (original)` column of `docs/Course_Catalogue_Website.xlsx`).
+- **Courses in the catalogue:** 108 (active Course, Camp and Capstone records in Course Master).
+- **Courses with a thumbnail:** 55, using 40 images. **Without:** 53 (they keep the placeholder; no matching image exists).
 
-Every image was matched by reading the title printed on the image itself, then checking it against the course's title, Subject, Program Type, Learning Model, Level and Language. Low-confidence matches were **not** applied.
+## Rules
 
-## How it works
-
-- `src/site/data/courseThumbnails.json` maps course IDs (`COURSE-###`, from S.No.) to their source image, with a confidence rating and the reason.
-- `scripts/build-course-thumbnails.py` writes a 1280×720 copy of each mapped image to `public/course-thumbnails/<id>.jpg`. These are about 145 KB each, compared with 0.7–2 MB for the originals. The originals are unchanged.
-- `src/site/data/courseCatalogue.ts` fills each course's existing `thumbnailUrl` field from the mapping. The course cards and detail pages already used that field.
-- The workbook is unchanged; it has no thumbnail column.
-
-To change a match, edit the JSON and run:
-
-```sh
-python3 -m pip install -r requirements-catalogue.txt
-python3 scripts/build-course-thumbnails.py
-```
+- Each image's printed title was checked against the course's LMS name, display name, type, learning model and level.
+- An image is shared only by records the workbook groups under the same LMS name (its *Name Key* column).
+- Each capstone has two LMS records and two image designs, so each record gets its own design.
+- Demo, C-NAT practice-set, workbook, book and testing images are not used: those types are not in the catalogue.
+- To change a match, edit `src/site/data/courseThumbnails.json`, then run `python3 scripts/build-course-thumbnails.py` (writes 1280×720 copies to `public/course-thumbnails/`).
 
 ## Mappings
 
-| Course ID | Course | Image | Confidence |
-|---|---|---|---|
-| COURSE-001 | Python Transition Program (Hindi/Adaptive Learning) | Python Transition Program - Hindi Adaptive Learning.jpg | High |
-| COURSE-002 | Programming Fundamentals with Codely (English/Self Learning) | Programming Fundamentals with Codely (EnglishSelf Learning).jpg | High |
-| COURSE-003 | Intellectual Property Course | Intellectual property Thumbnail | High |
-| COURSE-004 | Art and Music with Coding Camp | Art and Music with Coding Camp.jpg | High |
-| COURSE-005 | Artificial Intelligence & Machine Learning Camp | Artificial Intelligence & Machine Learning Camp .jpg | High |
-| COURSE-007 | Blockchain Concepts Camp | Block Chain and Cryptography CAMP | Medium |
-| COURSE-010 | Block Coding(VE) - AL | Block Coding(VE) - AL | High |
-| COURSE-011 | Grade 1 Assisted Learning Easy | Grade 1 Assisted Learning Easy | High |
-| COURSE-012 | Block Coding(M) -AL (Level 2) | Block Coding(M) -AL (Level 2) | High |
-| COURSE-013 | Grade 1 Assisted Learning Hard | Grade 1 Assisted Learning Hard | High |
-| COURSE-014 | Grade 1 Assisted Learning Moderate | Grade 1 Assisted Learning Moderate | High |
-| COURSE-015 | Grade 1 Assisted Learning Very Easy | Grade 1 Assisted Learning Very Easy | High |
-| COURSE-017 | Grade 6 Assisted Learning | Grade 6 Assisted Learning | High |
-| COURSE-019 | Block-Based Coding Fundamentals (Hindi) | Block Coding Hindi (M) | Medium |
-| COURSE-026 | Creative Art with Coding | Art With Coding - AL | High |
-| COURSE-029 | JavaScript Fundamentals | Javascript( E) - AL | High |
-| COURSE-030 | Foundations of Artificial Intelligence & Machine Learning | AIML Level-1 - AL | Medium |
-| COURSE-031 | Block-Based Coding Capstone (Live) | Block Coding Capstone - Live | High |
-| COURSE-032 | Web Development Capstone (Live) | Web Development Capstone - Live | High |
-| COURSE-033 | Python Programming Capstone (Live) | Python Capstone - Live | High |
-| COURSE-034 | Cloud Computing Capstone (Live) | Cloud Computing Capstone - Live | High |
-| COURSE-035 | Application Development Capstone (Live) | App Development Capstone - Live | High |
-| COURSE-036 | Advanced Web Development (English) | Web Development(H) - ALTS | High |
-| COURSE-037 | Advanced Python with Block Coding (English) | Python(Hard) - ALTS | Medium |
-| COURSE-038 | Block-Based Coding Applications | Block Coding(Hard) - AL | Medium |
-| COURSE-039 | Block-Based Coding Advance | Block Coding(M) - AL | Medium |
-| COURSE-040 | Programming Fundamentals with Codely | Codely Course - AL(TM) | Medium |
-| COURSE-041 | Programming Fundamentals with Codely (duplicate row of COURSE-040) | Codely Course - AL(TM) | Medium |
-| COURSE-044 | Block Coding Level-1 - Live(TM) | Block Coding Level-1 - Live(TM) | Medium |
-| COURSE-045 | Intermediate Web Development (English) | Web Development(M) - SL | High |
-| COURSE-046 | Block-Based Coding Fundamentals (English/Self Learning) | Block Coding(VE) - SL | High |
-| COURSE-047 | ब्लॉक कोडिंग(VE) - SL | ब्लॉक कोडिंग(VE) - SL | High |
-| COURSE-066 | Cloud Computing Level-1 - Live(N) | Cloud Computing Level-1 - Live(N) | High |
-| COURSE-067 | Block Coding Level-1 - Live(N) | Block Coding Level-1 - Live(N) | High |
-| COURSE-068 | App Development Level-1 - Live(N) | App Development Level-1 - Live(N) | High |
+| Course | Title | Type | Image | Confidence |
+|---|---|---|---|---|
+| CRS-001 | Python Transition Program | Course | Python Transition Program - Hindi Adaptive Learning.jpg | High |
+| CRS-002 | Programming Fundamentals with Codely | Course | Programming Fundamentals with Codely (EnglishSelf Learning).jpg | High |
+| CRS-003 | Intellectual Property Course | Course | Intellectual property Thumbnail | High |
+| CRS-004 | Art and Music with Coding | Camp | Art and Music with Coding Camp.jpg | High |
+| CRS-005 | Artificial Intelligence & Machine Learning | Camp | Artificial Intelligence & Machine Learning Camp .jpg | High |
+| CRS-007 | Blockchain Concepts | Camp | Block Chain and Cryptography CAMP | High |
+| CRS-018 | Artificial Intelligence & Machine Learning | Camp | Artificial Intelligence & Machine Learning Camp .jpg | High |
+| CRS-021 | Block Coding | Course | Block Coding(VE) - AL | High |
+| CRS-024 | Grade 1 Assisted Learning | Course | Grade 1 Assisted Learning Easy | High |
+| CRS-025 | Block Coding | Course | Block Coding(M) -AL (Level 2) | High |
+| CRS-026 | Grade 1 Assisted Learning | Course | Grade 1 Assisted Learning Hard | High |
+| CRS-027 | Grade 1 Assisted Learning | Course | Grade 1 Assisted Learning Moderate | High |
+| CRS-028 | Grade 1 Assisted Learning | Course | Grade 1 Assisted Learning Very Easy | High |
+| CRS-030 | Grade 6 Assisted Learning | Course | Grade 6 Assisted Learning | High |
+| CRS-031 | Art and Music with Coding | Camp | Art and Music with Coding Camp.jpg | High |
+| CRS-032 | Artificial Intelligence & Machine Learning | Camp | Artificial Intelligence & Machine Learning Camp .jpg | High |
+| CRS-047 | Block Chain and Cryptography Concepts | Camp | Block Chain and Cryptography CAMP | High |
+| CRS-049 | Block-Based Coding Fundamentals | Course | Block Coding Hindi (M) | High |
+| CRS-052 | Web Development Applications | Course | Web Development (Completed) | High |
+| CRS-058 | Creative Art with Coding | Course | Art With Coding - AL | High |
+| CRS-061 | JavaScript Fundamentals | Course | Javascript( E) - AL | High |
+| CRS-069 | Foundations of Artificial Intelligence & Machine Learning | Course | AIML Level-1 - AL | High |
+| CRS-070 | Block-Based Coding | Capstone | Block Coding Capstone - Live | High |
+| CRS-071 | Web Development | Capstone | Web Development Capstone - Live | High |
+| CRS-072 | Python Programming | Capstone | Python Capstone - Live | High |
+| CRS-073 | Cloud Computing | Capstone | Cloud Computing Capstone - Live | High |
+| CRS-074 | Application Development | Capstone | App Development Capstone - Live | High |
+| CRS-075 | Advanced Web Development | Course | Web Development(H) - ALTS | High |
+| CRS-076 | Advanced Python with Block Coding | Course | Python(Hard) - ALTS | High |
+| CRS-079 | Block-Based Coding Applications | Course | Block Coding(Hard) - AL | High |
+| CRS-080 | Block-Based Coding Advance | Course | Block Coding(M) - AL | High |
+| CRS-082 | Programming Fundamentals with Codely | Course | Codely Course - AL(TM)   | High |
+| CRS-084 | Block-Based Coding Applications | Course | Block Coding(Hard) - AL | High |
+| CRS-092 | Web Development Application | Course | Web Development(H) - ALTS | High |
+| CRS-098 | Block Coding Level-1 - Live(TM) | Course | Block Coding Level-1 - Live(TM) | Medium |
+| CRS-101 | Web Development | Course | Web Development(M) - SL | High |
+| CRS-102 | Block Coding | Course | Block Coding(VE) - SL | High |
+| CRS-122 | Block Coding | Course | ब्लॉक कोडिंग(VE) - SL | High |
+| CRS-123 | Block Coding | Course | Block Coding(M) - AL | High |
+| CRS-143 | Cloud Computing (N) | Course | Cloud Computing Level-1 - Live(N) | High |
+| CRS-144 | Block Coding (N) | Course | Block Coding Level-1 - Live(N) | High |
+| CRS-145 | App Development (N) | Course | App Development Level-1 - Live(N) | High |
+| CRS-147 | Cloud Computing | Capstone | Cloud Computing Capstone - Live copy | High |
+| CRS-148 | Block Coding | Capstone | Block Coding Capstone - Live   | High |
+| CRS-149 | Web Development | Capstone | Web Development Capstone - Live   | High |
+| CRS-150 | Python | Capstone | Python Capstone - Live copy | High |
+| CRS-151 | App Development | Capstone | App Development Capstone - Live copy | High |
+| CRS-154 | Block Coding(H) - AL | Course | Block Coding(Hard) - AL | High |
+| CRS-170 | Block Coding | Course | ब्लॉक कोडिंग(VE) - SL | High |
+| CRS-171 | Block Coding | Course | Block Coding(VE) - SL | High |
+| CRS-172 | Block Coding | Course | Block Coding(VE) - SL | High |
+| CRS-203 | Block-Based Coding Fundamentals | Course | Block Coding(VE) - SL | High |
+| CRS-204 | Block-Based Coding Fundamentals | Course | Block Coding(VE) - SL | High |
+| CRS-207 | Block-Based Coding | Course | Block Coding(M) - AL | High |
+| CRS-210 | Block-Based Coding | Course | Block Coding(Hard) - AL | High |
 
-Each image file name above omits its `-page-00001.jpg` ending. The reason for every match is recorded in the JSON.
+## Shared images (same LMS name in the workbook)
 
-## Decisions needed
+- Art and Music with Coding Camp.jpg: CRS-004, CRS-031
+- Artificial Intelligence & Machine Learning Camp .jpg: CRS-005, CRS-018, CRS-032
+- Block Chain and Cryptography CAMP: CRS-007, CRS-047
+- Web Development(H) - ALTS: CRS-075, CRS-092
+- Block Coding(Hard) - AL: CRS-079, CRS-084, CRS-154, CRS-210
+- Block Coding(M) - AL: CRS-080, CRS-123, CRS-207
+- Block Coding(VE) - SL: CRS-102, CRS-171, CRS-172, CRS-203, CRS-204
+- ब्लॉक कोडिंग(VE) - SL: CRS-122, CRS-170
 
-1. **Blockchain/cryptography camps.** One image, "Block Chain and Cryptography Camp", fits three courses: COURSE-007 Blockchain Concepts Camp (used), COURSE-070 Block Chain Camp - Live and COURSE-071 Cryptography Camp - Live. Should they share it?
-2. **AI & ML camps.** The "Artificial Intelligence & Machine Learning Camp" image is used for COURSE-005. COURSE-069 Machine Learning Camp - Live could share it.
-3. **Block Coding Level-1.** The image filed as "(TM)" reads only "Block Coding Level-1 LIVE", so it could equally be COURSE-059 Block Coding Level-1 - Live. It is assigned to COURSE-044 by its file name.
-4. **Demo images.** "Demo - Music" fits COURSE-009 Music Creation with Coding, and "Demo - Art Factory" fits COURSE-026. Both have **DEMO** printed on them, so they were not used.
-5. **Hindi coding course.** "हिंदी कोडिंग पाठ्यक्रम" (Hindi coding course, showing block coding) could be COURSE-016 Programming Fundamentals with Codely (Hindi) or COURSE-019. It was not used.
-6. **"Web Development (Completed)".** A general web-development image. It could suit COURSE-021 Web Development Applications or a Web Development Level course, but nothing identifies which one. It was not used.
-7. **Demo Grade images.** "Demo Grade 1/2/3/5/6/9/11 (ALTS)" do not match the "Silver Grade-N - Live" courses: they say Demo and ALTS, not Live. They were not used.
+## Courses without a thumbnail
 
-## Courses without a thumbnail (51)
+CRS-006 Data Science, CRS-008 Block-Based Coding, CRS-015 Music Creation with Coding, CRS-029 Programming Fundamentals with Codely, CRS-044 Data Science, CRS-048 Python Programming, CRS-050 Web Development, CRS-051 Block-Based Coding, CRS-054 Game Development Fundamentals with Codely, CRS-055 Game Development using p5.js, CRS-056 Creative Coding with p5.js, CRS-057 Introduction to Cryptography, CRS-059 Introduction to Blockchain, CRS-060 Foundations of Data Science, CRS-081 Programming Fundamentals with Codely, CRS-096 Python Level-1 - Live(TM), CRS-097 Web Development Level-1 - Live(TM), CRS-125 Web Development, CRS-126 Web Development, CRS-127 Web Development, CRS-128 Python, CRS-129 Python, CRS-130 Python, CRS-131 Cloud Computing, CRS-132 Cloud Computing, CRS-133 Cloud Computing, CRS-134 Block Coding, CRS-135 Block Coding, CRS-136 Block Coding, CRS-137 App Development, CRS-138 App Development, CRS-139 App Development, CRS-140 Python (N), CRS-141 Web Development (N), CRS-142 Python (N), CRS-164 Machine Learning, CRS-165 Block Chain, CRS-166 Cryptography, CRS-167 Python, CRS-168 Web Development, CRS-169 Block Coding Camp, CRS-173 Python (Ayushman), CRS-175 Silver Grade-8, CRS-176 Silver Grade-7, CRS-177 Silver Grade-6, CRS-178 Silver Grade-5, CRS-179 Silver Grade-4, CRS-180 Silver Grade-3, CRS-181 Silver Grade-2, CRS-182 Silver Grade-1, CRS-221 App Development, CRS-222 Theme Web Development, CRS-225 Adaptive Learning (Moderate)
 
-- **Camps:** 006 Data Science Camp, 008 Block-Based Coding Camp, 018 Python Programming Camp, 020 Web Development Camp, 069 Machine Learning Camp, 070 Block Chain Camp, 071 Cryptography Camp, 072 Python Camp, 073 Web Development Camp, 074 Block Coding Camp
-- **Assisted Learning courses:** 009 Music Creation with Coding, 016 Codely (Hindi), 021 Web Development Applications, 022 Game Development Fundamentals with Codely, 023 Game Development using p5.js, 024 Creative Coding with p5.js, 025 Introduction to Cryptography, 027 Introduction to Blockchain, 028 Foundations of Data Science
-- **Live levels:** 042, 043, 048–065 (Python, Web Development, Cloud Computing, Block Coding and App Development Levels 1–3, plus the (N)/(TM) variants without an image), and 075 Python Level-2 (Ayushman)
-- **Other:** 076–083 Silver Grade 1–8, 084 App Development Level-1 Copy, 085 Theme Web Development, 086 Adaptive Learning (Moderate)
+## Unused images
 
-## Unused images (45)
-
-- **C-NAT practice sets (22).** These are for the C-NAT olympiad, not catalogue courses: App Development (Easy, Hard); Block Coding (Easy, Easy (TM) ×2, Hard); Python (and TM); Web Development; AIML (Easy, Very Easy); Cryptography (Easy, Very Easy); Data Science (Easy, Very Easy); Python Block Coding (Easy, Very Easy); Python Syntax Coding (Easy, Very Easy); Web Development Block Coding (Very Easy); Web Development Syntax Coding (Easy, Very Easy).
-- **Demo classes (13):** Block Coding Demo; Demo - App Development, Art Factory, Music, Python, Web Development; Demo Grade 1, 2, 3, 5, 6, 9, 11 (ALTS).
-- **Second designs for already-mapped capstones (5):** Block Coding Capstone (second design), Web Development Capstone ("Live Project"), and the "copy" versions of Python, Cloud Computing and App Development Capstone.
-- **Other (5):** Coding Book, Grade-6 Computer Workbook, Testing Block Coding Moderate (Instructions Images), Web Development (Completed), हिंदी कोडिंग पाठ्यक्रम.
+- **Not a catalogue type:** Block Coding Demo; C-NAT - App Development(E) Practice Set; C-NAT - App Development(H) Practice Set; C-NAT - Block Coding(E) Practice Set(TM); C-NAT - Block Coding(E) Practice Set; C-NAT - Block Coding(Easy) Practice Set(TM); C-NAT - Block Coding(H) Practice Set; C-NAT - Python Practice Set(TM); C-NAT - Python Practice Set; C-NAT - Web Development Practice Set; C-NAT AIML (E) - Practice Set; C-NAT AIML (VE) - Practice Set; C-NAT Cryptography (E) - Practice Set; C-NAT Cryptography (VE) - Practice Set; C-NAT Data Science (Easy) - Practice Set; C-NAT Data Science (VE) - Practice Set; C-NAT Python Block Coding (E) - Practice Set; C-NAT Python Block Coding (VE) - Practice Set; C-NAT Python Syntax Coding (E) - Practice Set; C-NAT Python Syntax Coding (VE) - Practice Set; C-NAT Web Development Block Coding (VE) - Practice Set; C-NAT Web Development Syntax Coding (EASY) - Practice Set; C-NAT Web Development Syntax Coding (Very Easy) - Practice Set; Coding Book; Demo - App Development; Demo - Art Factory; Demo - Music; Demo - Python; Demo - Web Development; Demo-Grade-1 (ALTS); Demo-Grade-11(ALTS) - All Levels; Demo-Grade-2 (ALTS) - All Levels; Demo-Grade-3 (ALTS) - All Levels; Demo-Grade-5 (ALTS) - All Level; Demo-Grade-6 (ALTS) - All Level; Demo-Grade-9 (ALTS) - All Levels; Grade-6 Computer Workbook; Testing Block Coding Moderate(Instructions Images)
+- **Not confidently matched:** हिंदी कोडिंग पाठ्यक्रम ("Hindi coding course"). The closest course, CRS-029 (LMS name "…कोडली पाठ्यक्रम", "Hindi Codely course"), uses a different word, so it was left on the placeholder.

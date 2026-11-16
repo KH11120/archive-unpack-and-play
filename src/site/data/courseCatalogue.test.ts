@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   emptyCatalogueFilters,
   gradeOptions,
+  getCourseLevelLabel,
   getCatalogueOptionCount,
   getCourseFacetValues,
   getFacetOptions,
@@ -48,25 +49,32 @@ function testCourse(overrides: Partial<CourseRecord> = {}): CourseRecord {
 }
 
 describe("course catalogue publication and filtering", () => {
-  it("includes all intended workbook rows independently from offering approval", () => {
-    expect(catalogueCourses).toHaveLength(86);
+  it("includes every active Course, Camp and Capstone from Course Master, one record each", () => {
+    // Counts verified against docs/Course_Catalogue_Website.xlsx › Course Master.
+    expect(catalogueCourses).toHaveLength(108);
+    const byType = (type: string) => catalogueCourses.filter((c) => c.programType === type).length;
+    expect([byType("Course"), byType("Camp"), byType("Capstone")]).toEqual([79, 19, 10]);
+    expect(new Set(catalogueCourses.map((course) => course.id)).size).toBe(108);
+    expect(catalogueCourses.every((course) => /^CRS-\d{3}$/.test(course.id))).toBe(true);
+    expect(new Set(catalogueCourses.map((course) => course.routeSlug)).size).toBe(108);
     expect(publishedCourses).toEqual([]);
-    expect(catalogueCourses.every((course) => course.catalogueInclusion === "intended")).toBe(true);
     expect(catalogueCourses.some((course) => course.offeringApproved)).toBe(false);
-    expect(new Set(catalogueCourses.map((course) => course.routeSlug)).size).toBe(86);
     expect(catalogueCourses[0]).toMatchObject({
-      id: "COURSE-001",
-      title: "Python Transition Program (Hindi/Adaptive Learning)",
+      id: "CRS-001",
+      title: "Python Transition Program",
       category: "Python",
+      subject: "Python",
+      programType: "Course",
       learningModel: "Assisted Learning (AL)",
+      level: "Moderate",
+      language: "Hindi",
     });
-    expect(gradeOptions).toEqual([]);
-    expect(
-      catalogueCourses.filter((course) => course.title === "Programming Fundamentals with Codely"),
-    ).toHaveLength(2);
-    expect(catalogueCourses.find((course) => course.id === "COURSE-041")?.routeSlug).toBe(
-      "programming-fundamentals-with-codely-course-041",
-    );
+    // Inactive (Deleted) records are excluded, e.g. CRS-095 "Javascript(E) - AL(Deleted)".
+    expect(catalogueCourses.some((course) => course.id === "CRS-095")).toBe(false);
+    // Other types are excluded, e.g. demos and C-NAT practice sets.
+    expect(catalogueCourses.some((course) => course.id === "CRS-009")).toBe(false);
+    expect(catalogueCourses.some((course) => course.id === "CRS-062")).toBe(false);
+    expect(gradeOptions).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     expect(
       catalogueCourses.some((course) =>
         Object.keys(course).some((key) =>
@@ -76,6 +84,60 @@ describe("course catalogue publication and filtering", () => {
         ),
       ),
     ).toBe(false);
+  });
+
+  it("places each course in the website category for its subject", () => {
+    const counts: Record<string, number> = {};
+    for (const course of catalogueCourses)
+      counts[course.category] = (counts[course.category] ?? 0) + 1;
+    expect(counts).toEqual({
+      "Coding Foundations": 31,
+      Python: 13,
+      "Web Development": 14,
+      JavaScript: 1,
+      "App Development": 7,
+      "Games & Creative Coding": 7,
+      "AI & Data Science": 8,
+      "Blockchain & Cryptography": 6,
+      "Cloud Computing": 6,
+      Other: 15,
+    });
+  });
+
+  it("titles every course from the Display Name column", () => {
+    const fromDisplay = catalogueCourses.filter((c) => c.source?.titleFrom === "Display Name");
+    expect(fromDisplay).toHaveLength(105);
+    // Only these rows have no Display Name in the workbook yet (reported by the sync script).
+    expect(
+      catalogueCourses.filter((c) => c.source?.titleFrom !== "Display Name").map((c) => c.id),
+    ).toEqual(["CRS-096", "CRS-097", "CRS-098"]);
+  });
+
+  it("labels the card level: Live Level for Live courses, difficulty for the rest", () => {
+    expect(getCourseLevelLabel(testCourse({ learningModel: "Live", liveLevel: "Level 2" }))).toBe(
+      "Level 2",
+    );
+    // A Live course without a Live Level shows nothing, even if a difficulty exists.
+    expect(getCourseLevelLabel(testCourse({ learningModel: "Live", liveLevel: null }))).toBe(
+      undefined,
+    );
+    for (const [level, label] of [
+      ["Very Easy", "Very Easy"],
+      ["Easy", "Easy"],
+      ["Moderate", "Moderate"],
+      ["Hard", "Hard"],
+      ["Not specified", undefined],
+    ] as const) {
+      expect(
+        getCourseLevelLabel(testCourse({ learningModel: "Assisted Learning (AL)", level })),
+      ).toBe(label);
+    }
+    // Non-live courses use difficulty even when the workbook lists a Live Level.
+    expect(
+      getCourseLevelLabel(
+        testCourse({ learningModel: "Self Learning (SL)", level: "Hard", liveLevel: "Level 1" }),
+      ),
+    ).toBe("Hard");
   });
 
   it("requires Published status and all required publication fields", () => {
@@ -214,7 +276,7 @@ describe("course catalogue publication and filtering", () => {
       parseCatalogueSearch({
         model: "ALTS (meaning to confirm)",
         level: "Not specified",
-        grade: "5",
+        grade: "13",
       }),
     ).toMatchObject({
       models: [],

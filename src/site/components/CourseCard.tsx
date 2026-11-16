@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Clock3, Code2, GraduationCap, Languages, ListChecks } from "lucide-react";
-import type { CourseRecord } from "@/site/data/courseCatalogue";
+import { getCourseLevelLabel, type CourseRecord } from "@/site/data/courseCatalogue";
 
 function isDisplayable(value: string | null | undefined): value is string {
   return Boolean(value?.trim() && value.trim().toLocaleLowerCase() !== "not specified");
@@ -16,9 +16,32 @@ function displayLearningModel(value: string): string | undefined {
   return undefined;
 }
 
+/** One detail in its fixed slot; an empty slot keeps its place so columns stay aligned. */
+function CardDetail({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Clock3;
+  label: string;
+  value: string | undefined;
+}) {
+  if (!value) return <div aria-hidden="true" />;
+  return (
+    <div className="flex min-w-0 items-start gap-1.5">
+      <Icon aria-hidden="true" className="mt-px h-3.5 w-3.5 shrink-0 text-[#E8401C]" />
+      <dt className="sr-only">{label}</dt>
+      <dd className="min-w-0 break-words leading-snug">{value}</dd>
+    </div>
+  );
+}
+
 export default function CourseCard({ course }: { course: CourseRecord }) {
   // If an image file is missing, fall back to the neutral placeholder instead of a broken image.
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const levelLabel = getCourseLevelLabel(course);
+  const language = isDisplayable(course.language) ? course.language : undefined;
+  const lessons = typeof course.lessons === "number" ? `${course.lessons} lessons` : undefined;
   const gradeLabel =
     typeof course.gradeFrom === "number" && typeof course.gradeTo === "number"
       ? course.gradeFrom === course.gradeTo
@@ -71,7 +94,7 @@ export default function CourseCard({ course }: { course: CourseRecord }) {
         <span className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500">
           {course.category}
         </span>
-        {course.programType !== "Course" && (
+        {course.programType && (
           <span className="mb-2 text-xs font-bold uppercase tracking-wide text-[#E8401C]">
             {course.programType}
           </span>
@@ -83,43 +106,33 @@ export default function CourseCard({ course }: { course: CourseRecord }) {
           </p>
         )}
 
-        <dl className="mt-5 grid grid-cols-2 gap-x-3 gap-y-2 text-xs text-gray-600">
-          {course.duration && (
-            <div className="flex items-center gap-1.5">
-              <Clock3 aria-hidden="true" className="h-3.5 w-3.5 text-[#E8401C]" />
-              <dt className="sr-only">Duration</dt>
-              <dd>{course.duration}</dd>
-            </div>
+        {/* Footer: pinned to the bottom of the card, so the details line up across a row of
+            cards and always keep a fixed gap above the button. Each detail has a fixed slot:
+            level left and language right; lessons left and duration right. */}
+        <div className="mt-auto pt-5">
+          {(levelLabel || language || lessons || course.duration) && (
+            <dl className="mb-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-gray-600">
+              {(levelLabel || language) && (
+                <>
+                  <CardDetail icon={GraduationCap} label="Level" value={levelLabel} />
+                  <CardDetail icon={Languages} label="Language" value={language} />
+                </>
+              )}
+              {(lessons || course.duration) && (
+                <>
+                  <CardDetail icon={ListChecks} label="Lessons" value={lessons} />
+                  <CardDetail icon={Clock3} label="Duration" value={course.duration ?? undefined} />
+                </>
+              )}
+            </dl>
           )}
-          {isDisplayable(course.level) && (
-            <div className="flex items-center gap-1.5">
-              <GraduationCap aria-hidden="true" className="h-3.5 w-3.5 text-[#E8401C]" />
-              <dt className="sr-only">Level</dt>
-              <dd>{course.level}</dd>
-            </div>
-          )}
-          {isDisplayable(course.language) && (
-            <div className="flex items-center gap-1.5">
-              <Languages aria-hidden="true" className="h-3.5 w-3.5 text-[#E8401C]" />
-              <dt className="sr-only">Language</dt>
-              <dd>{course.language}</dd>
-            </div>
-          )}
-          {typeof course.lessons === "number" && (
-            <div className="flex items-center gap-1.5">
-              <ListChecks aria-hidden="true" className="h-3.5 w-3.5 text-[#E8401C]" />
-              <dt className="sr-only">Lessons</dt>
-              <dd>{course.lessons} lessons</dd>
-            </div>
-          )}
-        </dl>
-
-        <span className="mt-auto inline-flex min-h-11 items-center justify-center rounded-full border border-[#E8401C] px-5 py-3 text-sm font-bold text-[#E8401C] transition-colors group-hover:bg-[#E8401C] group-hover:text-white">
-          View Course{" "}
-          <span aria-hidden="true" className="ml-2">
-            →
+          <span className="flex min-h-11 w-full items-center justify-center rounded-full border border-[#E8401C] px-5 py-3 text-sm font-bold text-[#E8401C] transition-colors group-hover:bg-[#E8401C] group-hover:text-white">
+            View Course{" "}
+            <span aria-hidden="true" className="ml-2">
+              →
+            </span>
           </span>
-        </span>
+        </div>
       </div>
     </Link>
   );

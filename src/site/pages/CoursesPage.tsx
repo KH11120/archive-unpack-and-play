@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Check, Search, SlidersHorizontal, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Sheet,
@@ -130,7 +130,9 @@ export function FilterPanel({
   // Options come from the courses on this page (all courses, or one category), so a group
   // only lists values those courses actually have. Selected values always stay visible so they
   // can be removed, e.g. after switching to a category that does not use them.
-  const scopedCourses = getCoursesInCategory(courses, category);
+  const scopedCourses = getCoursesInCategory(courses, category).filter(
+    (course) => filters.categories.length === 0 || filters.categories.includes(course.category),
+  );
   const withSelected = <T extends FilterValue>(options: T[], selected: readonly T[]): T[] => [
     ...options,
     ...selected.filter((value) => !options.includes(value)),
@@ -210,22 +212,43 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
     return getCatalogueCategories();
   }, []);
 
+  // Categories chosen in the strip. A category page (/courses/category/<slug>) selects its own
+  // category; /courses can carry several (?category=a,b). A course in any of them matches.
+  const selectedCategories = category ? [category] : filters.categories;
+  const effectiveFilters = useMemo(
+    () => ({ ...filters, categories: selectedCategories }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filters, category],
+  );
+
   const results = useMemo(() => {
     const matched = catalogueCourses.filter((course) =>
-      matchesCatalogueFilters(course, filters, category),
+      matchesCatalogueFilters(course, effectiveFilters),
     );
     return sortCourses(matched, filters.sort);
-  }, [category, filters]);
+  }, [effectiveFilters, filters.sort]);
 
+  // On a category page the category lives in the path, not in the query string.
   const updateFilters: Props["onFiltersChange"] = (next, replace) => {
     setVisibleCount(12);
-    onFiltersChange(next, replace);
+    onFiltersChange({ ...next, categories: category ? [] : next.categories }, replace);
   };
 
-  // Removes the search and every sidebar filter; the chosen sort order is kept.
+  // Removes the search and every sidebar filter; the chosen categories and sort are kept.
   const clearFilters = () => {
-    updateFilters({ ...emptyCatalogueFilters, sort: filters.sort });
+    updateFilters({
+      ...emptyCatalogueFilters,
+      categories: effectiveFilters.categories,
+      sort: filters.sort,
+    });
   };
+
+  /** Link target for a category selection (keeps search, sidebar filters and sort). */
+  const otherFilters = { ...filters, categories: [] };
+  const toggleCategory = (item: string) =>
+    selectedCategories.includes(item)
+      ? selectedCategories.filter((value) => value !== item)
+      : [...selectedCategories, item];
 
   const activeChips: { key: FilterKey | "q"; value: FilterValue | string; label: string }[] = [];
   if (filters.q.trim())
@@ -257,7 +280,9 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
           <div>
             <p className="section-label mb-4">OUR COURSES</p>
             <h1 className="text-4xl font-black leading-tight text-gray-900 sm:text-5xl">
-              {category ? `${category} Courses` : "Explore Our Courses"}
+              {selectedCategories.length === 1
+                ? `${selectedCategories[0]} Courses`
+                : "Explore Our Courses"}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-gray-600">
               Explore technology courses for your interests and learning needs.
@@ -287,25 +312,54 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
       </section>
 
       <nav aria-label="Course categories" className="border-b border-gray-100 bg-white">
+        {/* Multi-select: each chip toggles its category; filters, search and sort are kept. */}
         <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-4 sm:px-6 lg:px-8">
+          {/* All Courses resets the catalogue: no categories, search or sidebar filters. */}
           <Link
             to="/courses"
             search={{}}
-            className={`min-h-11 shrink-0 rounded-full px-5 py-3 text-sm font-bold transition-colors ${activeCategory === "All" ? "bg-[#E8401C] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+            aria-current={selectedCategories.length === 0 ? "page" : undefined}
+            className={`min-h-11 shrink-0 rounded-full px-5 py-3 text-sm font-bold transition-colors ${selectedCategories.length === 0 ? "bg-[#E8401C] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
           >
             All Courses
           </Link>
-          {categories.map((item) => (
-            <Link
-              key={item}
-              to="/courses/category/$category"
-              params={{ category: getCourseCategorySlug(item) }}
-              search={serializeCatalogueSearch(filters)}
-              className={`min-h-11 shrink-0 rounded-full px-5 py-3 text-sm font-bold transition-colors ${activeCategory === item ? "bg-[#E8401C] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
-            >
-              {item}
-            </Link>
-          ))}
+          {categories.map((item) => {
+            const selected = selectedCategories.includes(item);
+            const next = toggleCategory(item);
+            const chipClass = `inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-5 py-3 text-sm font-bold transition-colors ${selected ? "bg-[#E8401C] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`;
+            const content = (
+              <>
+                {selected && <Check aria-hidden="true" className="-ml-1 h-4 w-4" />}
+                {item}
+                <span className="sr-only">{selected ? " (selected)" : ""}</span>
+              </>
+            );
+            // One category keeps its own page; several are listed on /courses.
+            return next.length === 1 ? (
+              <Link
+                key={item}
+                to="/courses/category/$category"
+                params={{ category: getCourseCategorySlug(next[0]!) }}
+                search={serializeCatalogueSearch(otherFilters)}
+                className={chipClass}
+                data-category={item}
+                data-selected={selected || undefined}
+              >
+                {content}
+              </Link>
+            ) : (
+              <Link
+                key={item}
+                to="/courses"
+                search={serializeCatalogueSearch({ ...otherFilters, categories: next })}
+                className={chipClass}
+                data-category={item}
+                data-selected={selected || undefined}
+              >
+                {content}
+              </Link>
+            );
+          })}
         </div>
       </nav>
 
@@ -329,8 +383,8 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
                   <SheetDescription>Select options, then apply to the catalogue.</SheetDescription>
                 </SheetHeader>
                 <FilterPanel
-                  filters={filters}
-                  category={category}
+                  filters={effectiveFilters}
+                  category={undefined}
                   onChange={updateFilters}
                   onClear={clearFilters}
                 />
@@ -392,8 +446,8 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
         <div className="grid gap-8 lg:grid-cols-[15rem_minmax(0,1fr)]">
           <aside className="hidden lg:block" aria-label="Filter courses">
             <FilterPanel
-              filters={filters}
-              category={category}
+              filters={effectiveFilters}
+              category={undefined}
               onChange={updateFilters}
               onClear={clearFilters}
             />

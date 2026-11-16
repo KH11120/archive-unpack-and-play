@@ -1,5 +1,14 @@
 export type Page =
-  "home" | "courses" | "about" | "school" | "contact" | "vernatics" | "cnat" | "privacy" | "terms";
+  | "home"
+  | "courses"
+  | "about"
+  | "school"
+  | "contact"
+  | "vernatics"
+  | "cnat"
+  | "privacy"
+  | "terms"
+  | "work";
 
 export const pagePaths: Record<
   Page,
@@ -12,6 +21,7 @@ export const pagePaths: Record<
   | "/c-nat"
   | "/privacy-policy"
   | "/terms-and-conditions"
+  | "/work-with-us"
 > = {
   home: "/",
   courses: "/courses",
@@ -22,6 +32,7 @@ export const pagePaths: Record<
   cnat: "/c-nat",
   privacy: "/privacy-policy",
   terms: "/terms-and-conditions",
+  work: "/work-with-us",
 };
 
 /**

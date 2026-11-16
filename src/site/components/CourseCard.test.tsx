@@ -99,3 +99,72 @@ describe("CourseCard", () => {
     expect(screen.getByText("View Course")).toBeInTheDocument();
   });
 });
+
+describe("CourseCard type label and level", () => {
+  it.each(["Course", "Camp", "Capstone"])("shows the orange %s label", (programType) => {
+    render(<CourseCard course={fixture({ programType })} />);
+    const label = screen.getByText(programType);
+    expect(label.className).toContain("text-[#E8401C]");
+  });
+
+  it("shows the Live Level for live courses and the difficulty for the rest", () => {
+    const { unmount } = render(
+      <CourseCard
+        course={fixture({ learningModel: "Live", liveLevel: "Level 3", level: "Hard" })}
+      />,
+    );
+    expect(screen.getByText("Level 3")).toBeInTheDocument();
+    expect(screen.queryByText("Hard")).toBeNull();
+    unmount();
+    render(
+      <CourseCard
+        course={fixture({
+          learningModel: "Self Learning (SL)",
+          level: "Very Easy",
+          liveLevel: null,
+        })}
+      />,
+    );
+    expect(screen.getByText("Very Easy")).toBeInTheDocument();
+    expect(screen.queryByText("VE")).toBeNull();
+  });
+});
+
+describe("CourseCard detail slots", () => {
+  const slots = (container: HTMLElement) =>
+    [...container.querySelectorAll("dl > div")].map(
+      (slot) => slot.querySelector("dd")?.textContent ?? "",
+    );
+
+  it("keeps level on the left and language on the right", () => {
+    const { container } = render(
+      <CourseCard
+        course={fixture({
+          learningModel: "Self Learning (SL)",
+          level: "Moderate",
+          language: "Hindi",
+        })}
+      />,
+    );
+    expect(slots(container).slice(0, 2)).toEqual(["Moderate", "Hindi"]);
+  });
+
+  it("keeps language on the right even when there is no level", () => {
+    const { container } = render(
+      <CourseCard
+        course={fixture({
+          learningModel: "Not specified",
+          level: "Not specified",
+          language: "English",
+        })}
+      />,
+    );
+    expect(slots(container).slice(0, 2)).toEqual(["", "English"]);
+  });
+
+  it("puts the details above the button, never after it", () => {
+    const { container } = render(<CourseCard course={fixture()} />);
+    const footer = container.querySelector("dl")!.parentElement!;
+    expect(footer.lastElementChild?.textContent).toContain("View Course");
+  });
+});

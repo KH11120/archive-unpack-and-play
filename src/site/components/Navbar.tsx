@@ -21,6 +21,7 @@ export default function Navbar({ currentPage, navigate }: NavbarProps) {
     { label: t("Courses", "कोर्स"), page: "courses" },
     { label: t("School", "स्कूल"), page: "school" },
     { label: t("About", "हमारे बारे में"), page: "about" },
+    { label: t("Work with Us", "हमारे साथ काम करें"), page: "work" },
     { label: t("Contact Us", "संपर्क"), page: "contact" },
   ];
 
@@ -54,12 +55,12 @@ export default function Navbar({ currentPage, navigate }: NavbarProps) {
             className="flex items-center shrink-0"
             aria-label="APTCODER home"
           >
-            {/* Slightly smaller on tablet widths, where the menu items share a tight row. */}
-            <AptcoderLogo className="h-9 md:h-8 lg:h-10" eager />
+            {/* The full menu shows from 1024px; narrower screens use the menu button. */}
+            <AptcoderLogo className="h-9 lg:h-10" eager />
           </button>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-8">
             {links.map((link) => (
               <button
                 key={link.page}
@@ -76,7 +77,7 @@ export default function Navbar({ currentPage, navigate }: NavbarProps) {
           </div>
 
           {/* Desktop CTAs */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             {languageToggle}
             {/* Search: the course catalogue's search box is the site's search. */}
             <button
@@ -122,7 +123,7 @@ export default function Navbar({ currentPage, navigate }: NavbarProps) {
               mobileOpen ? t("Close menu", "मेनू बंद करें") : t("Open menu", "मेनू खोलें")
             }
             aria-expanded={mobileOpen}
-            className="md:hidden p-2 text-gray-600"
+            className="lg:hidden p-2 text-gray-600"
           >
             {mobileOpen ? (
               <svg
@@ -152,7 +153,7 @@ export default function Navbar({ currentPage, navigate }: NavbarProps) {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden py-4 border-t border-gray-100">
+          <div className="lg:hidden py-4 border-t border-gray-100">
             <div className="flex items-center justify-between px-2 pb-3 mb-1 border-b border-gray-100">
               <span className="text-xs font-semibold text-gray-500">{t("Language", "भाषा")}</span>
               {languageToggle}

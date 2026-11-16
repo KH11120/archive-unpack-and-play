@@ -33,6 +33,7 @@ const offeringLinks: FooterLinkTarget[] = [
 const companyLinks: FooterLinkTarget[] = [
   { label: "About Us", page: "about" },
   { label: "Our Team", page: "about", section: sectionIds.meetOurTeam },
+  { label: "Work with Us", page: "work" },
   { label: "Partner With Us", page: "contact", section: sectionIds.contactForm },
   { label: "Contact Us", page: "contact" },
   // Legal documents open as standalone pages in a new tab.

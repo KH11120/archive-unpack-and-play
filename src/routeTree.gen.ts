@@ -18,6 +18,7 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as SchoolRouteImport } from './routes/school'
 import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as VernaticsRouteImport } from './routes/vernatics'
+import { Route as WorkWithUsRouteImport } from './routes/work-with-us'
 import { Route as CoursesIndexRouteImport } from './routes/courses/index'
 import { Route as CoursesSlugRouteImport } from './routes/courses/$slug'
 import { Route as CoursesCategoryCategoryRouteImport } from './routes/courses/category/$category'
@@ -67,6 +68,11 @@ const VernaticsRoute = VernaticsRouteImport.update({
   path: '/vernatics',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorkWithUsRoute = WorkWithUsRouteImport.update({
+  id: '/work-with-us',
+  path: '/work-with-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CoursesIndexRoute = CoursesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/school': typeof SchoolRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/vernatics': typeof VernaticsRoute
+  '/work-with-us': typeof WorkWithUsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses/': typeof CoursesIndexRoute
   '/courses/category/$category': typeof CoursesCategoryCategoryRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/school': typeof SchoolRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/vernatics': typeof VernaticsRoute
+  '/work-with-us': typeof WorkWithUsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses': typeof CoursesIndexRoute
   '/courses/category/$category': typeof CoursesCategoryCategoryRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/school': typeof SchoolRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/vernatics': typeof VernaticsRoute
+  '/work-with-us': typeof WorkWithUsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses/': typeof CoursesIndexRoute
   '/courses/category/$category': typeof CoursesCategoryCategoryRoute
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/school'
     | '/terms-and-conditions'
     | '/vernatics'
+    | '/work-with-us'
     | '/courses/$slug'
     | '/courses/'
     | '/courses/category/$category'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/school'
     | '/terms-and-conditions'
     | '/vernatics'
+    | '/work-with-us'
     | '/courses/$slug'
     | '/courses'
     | '/courses/category/$category'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/school'
     | '/terms-and-conditions'
     | '/vernatics'
+    | '/work-with-us'
     | '/courses/$slug'
     | '/courses/'
     | '/courses/category/$category'
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   SchoolRoute: typeof SchoolRoute
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   VernaticsRoute: typeof VernaticsRoute
+  WorkWithUsRoute: typeof WorkWithUsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -246,6 +259,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VernaticsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/work-with-us': {
+      id: '/work-with-us'
+      path: '/work-with-us'
+      fullPath: '/work-with-us'
+      preLoaderRoute: typeof WorkWithUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/courses/': {
       id: '/courses/'
       path: '/'
@@ -296,6 +316,7 @@ const rootRouteChildren: RootRouteChildren = {
   SchoolRoute: SchoolRoute,
   TermsAndConditionsRoute: TermsAndConditionsRoute,
   VernaticsRoute: VernaticsRoute,
+  WorkWithUsRoute: WorkWithUsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

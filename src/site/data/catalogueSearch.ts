@@ -1,5 +1,7 @@
 import {
+  categoryOptions,
   emptyCatalogueFilters,
+  getCourseCategorySlug,
   gradeOptions,
   languageOptions,
   learningModelOptions,
@@ -11,6 +13,8 @@ import {
 
 export interface CatalogueUrlSearch extends Record<string, unknown> {
   q?: string;
+  /** Selected categories as URL slugs, e.g. "python,web-development". */
+  category?: string;
   model?: string;
   grade?: string;
   level?: string;
@@ -47,6 +51,11 @@ export function parseCatalogueSearch(search: Record<string, unknown>): Catalogue
       : "recommended";
   return {
     q: typeof search["q"] === "string" ? search["q"].slice(0, 100) : "",
+    categories: readCsv(search["category"])
+      .map((slug) => categoryOptions.find((option) => getCourseCategorySlug(option) === slug))
+      .filter(
+        (value, index, list): value is string => Boolean(value) && list.indexOf(value) === index,
+      ),
     models: approvedOptions(readCsv(search["model"]), learningModelOptions),
     grades: readCsv(search["grade"])
       .map(Number)
@@ -61,6 +70,8 @@ export function parseCatalogueSearch(search: Record<string, unknown>): Catalogue
 export function serializeCatalogueSearch(filters: CatalogueFilters): Record<string, string> {
   const result: Record<string, string> = {};
   if (filters.q.trim()) result["q"] = filters.q.trim();
+  if (filters.categories.length)
+    result["category"] = filters.categories.map(getCourseCategorySlug).join(",");
   if (filters.models.length) result["model"] = filters.models.join(",");
   if (filters.grades.length) result["grade"] = filters.grades.join(",");
   if (filters.levels.length) result["level"] = filters.levels.join(",");
@@ -77,6 +88,7 @@ export function validateCatalogueSearch(search: Record<string, unknown>): Catalo
 export function hasActiveCatalogueSearch(filters: CatalogueFilters): boolean {
   return Boolean(
     filters.q.trim() ||
+    filters.categories.length ||
     filters.models.length ||
     filters.grades.length ||
     filters.levels.length ||

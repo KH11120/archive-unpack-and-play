@@ -1,4 +1,4 @@
-"""Tests for mapping the simplified workbook to website-safe course data."""
+"""Tests for building the website catalogue from the Course Master sheet."""
 
 import importlib.util
 import unittest
@@ -12,99 +12,58 @@ assert SPEC.loader is not None
 SPEC.loader.exec_module(sync)
 
 
-class CatalogueExportTests(unittest.TestCase):
-    def test_maps_only_the_available_workbook_fields(self):
-        course = sync.row_to_course(
-            {
-                "S.No.": 7,
-                "Course Title": "Python Practice",
-                "Category": "Python",
-                "Subject": "Python",
-                "Program Type": "Camp",
-                "Learning Model": "Live",
-                "Level": "Moderate",
-                "Language": "English",
-            },
-            8,
-        )
-        self.assertEqual(course["id"], "COURSE-007")
-        self.assertEqual(course["slug"], "python-practice")
+def row(**overrides):
+    base = {
+        "Record ID": "CRS-130",
+        "Source Sno.": "132",
+        "LMS Course Name (original)": "Python Level-1 - Live",
+        'Display Name (cleaned from "New Lesson Name")': "Python",
+        "Type": "Course",
+        "Subject": "Python",
+        "Learning Model": "Live",
+        "Difficulty": "Not specified",
+        "Grade": "Not specified",
+        "Live Level": "Level 1",
+        "Language": "Not specified",
+        "LMS Status": "Active",
+        "Lessons": 20,
+        "Revision Lessons": None,
+    }
+    base.update(overrides)
+    return base
+
+
+class CourseMasterExportTests(unittest.TestCase):
+    def test_maps_course_master_fields(self):
+        course = sync.row_to_course(row())
+        self.assertEqual(course["id"], "CRS-130")
+        self.assertEqual(course["title"], "Python")
         self.assertEqual(course["category"], "Python")
-        self.assertEqual(course["programType"], "Camp")
-        self.assertEqual(course["offeringApproved"], False)
-        self.assertIsNone(course["duration"])
+        self.assertEqual(course["programType"], "Course")
+        self.assertEqual(course["liveLevel"], "Level 1")
+        self.assertEqual(course["lessons"], 20)
         self.assertIsNone(course["gradeFrom"])
-        self.assertIsNone(course["thumbnailUrl"])
-        self.assertEqual(course["learningOutcomes"], [])
+        self.assertFalse(course["offeringApproved"])
 
-    def test_optional_fields_can_be_missing_without_dropping_a_course(self):
-        course = sync.row_to_course(
-            {
-                "S.No.": 1,
-                "Course Title": "Course with sparse details",
-                "Category": "Other",
-                "Subject": "General / Multi-subject",
-                "Program Type": "Course",
-                "Learning Model": "Not specified",
-                "Level": "Not specified",
-                "Language": "Not specified",
-            },
-            2,
-        )
-        self.assertEqual(course["catalogueInclusion"], "intended")
-        self.assertEqual(course["learningModel"], "Not specified")
-        self.assertEqual(course["level"], "Not specified")
+    def test_title_comes_from_display_name_and_falls_back_only_when_empty(self):
+        self.assertEqual(sync.row_to_course(row())["source"]["titleFrom"], "Display Name")
+        fallback = sync.row_to_course(row(**{'Display Name (cleaned from "New Lesson Name")': None}))
+        self.assertEqual(fallback["title"], "Python Level-1 - Live")
+        self.assertEqual(fallback["source"]["titleFrom"], "LMS Course Name")
 
-    def test_unresolved_values_do_not_become_filter_options(self):
-        courses = [
-            {"learningModel": "Live"},
-            {"learningModel": "Assisted Learning (AL)"},
-            {"learningModel": "ALTS (meaning to confirm)"},
-            {"learningModel": "Not specified"},
-        ]
-        self.assertEqual(
-            sync.filter_values(
-                courses,
-                "learningModel",
-                sync.UNRESOLVED_MODELS,
-                ("Live", "Assisted Learning (AL)", "Self Learning (SL)"),
-            ),
-            ["Live", "Assisted Learning (AL)"],
-        )
+    def test_grade_and_live_level(self):
+        course = sync.row_to_course(row(Grade="Grade 6", **{"Live Level": "N/A"}))
+        self.assertEqual((course["gradeFrom"], course["gradeTo"]), (6, 6))
+        self.assertIsNone(course["liveLevel"])
 
-    def test_duplicate_titles_are_retained_with_unique_routes(self):
-        courses = [
-            {"id": "COURSE-001", "title": "Python Practice", "slug": "python-practice"},
-            {"id": "COURSE-002", "title": "Python Practice", "slug": "python-practice"},
-        ]
-        sync.unique_route_slugs(courses)
-        self.assertEqual(
-            [course["routeSlug"] for course in courses],
-            ["python-practice", "python-practice-course-002"],
-        )
+    def test_unmapped_subject_stops_the_build(self):
+        with self.assertRaises(ValueError):
+            sync.row_to_course(row(Subject="Robotics"))
 
-    def test_invalid_or_duplicate_serial_numbers_are_rejected_by_mapping(self):
-        row = {
-            "S.No.": "",
-            "Course Title": "A title",
-        }
-        with self.assertRaisesRegex(ValueError, "positive integer S.No."):
-            sync.row_to_course(row, 4)
-
-    def test_required_headers_match_the_latest_simplified_workbook(self):
-        self.assertEqual(
-            sync.REQUIRED_HEADERS,
-            (
-                "S.No.",
-                "Course Title",
-                "Category",
-                "Subject",
-                "Program Type",
-                "Learning Model",
-                "Level",
-                "Language",
-            ),
-        )
+    def test_route_slugs_are_unique_for_shared_titles(self):
+        courses = [sync.row_to_course(row(**{"Record ID": i})) for i in ("CRS-130", "CRS-150")]
+        sync.assign_route_slugs(courses)
+        self.assertEqual([c["routeSlug"] for c in courses], ["python-crs-130", "python-crs-150"])
 
 
 if __name__ == "__main__":

@@ -30,14 +30,19 @@ describe("course thumbnail mapping", () => {
     }
   });
 
-  it("does not reuse an image across different courses", () => {
+  it("shares an image only between records with the same LMS course name", () => {
+    // Same normalisation as the workbook's "Name Key (helper)" column.
+    const nameKey = (name: string) =>
+      name.replace("(Deleted)", "").replace(/[\s-]/g, "").toLocaleLowerCase();
+    const byId = new Map(catalogueCourses.map((course) => [course.id, course]));
     const bySource = new Map<string, string[]>();
     for (const [id, entry] of entries) {
       bySource.set(entry.source, [...(bySource.get(entry.source) ?? []), id]);
     }
-    const shared = [...bySource.values()].filter((ids) => ids.length > 1);
-    // COURSE-040 and COURSE-041 are identical rows in the workbook, so they share one image.
-    expect(shared).toEqual([["COURSE-040", "COURSE-041"]]);
+    for (const ids of bySource.values()) {
+      const keys = new Set(ids.map((id) => nameKey(byId.get(id)?.source?.lmsName ?? id)));
+      expect(keys.size, ids.join(", ")).toBe(1);
+    }
   });
 
   it("records only High or Medium confidence matches", () => {
