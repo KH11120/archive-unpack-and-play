@@ -99,7 +99,10 @@ export default function CourseCard({ course }: { course: CourseRecord }) {
             {course.programType}
           </span>
         )}
-        <h2 className="line-clamp-2 text-lg font-black text-gray-900">{course.title}</h2>
+        {/* Course titles are product names and stay in English in the Hindi view. */}
+        <h2 className="line-clamp-2 text-lg font-black text-gray-900" data-translate="no">
+          {course.title}
+        </h2>
         {course.shortDescription && (
           <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-relaxed text-gray-600">
             {course.shortDescription}

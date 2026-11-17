@@ -14,7 +14,8 @@ import Footer from "@/site/components/Footer";
 import WhatsAppButton from "@/site/components/WhatsAppButton";
 import SectionScroller from "@/site/components/SectionScroller";
 import { KccJoinProvider } from "@/site/components/kcc/KccContext";
-import { LanguageProvider } from "@/site/components/LanguageContext";
+import { LANGUAGE_STORAGE_KEY, LanguageProvider } from "@/site/components/LanguageContext";
+import HindiTranslator from "@/site/i18n/HindiTranslator";
 import { useSiteNavigate } from "@/site/useSiteNavigate";
 import { pagePaths, type Page } from "@/site/page";
 import { useLocation } from "@tanstack/react-router";
@@ -130,6 +131,13 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/* If Hindi was chosen last time, keep the page hidden until it has been translated
+            (HindiTranslator removes this; it also lifts itself after 2.5 s as a safety net). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem(${JSON.stringify(LANGUAGE_STORAGE_KEY)})==="hi"){var s=document.createElement("style");s.id="hi-pending";s.textContent="body{visibility:hidden}";document.head.appendChild(s);setTimeout(function(){s.remove()},2500)}}catch(e){}`,
+          }}
+        />
       </head>
       <body>
         {children}
@@ -147,6 +155,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <LanguageProvider>
         <SiteLayout />
+        <HindiTranslator />
       </LanguageProvider>
     </QueryClientProvider>
   );

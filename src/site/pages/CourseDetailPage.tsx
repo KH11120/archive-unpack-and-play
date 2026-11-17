@@ -117,7 +117,7 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
               </Link>
             </li>
             <li aria-hidden="true">›</li>
-            <li aria-current="page" className="font-semibold text-gray-900">
+            <li aria-current="page" className="font-semibold text-gray-900" data-translate="no">
               {course.title}
             </li>
           </ol>
@@ -128,7 +128,10 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-9 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:px-8 lg:py-14">
           <div>
             <p className="section-label mb-4">{course.category}</p>
-            <h1 className="text-4xl font-black leading-tight text-gray-900 sm:text-5xl">
+            <h1
+              className="text-4xl font-black leading-tight text-gray-900 sm:text-5xl"
+              data-translate="no"
+            >
               {course.title}
             </h1>
             {course.shortDescription && (
@@ -393,7 +396,9 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
         </div>
 
         <aside className="h-fit rounded-2xl border border-gray-200 bg-white p-5 shadow-sm lg:sticky lg:top-24">
-          <h2 className="text-lg font-black text-gray-900">{course.title}</h2>
+          <h2 className="text-lg font-black text-gray-900" data-translate="no">
+            {course.title}
+          </h2>
           {course.priceDisplay && (
             <p className="mt-3 text-2xl font-black text-gray-900">{course.priceDisplay}</p>
           )}
@@ -421,7 +426,10 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
         data-fixed-bottom-bar
       >
         <div className="mx-auto flex max-w-7xl items-center gap-3">
-          <span className="min-w-0 flex-1 truncate text-sm font-bold text-gray-900">
+          <span
+            className="min-w-0 flex-1 truncate text-sm font-bold text-gray-900"
+            data-translate="no"
+          >
             {course.title}
           </span>
           <button

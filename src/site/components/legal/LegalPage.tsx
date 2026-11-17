@@ -74,7 +74,8 @@ function Block({ block }: { block: LegalBlock }): ReactNode {
 
 export default function LegalPage({ document: doc }: { document: LegalDocument }) {
   return (
-    <main className="min-h-screen bg-white">
+    // Legal wording is shown exactly as provided, so it is not translated into Hindi.
+    <main className="min-h-screen bg-white" data-translate="no">
       <div className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
         <header className="mb-10 border-b border-gray-100 pb-8">
           <a href={pageHref("home")} aria-label="APTCODER home" className="mb-8 inline-block">
