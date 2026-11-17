@@ -21,8 +21,8 @@ export default function Navbar({ currentPage, navigate }: NavbarProps) {
     { label: t("Courses", "कोर्स"), page: "courses" },
     { label: t("School", "स्कूल"), page: "school" },
     { label: t("About", "हमारे बारे में"), page: "about" },
-    { label: t("Work with Us", "हमारे साथ काम करें"), page: "work" },
     { label: t("Contact Us", "संपर्क"), page: "contact" },
+    { label: t("Careers", "करियर"), page: "careers" },
   ];
 
   const languageToggle = (

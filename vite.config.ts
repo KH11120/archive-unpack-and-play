@@ -40,7 +40,7 @@ function staticPages(): { path: string }[] {
     "/contact",
     "/vernatics",
     "/c-nat",
-    "/work-with-us",
+    "/careers",
     "/privacy-policy",
     "/terms-and-conditions",
     ...new Set(catalogue.courses.map((course) => `/courses/category/${slug(course.category)}`)),

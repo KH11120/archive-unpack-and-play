@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import WorkWithUsPage from "@/site/pages/WorkWithUsPage";
+import CareersPage from "@/site/pages/CareersPage";
 
 import { useSiteNavigate } from "@/site/useSiteNavigate";
 
-const TITLE = "APTCODER | Work with Us";
+const TITLE = "APTCODER | Careers";
 const DESCRIPTION =
-  "Interested in working with APTCODER? Educators, creators and partners can get in touch to help make technology education accessible to every child.";
+  "Careers at APTCODER: see current openings and send us your resume to join the team making technology education accessible to every child.";
 
-export const Route = createFileRoute("/work-with-us")({
+export const Route = createFileRoute("/careers")({
   head: () => ({
     meta: [
       { title: TITLE },
@@ -17,10 +17,10 @@ export const Route = createFileRoute("/work-with-us")({
       { property: "og:type", content: "website" },
     ],
   }),
-  component: WorkWithUsRoute,
+  component: CareersRoute,
 });
 
-function WorkWithUsRoute() {
+function CareersRoute() {
   const navigate = useSiteNavigate();
-  return <WorkWithUsPage navigate={navigate} />;
+  return <CareersPage navigate={navigate} />;
 }

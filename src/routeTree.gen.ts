@@ -12,13 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as CNatRouteImport } from './routes/c-nat'
+import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CoursesRouteRouteImport } from './routes/courses/route'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as SchoolRouteImport } from './routes/school'
 import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as VernaticsRouteImport } from './routes/vernatics'
-import { Route as WorkWithUsRouteImport } from './routes/work-with-us'
 import { Route as CoursesIndexRouteImport } from './routes/courses/index'
 import { Route as CoursesSlugRouteImport } from './routes/courses/$slug'
 import { Route as CoursesCategoryCategoryRouteImport } from './routes/courses/category/$category'
@@ -36,6 +36,11 @@ const AboutRoute = AboutRouteImport.update({
 const CNatRoute = CNatRouteImport.update({
   id: '/c-nat',
   path: '/c-nat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -68,11 +73,6 @@ const VernaticsRoute = VernaticsRouteImport.update({
   path: '/vernatics',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WorkWithUsRoute = WorkWithUsRouteImport.update({
-  id: '/work-with-us',
-  path: '/work-with-us',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CoursesIndexRoute = CoursesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -94,12 +94,12 @@ export interface FileRoutesByFullPath {
   '/courses': typeof CoursesRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/c-nat': typeof CNatRoute
+  '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/school': typeof SchoolRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/vernatics': typeof VernaticsRoute
-  '/work-with-us': typeof WorkWithUsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses/': typeof CoursesIndexRoute
   '/courses/category/$category': typeof CoursesCategoryCategoryRoute
@@ -108,12 +108,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/c-nat': typeof CNatRoute
+  '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/school': typeof SchoolRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/vernatics': typeof VernaticsRoute
-  '/work-with-us': typeof WorkWithUsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses': typeof CoursesIndexRoute
   '/courses/category/$category': typeof CoursesCategoryCategoryRoute
@@ -124,12 +124,12 @@ export interface FileRoutesById {
   '/courses': typeof CoursesRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/c-nat': typeof CNatRoute
+  '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/school': typeof SchoolRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/vernatics': typeof VernaticsRoute
-  '/work-with-us': typeof WorkWithUsRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/courses/': typeof CoursesIndexRoute
   '/courses/category/$category': typeof CoursesCategoryCategoryRoute
@@ -141,12 +141,12 @@ export interface FileRouteTypes {
     | '/courses'
     | '/about'
     | '/c-nat'
+    | '/careers'
     | '/contact'
     | '/privacy-policy'
     | '/school'
     | '/terms-and-conditions'
     | '/vernatics'
-    | '/work-with-us'
     | '/courses/$slug'
     | '/courses/'
     | '/courses/category/$category'
@@ -155,12 +155,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/c-nat'
+    | '/careers'
     | '/contact'
     | '/privacy-policy'
     | '/school'
     | '/terms-and-conditions'
     | '/vernatics'
-    | '/work-with-us'
     | '/courses/$slug'
     | '/courses'
     | '/courses/category/$category'
@@ -170,12 +170,12 @@ export interface FileRouteTypes {
     | '/courses'
     | '/about'
     | '/c-nat'
+    | '/careers'
     | '/contact'
     | '/privacy-policy'
     | '/school'
     | '/terms-and-conditions'
     | '/vernatics'
-    | '/work-with-us'
     | '/courses/$slug'
     | '/courses/'
     | '/courses/category/$category'
@@ -186,12 +186,12 @@ export interface RootRouteChildren {
   CoursesRouteRoute: typeof CoursesRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   CNatRoute: typeof CNatRoute
+  CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   SchoolRoute: typeof SchoolRoute
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   VernaticsRoute: typeof VernaticsRoute
-  WorkWithUsRoute: typeof WorkWithUsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -215,6 +215,13 @@ declare module '@tanstack/react-router' {
       path: '/c-nat'
       fullPath: '/c-nat'
       preLoaderRoute: typeof CNatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -257,13 +264,6 @@ declare module '@tanstack/react-router' {
       path: '/vernatics'
       fullPath: '/vernatics'
       preLoaderRoute: typeof VernaticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/work-with-us': {
-      id: '/work-with-us'
-      path: '/work-with-us'
-      fullPath: '/work-with-us'
-      preLoaderRoute: typeof WorkWithUsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/courses/': {
@@ -311,12 +311,12 @@ const rootRouteChildren: RootRouteChildren = {
   CoursesRouteRoute: CoursesRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   CNatRoute: CNatRoute,
+  CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   SchoolRoute: SchoolRoute,
   TermsAndConditionsRoute: TermsAndConditionsRoute,
   VernaticsRoute: VernaticsRoute,
-  WorkWithUsRoute: WorkWithUsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -10,7 +10,7 @@ export type Page =
   | "cnat"
   | "privacy"
   | "terms"
-  | "work";
+  | "careers";
 
 export const pagePaths: Record<
   Page,
@@ -23,7 +23,7 @@ export const pagePaths: Record<
   | "/c-nat"
   | "/privacy-policy"
   | "/terms-and-conditions"
-  | "/work-with-us"
+  | "/careers"
 > = {
   home: "/",
   courses: "/courses",
@@ -34,7 +34,7 @@ export const pagePaths: Record<
   cnat: "/c-nat",
   privacy: "/privacy-policy",
   terms: "/terms-and-conditions",
-  work: "/work-with-us",
+  careers: "/careers",
 };
 
 /**
@@ -48,6 +48,7 @@ export const sectionIds = {
   meetOurTeam: "meet-our-team",
   contactForm: "contact-form",
   courseSearch: "course-search",
+  openPositions: "open-positions",
 } as const;
 
 /** URL for a page (including the site base path), optionally with a section anchor. */
