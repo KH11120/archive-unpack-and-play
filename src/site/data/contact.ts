@@ -8,6 +8,10 @@ export const CONTACT_EMAIL = "hello@aptcoder.com";
 /** APTCODER’s learning platform (Codely). */
 export const CODELY_PORTAL_URL = "https://portal.aptcoder.com/dist/home.html";
 
+/** Header Sign In and Join for Free buttons (APTCODER coding platform, staging). */
+export const SIGN_IN_URL = "https://coding.app.staging.platform.aptcoder.com/login";
+export const SIGN_UP_URL = "https://coding.app.staging.platform.aptcoder.com/signup";
+
 export const CONTACT_PHONE = "+91-9318497057";
 /** `tel:` link (digits only, with country code) so phones open the dialler. */
 export const CONTACT_PHONE_HREF = "tel:+919318497057";

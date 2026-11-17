@@ -9,6 +9,8 @@ import RecordedClassLead from "../components/RecordedClassLead"
 import { useKccJoin } from "../components/kcc/KccContext"
 import { useLanguage } from "../components/LanguageContext"
 import { siteWideFaqs } from "../data/siteFaqs"
+import { homeCourseCategories } from "../data/homeCourseCategories"
+import CourseCategoryLink from "../components/CourseCategoryLink"
 
 interface Props {
   navigate: (page: Page) => void
@@ -254,16 +256,15 @@ export default function HomePage({ navigate }: Props) {
                     <span className="enrolling-dot" aria-hidden="true" />
                     ENROLLING NOW
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => navigate("courses")}
+                  <CourseCategoryLink
+                    categories={homeCourseCategories.heroPrograms}
                     className="group inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-sm font-bold text-primary hover:text-primary-dark"
                   >
                     Explore Programs
                     <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
                       →
                     </span>
-                  </button>
+                  </CourseCategoryLink>
                 </div>
                 <div className="my-4 h-px bg-gray-100" aria-hidden="true" />
                 <p className="text-xl font-black leading-tight tracking-tight text-dark">
@@ -405,13 +406,12 @@ export default function HomePage({ navigate }: Props) {
                       </div>
                     ))}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => navigate("courses")}
-                    className="mt-4 text-sm font-black text-primary hover:text-primary-dark"
+                  <CourseCategoryLink
+                    categories={homeCourseCategories.projects[selectedProject.title] ?? []}
+                    className="mt-4 inline-block text-sm font-black text-primary hover:text-primary-dark"
                   >
                     Explore Courses →
-                  </button>
+                  </CourseCategoryLink>
                 </div>
               </div>
             </div>
@@ -459,6 +459,14 @@ export default function HomePage({ navigate }: Props) {
               <p className="relative text-center mt-3 text-xs font-bold text-white/65">
                 The next idea could be theirs.
               </p>
+              <div className="relative mt-2 text-center">
+                <CourseCategoryLink
+                  categories={homeCourseCategories.morePossibilities}
+                  className="inline-block text-sm font-black text-primary hover:text-white"
+                >
+                  Explore Courses →
+                </CourseCategoryLink>
+              </div>
             </div>
           )}
         </div>
@@ -529,10 +537,13 @@ export default function HomePage({ navigate }: Props) {
                   </button>
                 </div>
               </div>
-              {/* Video panel: edge to edge in 16:9 on small screens; on desktop the full,
-                  uncropped video sits centred as a framed card on the peach panel. */}
-              <div className="relative flex items-center justify-center bg-peach-mid lg:min-h-full lg:p-8">
-                <VernaticsVideo />
+              {/* Video panel: edge to edge in 16:9 on small screens; on desktop the video fills
+                  the whole right half of the card (scaled to cover, centred on the robot). */}
+              <div className="relative">
+                <VernaticsVideo
+                  fit="cover"
+                  className="relative aspect-video w-full overflow-hidden bg-peach-mid lg:absolute lg:inset-0 lg:aspect-auto lg:h-full"
+                />
               </div>
             </div>
           </article>

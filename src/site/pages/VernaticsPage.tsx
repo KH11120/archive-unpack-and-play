@@ -1,7 +1,26 @@
 import type { ReactNode } from "react";
-import { Code2, FlaskConical, Move, Radar, Sparkles, Wifi } from "lucide-react";
+import {
+  Code2,
+  Download,
+  FlaskConical,
+  Info,
+  LayoutGrid,
+  Link2,
+  MonitorSmartphone,
+  Move,
+  Orbit,
+  Play,
+  Radar,
+  Sparkles,
+  Star,
+  Wifi,
+  WifiOff,
+} from "lucide-react";
 import type { Page } from "../page";
+import { assetUrl } from "../assetUrl";
+import CourseCategoryLink from "../components/CourseCategoryLink";
 import VernaticsVideo, { VERNATICS_POSTER_SRC } from "../components/VernaticsVideo";
+import { VERNATICS_CATEGORY } from "../data/vernaticsCourses";
 
 interface Props {
   navigate: (page: Page) => void;
@@ -89,6 +108,38 @@ const steps = [
   },
 ];
 
+/** Screenshot of the Vernatics coding portal (public/images/vernatics_portal.jpeg, 2702 × 1662). */
+export const VERNATICS_PORTAL_SRC = assetUrl("/images/vernatics_portal.jpeg");
+
+const portalFeatures = [
+  { icon: Info, title: "Instructions", text: "Guides you step-by-step to complete the activity." },
+  { icon: Play, title: "Run", text: "Run the program and see the output." },
+  { icon: LayoutGrid, title: "Blocks", text: "Choose coding in Blocks, Code (syntax) or both." },
+  { icon: Link2, title: "Link", text: "Get the activity link to share with others." },
+  {
+    icon: MonitorSmartphone,
+    title: "Share Access",
+    text: "Share remote access and control devices with others and vice versa.",
+  },
+  { icon: Download, title: "Download", text: "Download the activity to your device." },
+  {
+    icon: WifiOff,
+    title: "Reset WiFi",
+    text: "Connect the device via Bluetooth or WiFi and use other WiFi when needed.",
+  },
+];
+
+const codingLevels = [
+  { icon: Star, name: "Robo Star", level: "Simple Level", text: "Coding with single blocks." },
+  { icon: Orbit, name: "Robo Orbit", level: "Moderate Level", text: "More blocks, more logic." },
+  {
+    icon: Sparkles,
+    name: "Robo Galaxy",
+    level: "Tough Level",
+    text: "Advanced logic and complex coding.",
+  },
+];
+
 const iconTile =
   "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-peach text-primary";
 
@@ -113,13 +164,13 @@ export default function VernaticsPage({ navigate }: Props) {
               ideas turn into action.
             </p>
             <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => navigate("contact")}
+              {/* Opens the catalogue with the Vernatics category selected. */}
+              <CourseCategoryLink
+                categories={[VERNATICS_CATEGORY]}
                 className="flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 font-semibold text-white transition-colors hover:bg-primary-dark"
               >
                 Start Learning →
-              </button>
+              </CourseCategoryLink>
               <a
                 href={`#${FEATURES_ID}`}
                 className="rounded-full border-2 border-gray-200 px-7 py-3.5 font-semibold text-gray-700 transition-colors hover:border-primary"
@@ -192,7 +243,7 @@ export default function VernaticsPage({ navigate }: Props) {
                 height={540}
                 loading="lazy"
                 decoding="async"
-                className="aspect-video h-full w-full object-cover lg:aspect-[4/5]"
+                className="block aspect-video h-auto w-full object-contain"
               />
             </div>
             <ul className="grid gap-5 sm:grid-cols-2">
@@ -205,6 +256,89 @@ export default function VernaticsPage({ navigate }: Props) {
               ))}
             </ul>
           </div>
+        </div>
+      </section>
+
+      {/* Vernatics Portal: the coding portal's tools and its three coding levels */}
+      <section className="bg-peach py-16 sm:py-20" aria-labelledby="portal-heading">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto mb-10 max-w-3xl text-center">
+            <div className="section-label mb-3 justify-center">VERNATICS PORTAL</div>
+            <h2 id="portal-heading" className="text-3xl font-black text-dark sm:text-4xl">
+              Key Features at a Glance
+            </h2>
+          </div>
+
+          {/* Screenshot on the left (complete, at its own proportions), features on the right;
+              stacked on smaller screens. */}
+          <div className="grid items-center gap-6 lg:grid-cols-[minmax(0,8fr)_minmax(0,7fr)] lg:gap-10">
+            <figure className="overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-28px_rgba(17,24,39,0.45)] ring-1 ring-black/5">
+              <img
+                src={VERNATICS_PORTAL_SRC}
+                alt="The Vernatics portal: a toolbar with Instructions, Blocks, Download, Run and more, the block categories Robo Star, Robo Orbit and Robo Galaxy, the coding area and the device log"
+                width={2702}
+                height={1662}
+                loading="lazy"
+                decoding="async"
+                className="block h-auto w-full"
+              />
+            </figure>
+            <ul className="grid gap-3 sm:grid-cols-2" aria-label="Portal features">
+              {portalFeatures.map(({ icon: Icon, title, text }, i) => (
+                <li
+                  key={title}
+                  // The seventh card spans the row so the grid has no gap.
+                  className={`flex items-start gap-3 rounded-2xl bg-white p-3.5 ${
+                    i === portalFeatures.length - 1 && portalFeatures.length % 2 === 1
+                      ? "sm:col-span-2"
+                      : ""
+                  }`}
+                >
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-peach text-primary">
+                    <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-black text-dark">{title}</h3>
+                    <p className="text-[13px] leading-snug text-gray-600">{text}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <h3 className="mb-5 mt-14 text-center text-xl font-black text-dark sm:text-2xl">
+            Three Coding Levels
+          </h3>
+          <ol className="mx-auto grid max-w-5xl gap-5 md:grid-cols-3">
+            {codingLevels.map(({ icon: Icon, name, level, text }, i) => (
+              <li
+                key={name}
+                className="relative overflow-hidden rounded-3xl border border-red-100 bg-white p-6 shadow-[0_2px_12px_-6px_rgba(17,24,39,0.15)]"
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <span className={iconTile}>
+                    <Icon className="h-6 w-6" aria-hidden="true" />
+                  </span>
+                  <span
+                    className="flex gap-1"
+                    aria-label={`Level ${i + 1} of ${codingLevels.length}`}
+                  >
+                    {codingLevels.map((_, dot) => (
+                      <span
+                        key={dot}
+                        className={`h-2 w-6 rounded-full ${dot <= i ? "bg-primary" : "bg-peach-mid"}`}
+                      />
+                    ))}
+                  </span>
+                </div>
+                <h4 className="text-lg font-black text-dark">{name}</h4>
+                <p className="mb-2 text-xs font-black uppercase tracking-widest text-primary">
+                  {level}
+                </p>
+                <p className="text-sm leading-relaxed text-gray-600">{text}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 

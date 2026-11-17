@@ -1,9 +1,15 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fireEvent, render, screen } from "@testing-library/react";
+import {
+  createMemoryHistory,
+  createRootRoute,
+  createRouter,
+  RouterProvider,
+} from "@tanstack/react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { pagePaths } from "@/site/page";
-import VernaticsPage from "./VernaticsPage";
+import VernaticsPage, { VERNATICS_PORTAL_SRC } from "./VernaticsPage";
 
 class IdleObserver {
   observe() {}
@@ -13,10 +19,17 @@ class IdleObserver {
 describe("Vernatics page", () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  const renderPage = () => {
+  // The page contains router links, so it renders inside a minimal router.
+  const renderPage = async () => {
     vi.stubGlobal("IntersectionObserver", IdleObserver);
     const navigate = vi.fn();
-    render(<VernaticsPage navigate={navigate} />);
+    const rootRoute = createRootRoute({ component: () => <VernaticsPage navigate={navigate} /> });
+    const router = createRouter({
+      routeTree: rootRoute,
+      history: createMemoryHistory({ initialEntries: ["/vernatics"] }),
+    });
+    render(<RouterProvider router={router} />);
+    await screen.findByRole("heading", { level: 1 });
     return navigate;
   };
 
@@ -24,8 +37,8 @@ describe("Vernatics page", () => {
     expect(pagePaths.vernatics).toBe("/vernatics");
   });
 
-  it("shows the hero with the highlighted heading and the robot video", () => {
-    renderPage();
+  it("shows the hero with the highlighted heading and the robot video", async () => {
+    await renderPage();
     const h1 = screen.getByRole("heading", { level: 1 });
     expect(h1).toHaveTextContent("Meet Your First Coding Robot.");
     expect(h1.querySelector("span")).toHaveTextContent("Coding Robot.");
@@ -33,10 +46,13 @@ describe("Vernatics page", () => {
     expect(video.muted && video.loop && video.hasAttribute("playsinline")).toBe(true);
   });
 
-  it("has working buttons", () => {
-    const navigate = renderPage();
-    fireEvent.click(screen.getByRole("button", { name: "Start Learning →" }));
-    expect(navigate).toHaveBeenLastCalledWith("contact");
+  it("has working buttons", async () => {
+    const navigate = await renderPage();
+    // Start Learning opens the catalogue with the Vernatics category selected.
+    expect(screen.getByRole("link", { name: "Start Learning →" })).toHaveAttribute(
+      "href",
+      "/courses/category/vernatics",
+    );
     fireEvent.click(screen.getByRole("button", { name: "Explore APTCODER Classes →" }));
     expect(navigate).toHaveBeenLastCalledWith("courses");
     const features = screen.getByRole("link", { name: "Explore Its Features" });
@@ -44,8 +60,8 @@ describe("Vernatics page", () => {
     expect(document.getElementById(target)).toHaveTextContent("What Can Children Explore?");
   });
 
-  it("shows the three experience cards, four explore cards and three steps", () => {
-    renderPage();
+  it("shows the three experience cards, four explore cards and three steps", async () => {
+    await renderPage();
     for (const text of [
       "CODE",
       "CONTROL",
@@ -59,6 +75,59 @@ describe("Vernatics page", () => {
       "Experiment",
     ]) {
       expect(screen.getByRole("heading", { name: text })).toBeInTheDocument();
+    }
+  });
+});
+
+describe("Vernatics page images and portal", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const renderPage = async () => {
+    vi.stubGlobal("IntersectionObserver", IdleObserver);
+    const rootRoute = createRootRoute({ component: () => <VernaticsPage navigate={vi.fn()} /> });
+    const router = createRouter({
+      routeTree: rootRoute,
+      history: createMemoryHistory({ initialEntries: ["/vernatics"] }),
+    });
+    render(<RouterProvider router={router} />);
+    await screen.findByRole("heading", { level: 1 });
+  };
+
+  it("shows the whole robot photo instead of cropping it", async () => {
+    await renderPage();
+    const photo = screen.getByRole("img", { name: /robot on a table/ });
+    expect(photo.className).not.toMatch(/object-cover|aspect-\[4\/5\]/);
+    expect(photo.className).toContain("aspect-video");
+  });
+
+  it("presents the portal screenshot, its seven features and three coding levels", async () => {
+    await renderPage();
+    expect(screen.getByRole("heading", { name: "Key Features at a Glance" })).toBeInTheDocument();
+    const shot = screen.getByRole("img", { name: /Vernatics portal/ });
+    expect(shot).toHaveAttribute("src", VERNATICS_PORTAL_SRC);
+    expect(VERNATICS_PORTAL_SRC).toBe("/images/vernatics_portal.jpeg");
+    expect(existsSync(resolve(__dirname, "../../../public/images/vernatics_portal.jpeg"))).toBe(
+      true,
+    );
+    expect(shot.className).not.toMatch(/object-cover/);
+    for (const feature of [
+      "Instructions",
+      "Run",
+      "Blocks",
+      "Link",
+      "Share Access",
+      "Download",
+      "Reset WiFi",
+    ]) {
+      expect(screen.getByRole("heading", { name: feature })).toBeInTheDocument();
+    }
+    for (const [name, level] of [
+      ["Robo Star", "Simple Level"],
+      ["Robo Orbit", "Moderate Level"],
+      ["Robo Galaxy", "Tough Level"],
+    ] as const) {
+      expect(screen.getByRole("heading", { name })).toBeInTheDocument();
+      expect(screen.getByText(level)).toBeInTheDocument();
     }
   });
 });

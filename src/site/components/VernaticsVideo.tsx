@@ -14,18 +14,21 @@ const DEFAULT_FRAME =
  *   until then), so it never slows a page's first load.
  * - Muted + playsInline so browsers allow autoplay; no controls by default.
  * - Pauses while off screen; reduced-motion visitors see the still poster.
- * - object-fit: contain inside a 16:9 frame, so the whole robot is always visible and the
- *   video is never stretched.
+ * - object-fit: contain inside a 16:9 frame (default), so the whole robot is always visible, or
+ *   `fit="cover"` to fill a frame of another shape; the video is never stretched either way.
  * - `fallbackControls`: when autoplay is refused or reduced motion is on, show the browser's
  *   normal controls so the visitor can still choose to play it.
  */
 export default function VernaticsVideo({
   className = DEFAULT_FRAME,
   fallbackControls = false,
+  fit = "contain",
 }: {
-  /** Classes for the 16:9 frame around the video. */
+  /** Classes for the frame around the video (16:9 unless the frame is sized otherwise). */
   className?: string;
   fallbackControls?: boolean;
+  /** "cover" fills a frame of any shape (scaled, never stretched); "contain" shows the whole frame. */
+  fit?: "contain" | "cover";
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [load, setLoad] = useState(false);
@@ -89,7 +92,7 @@ export default function VernaticsVideo({
     <div className={className} {...(controls ? {} : { role: "img", "aria-label": label })}>
       <video
         ref={videoRef}
-        className="absolute inset-0 h-full w-full object-contain"
+        className={`absolute inset-0 h-full w-full ${fit === "cover" ? "object-cover" : "object-contain"}`}
         src={load || controls ? VERNATICS_VIDEO_SRC : undefined}
         poster={VERNATICS_POSTER_SRC}
         muted

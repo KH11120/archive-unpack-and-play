@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { sectionIds, type Page, type SiteNavigate } from "../page";
-import { CODELY_PORTAL_URL } from "../data/contact";
+import { SIGN_IN_URL, SIGN_UP_URL } from "../data/contact";
 import { useLanguage } from "./LanguageContext";
 import AptcoderLogo from "./AptcoderLogo";
 
@@ -99,21 +99,23 @@ export default function Navbar({ currentPage, navigate }: NavbarProps) {
                 <path d="m21 21-4.35-4.35" />
               </svg>
             </button>
-            {/* Sign in happens on APTCODER's learning platform (Codely). */}
+            {/* Sign in and sign up happen on APTCODER's coding platform (opened in a new tab). */}
             <a
-              href={CODELY_PORTAL_URL}
+              href={SIGN_IN_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm font-semibold text-gray-800 border border-gray-300 rounded-full px-4 py-2 hover:border-gray-500 transition-colors"
             >
               {t("Sign In", "साइन इन")}
             </a>
-            <button
-              onClick={() => navigate("courses")}
+            <a
+              href={SIGN_UP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-sm font-semibold text-white bg-[#E8401C] rounded-full px-5 py-2 hover:bg-[#C73516] transition-colors"
             >
               {t("Join for Free", "मुफ़्त जुड़ें")}
-            </button>
+            </a>
           </div>
 
           {/* Mobile menu button */}
@@ -174,22 +176,21 @@ export default function Navbar({ currentPage, navigate }: NavbarProps) {
             ))}
             <div className="flex gap-3 mt-4 pt-4 border-t border-gray-100">
               <a
-                href={CODELY_PORTAL_URL}
+                href={SIGN_IN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 text-center text-sm font-semibold text-gray-800 border border-gray-300 rounded-full px-4 py-2"
               >
                 {t("Sign In", "साइन इन")}
               </a>
-              <button
-                onClick={() => {
-                  navigate("courses");
-                  setMobileOpen(false);
-                }}
-                className="flex-1 text-sm font-semibold text-white bg-[#E8401C] rounded-full px-4 py-2"
+              <a
+                href={SIGN_UP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 text-center text-sm font-semibold text-white bg-[#E8401C] rounded-full px-4 py-2"
               >
                 {t("Join for Free", "मुफ़्त जुड़ें")}
-              </button>
+              </a>
             </div>
           </div>
         )}

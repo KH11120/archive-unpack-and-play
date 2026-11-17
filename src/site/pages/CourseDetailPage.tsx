@@ -83,7 +83,10 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
     ...(typeof course.lessons === "number"
       ? [["Lessons", String(course.lessons)] as [string, string]]
       : []),
-    ...(isDisplayable(course.level) ? [["Level", course.level] as [string, string]] : []),
+    // A hand-added course's own level text (e.g. "Simple Level") when it has one.
+    ...(isDisplayable(course.levelLabel ?? course.level)
+      ? [["Level", (course.levelLabel ?? course.level)!] as [string, string]]
+      : []),
     ...(isDisplayable(course.language) ? [["Language", course.language] as [string, string]] : []),
     ...(displayLearningModel(course.learningModel)
       ? [["Learning Model", displayLearningModel(course.learningModel)!] as [string, string]]
@@ -146,9 +149,9 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
                   {displayLearningModel(course.learningModel)}
                 </span>
               )}
-              {isDisplayable(course.level) && (
+              {isDisplayable(course.levelLabel ?? course.level) && (
                 <span className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-800">
-                  {course.level}
+                  {course.levelLabel ?? course.level}
                 </span>
               )}
               {isDisplayable(course.language) && (

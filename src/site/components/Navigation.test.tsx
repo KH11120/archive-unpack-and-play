@@ -73,14 +73,41 @@ describe("footer links", () => {
 });
 
 describe("navbar", () => {
-  it("search opens the course search, Sign In opens the learning platform", () => {
+  it("search opens the course search; Sign In and Join for Free open the platform in a new tab", () => {
     const navigate = vi.fn();
     withProviders(<Navbar currentPage="home" navigate={navigate} />);
     fireEvent.click(screen.getByRole("button", { name: "Search courses" }));
     expect(navigate).toHaveBeenCalledWith("courses", sectionIds.courseSearch);
     const signIn = screen.getByRole("link", { name: "Sign In" });
-    expect(signIn).toHaveAttribute("href", CODELY_PORTAL_URL);
+    expect(signIn).toHaveAttribute(
+      "href",
+      "https://coding.app.staging.platform.aptcoder.com/login",
+    );
     expect(signIn).toHaveAttribute("target", "_blank");
+    expect(signIn).toHaveAttribute("rel", "noopener noreferrer");
+    const join = screen.getByRole("link", { name: "Join for Free" });
+    expect(join).toHaveAttribute("href", "https://coding.app.staging.platform.aptcoder.com/signup");
+    expect(join).toHaveAttribute("target", "_blank");
+    expect(join).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("uses the same destinations in the mobile menu", () => {
+    withProviders(<Navbar currentPage="home" navigate={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: /menu/i }));
+    const signIns = screen.getAllByRole("link", { name: "Sign In" });
+    const joins = screen.getAllByRole("link", { name: "Join for Free" });
+    expect(signIns).toHaveLength(2);
+    expect(joins).toHaveLength(2);
+    for (const link of signIns)
+      expect(link).toHaveAttribute(
+        "href",
+        "https://coding.app.staging.platform.aptcoder.com/login",
+      );
+    for (const link of joins)
+      expect(link).toHaveAttribute(
+        "href",
+        "https://coding.app.staging.platform.aptcoder.com/signup",
+      );
   });
 });
 

@@ -9,6 +9,7 @@ import {
   isPublishableCourse,
   matchesCatalogueFilters,
   catalogueCourses,
+  workbookCourses,
   publishedCourses,
   sortCourses,
   toPublicCourse,
@@ -51,15 +52,15 @@ function testCourse(overrides: Partial<CourseRecord> = {}): CourseRecord {
 describe("course catalogue publication and filtering", () => {
   it("includes every active Course, Camp and Capstone from Course Master, one record each", () => {
     // Counts verified against docs/Course_Catalogue_Website.xlsx › Course Master.
-    expect(catalogueCourses).toHaveLength(108);
-    const byType = (type: string) => catalogueCourses.filter((c) => c.programType === type).length;
+    expect(workbookCourses).toHaveLength(108);
+    const byType = (type: string) => workbookCourses.filter((c) => c.programType === type).length;
     expect([byType("Course"), byType("Camp"), byType("Capstone")]).toEqual([79, 19, 10]);
-    expect(new Set(catalogueCourses.map((course) => course.id)).size).toBe(108);
-    expect(catalogueCourses.every((course) => /^CRS-\d{3}$/.test(course.id))).toBe(true);
-    expect(new Set(catalogueCourses.map((course) => course.routeSlug)).size).toBe(108);
+    expect(new Set(workbookCourses.map((course) => course.id)).size).toBe(108);
+    expect(workbookCourses.every((course) => /^CRS-\d{3}$/.test(course.id))).toBe(true);
+    expect(new Set(workbookCourses.map((course) => course.routeSlug)).size).toBe(108);
     expect(publishedCourses).toEqual([]);
-    expect(catalogueCourses.some((course) => course.offeringApproved)).toBe(false);
-    expect(catalogueCourses[0]).toMatchObject({
+    expect(workbookCourses.some((course) => course.offeringApproved)).toBe(false);
+    expect(workbookCourses[0]).toMatchObject({
       id: "CRS-001",
       title: "Python Transition Program",
       category: "Python",
@@ -70,13 +71,13 @@ describe("course catalogue publication and filtering", () => {
       language: "Hindi",
     });
     // Inactive (Deleted) records are excluded, e.g. CRS-095 "Javascript(E) - AL(Deleted)".
-    expect(catalogueCourses.some((course) => course.id === "CRS-095")).toBe(false);
+    expect(workbookCourses.some((course) => course.id === "CRS-095")).toBe(false);
     // Other types are excluded, e.g. demos and C-NAT practice sets.
-    expect(catalogueCourses.some((course) => course.id === "CRS-009")).toBe(false);
-    expect(catalogueCourses.some((course) => course.id === "CRS-062")).toBe(false);
+    expect(workbookCourses.some((course) => course.id === "CRS-009")).toBe(false);
+    expect(workbookCourses.some((course) => course.id === "CRS-062")).toBe(false);
     expect(gradeOptions).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     expect(
-      catalogueCourses.some((course) =>
+      workbookCourses.some((course) =>
         Object.keys(course).some((key) =>
           ["publishStatus", "Content Notes", "Source Flags", "Owner", "LMS Record IDs"].includes(
             key,
@@ -88,7 +89,7 @@ describe("course catalogue publication and filtering", () => {
 
   it("places each course in the website category for its subject", () => {
     const counts: Record<string, number> = {};
-    for (const course of catalogueCourses)
+    for (const course of workbookCourses)
       counts[course.category] = (counts[course.category] ?? 0) + 1;
     expect(counts).toEqual({
       "Coding Foundations": 31,
@@ -105,11 +106,11 @@ describe("course catalogue publication and filtering", () => {
   });
 
   it("titles every course from the Display Name column", () => {
-    const fromDisplay = catalogueCourses.filter((c) => c.source?.titleFrom === "Display Name");
+    const fromDisplay = workbookCourses.filter((c) => c.source?.titleFrom === "Display Name");
     expect(fromDisplay).toHaveLength(105);
     // Only these rows have no Display Name in the workbook yet (reported by the sync script).
     expect(
-      catalogueCourses.filter((c) => c.source?.titleFrom !== "Display Name").map((c) => c.id),
+      workbookCourses.filter((c) => c.source?.titleFrom !== "Display Name").map((c) => c.id),
     ).toEqual(["CRS-096", "CRS-097", "CRS-098"]);
   });
 

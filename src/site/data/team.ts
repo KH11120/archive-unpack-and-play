@@ -28,7 +28,7 @@ export const team: TeamMember[] = [
   {
     id: "ashish-bhatt",
     name: "Ashish Bhatt",
-    role: "Technical Head & Founding Member",
+    role: "Founding Member & CTO",
     description:
       "An alumnus of IIT Bombay, Ashish Bhatt leads the technical vision and development at APTCODER, helping build engaging and scalable technology-driven learning solutions.",
     photo: assetUrl("/images/team/web/ashish-bhatt.jpg"),
