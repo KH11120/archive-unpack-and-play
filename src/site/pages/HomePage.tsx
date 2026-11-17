@@ -11,6 +11,7 @@ import { useLanguage } from "../components/LanguageContext"
 import { siteWideFaqs } from "../data/siteFaqs"
 import { homeCourseCategories } from "../data/homeCourseCategories"
 import CourseCategoryLink from "../components/CourseCategoryLink"
+import FreeClassModal from "../components/freeClass/FreeClassModal"
 
 interface Props {
   navigate: (page: Page) => void
@@ -194,6 +195,7 @@ export default function HomePage({ navigate }: Props) {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [activeProject, setActiveProject] = useState(0)
   const [showMorePossibilities, setShowMorePossibilities] = useState(false)
+  const [freeClassOpen, setFreeClassOpen] = useState(false)
   const openKccJoin = useKccJoin()
   const { t } = useLanguage()
   const selectedProject = projects[activeProject]!
@@ -239,7 +241,7 @@ export default function HomePage({ navigate }: Props) {
               <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => navigate("courses")}
+                  onClick={() => setFreeClassOpen(true)}
                   className="rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-white hover:bg-primary-dark transition-colors"
                 >
                   {t("Book a Free Class", "मुफ़्त क्लास बुक करें")}{" "}
@@ -739,13 +741,16 @@ export default function HomePage({ navigate }: Props) {
           </p>
           <button
             type="button"
-            onClick={() => navigate("courses")}
+            onClick={() => setFreeClassOpen(true)}
             className="rounded-full bg-primary px-8 py-4 text-sm font-black text-white hover:bg-primary-dark"
           >
             Book a Free Class →
           </button>
         </div>
       </section>
+
+      {/* Opened by both "Book a Free Class" buttons on this page. */}
+      <FreeClassModal open={freeClassOpen} onOpenChange={setFreeClassOpen} />
     </div>
   )
 }
