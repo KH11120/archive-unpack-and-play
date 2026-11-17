@@ -21,6 +21,7 @@ import { useLocation } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { assetUrl } from "@/site/assetUrl";
 
 function NotFoundComponent() {
   return (
@@ -71,7 +72,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
             Try again
           </button>
           <a
-            href="/"
+            href={assetUrl("/")}
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
             Go home
@@ -102,20 +103,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       // APTCODER favicon (public/images/brand/favicon.png, squared by scripts/build-favicons.py).
       // Bump ?v= when the icon changes so browsers drop their cached copy.
-      { rel: "icon", href: "/favicon.ico?v=2", sizes: "48x48" },
+      { rel: "icon", href: assetUrl("/favicon.ico?v=2"), sizes: "48x48" },
       {
         rel: "icon",
-        href: "/images/brand/favicon-32x32.png?v=2",
+        href: assetUrl("/images/brand/favicon-32x32.png?v=2"),
         type: "image/png",
         sizes: "32x32",
       },
       {
         rel: "icon",
-        href: "/images/brand/favicon-192x192.png?v=2",
+        href: assetUrl("/images/brand/favicon-192x192.png?v=2"),
         type: "image/png",
         sizes: "192x192",
       },
-      { rel: "apple-touch-icon", href: "/images/brand/apple-touch-icon.png?v=2", sizes: "180x180" },
+      { rel: "apple-touch-icon", href: assetUrl("/images/brand/apple-touch-icon.png?v=2"), sizes: "180x180" },
     ],
   }),
   shellComponent: RootShell,
@@ -153,7 +154,8 @@ function RootComponent() {
 
 function SiteLayout() {
   const navigate = useSiteNavigate();
-  const { pathname } = useLocation();
+  // Static hosting (GitHub Pages) serves pages with a trailing slash, e.g. /school/.
+  const pathname = useLocation().pathname.replace(/(.)\/+$/, "$1");
   const current =
     pathname === "/courses" || pathname.startsWith("/courses/")
       ? "courses"

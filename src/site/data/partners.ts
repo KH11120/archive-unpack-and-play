@@ -1,4 +1,5 @@
 import logoSizes from "./partnerLogoSizes.generated.json";
+import { assetUrl } from "@/site/assetUrl";
 
 /*
  * Ecosystem partners shown in the homepage logo strip and on the About page.
@@ -55,7 +56,7 @@ export const partners: readonly Partner[] = PARTNERS_IN_ORDER.map((entry, index)
   return {
     name: entry.name,
     fullName: entry.fullName,
-    src: `/images/organisations/web/${entry.logo}`,
+    src: assetUrl(`/images/organisations/web/${entry.logo}`),
     width: size.width,
     height: size.height,
     order: index + 1,

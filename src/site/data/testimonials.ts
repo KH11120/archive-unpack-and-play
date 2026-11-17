@@ -1,3 +1,5 @@
+import { assetUrl } from "@/site/assetUrl";
+
 /**
  * Testimonials for the homepage "Voices from the APTCODER Ecosystem" section.
  * Add more entries here; the section renders them in order.
@@ -46,7 +48,7 @@ export type QuoteTestimonial = TestimonialBase & {
 export type Testimonial = VideoTestimonial | QuoteTestimonial;
 
 /** Files in public/Feedback have spaces in their names; encode them for use as URLs. */
-const feedbackFile = (name: string) => `/Feedback/${encodeURIComponent(name)}`;
+const feedbackFile = (name: string) => assetUrl(`/Feedback/${encodeURIComponent(name)}`);
 
 export const testimonials: Testimonial[] = [
   {
@@ -68,7 +70,7 @@ export const testimonials: Testimonial[] = [
     label: "PARENT EXPERIENCE",
     speaker: "A parent shares their child’s APTCODER journey",
     video: feedbackFile("sanidhya parent.mp4"),
-    poster: "/Feedback/posters/parent-experience.jpg",
+    poster: assetUrl("/Feedback/posters/parent-experience.jpg"),
     posterAlt: "A parent speaking about APTCODER",
     width: 576,
     height: 1024,
@@ -92,7 +94,7 @@ export const testimonials: Testimonial[] = [
     label: "SCHOOL PERSPECTIVE",
     speaker: "Principal, Atal Awasiya Vidyalaya, Varanasi",
     video: feedbackFile("Atal Awasiya Vidyalaya VNS Principal Feedback.mp4"),
-    poster: "/Feedback/posters/school-perspective.jpg",
+    poster: assetUrl("/Feedback/posters/school-perspective.jpg"),
     posterAlt: "The principal of Atal Awasiya Vidyalaya speaking about APTCODER",
     width: 478,
     height: 850,

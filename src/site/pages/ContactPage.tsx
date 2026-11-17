@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { pagePaths, type Page } from '../page'
+import { pageHref, type Page } from '../page'
 import { useLanguage } from '../components/LanguageContext'
 import SocialLinks from '../components/SocialLinks'
 import {
@@ -163,7 +163,7 @@ export default function ContactPage(_props: Props) {
                   <p className="text-xs text-gray-400">
                     By clicking send, you agree to our{' '}
                     <a
-                      href={pagePaths.privacy}
+                      href={pageHref("privacy")}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#E8401C] hover:underline"
@@ -172,7 +172,7 @@ export default function ContactPage(_props: Props) {
                     </a>
                     {' '}and{' '}
                     <a
-                      href={pagePaths.terms}
+                      href={pageHref("terms")}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#E8401C] hover:underline"

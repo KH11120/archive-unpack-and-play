@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
+import { assetUrl } from "@/site/assetUrl";
 
-export const HERO_VIDEO_SRC = "/videos/APTbackvideo.mp4";
-export const HERO_POSTER_SRC = "/videos/APTbackvideo-poster.jpg";
+export const HERO_VIDEO_SRC = assetUrl("/videos/APTbackvideo.mp4");
+export const HERO_POSTER_SRC = assetUrl("/videos/APTbackvideo-poster.jpg");
 
 /**
  * Full-bleed background video for the homepage hero, with the white overlays that keep the

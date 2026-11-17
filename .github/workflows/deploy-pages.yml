@@ -1,0 +1,74 @@
+# Builds the site as static files and publishes it to GitHub Pages.
+#
+# One-time setup: GitHub repo → Settings → Pages → "Build and deployment" → Source:
+# "GitHub Actions". After that, every push to main (and the manual "Run workflow" button)
+# deploys to https://<owner>.github.io/<repo>/ (or your custom domain, if one is set).
+#
+# This only adds a static copy of the site; the Lovable/Cloudflare build is unaffected.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a newer push replaces an in-progress one.
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Read the Pages URL
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build the static site
+        run: bun run build:pages
+        env:
+          # "/<repo>" for a project site, "" for a custom domain or <owner>.github.io repo.
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+
+      - name: Prepare the files
+        run: |
+          # Original thumbnail artwork is not used by the site (it uses course-thumbnails/).
+          rm -rf "dist/client/Thumbnail Samples"
+          # Serve folders that start with "_" as-is (no Jekyll processing).
+          touch dist/client/.nojekyll
+
+      - name: Upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/client
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

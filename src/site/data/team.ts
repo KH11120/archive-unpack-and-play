@@ -1,3 +1,5 @@
+import { assetUrl } from "@/site/assetUrl";
+
 /**
  * Leadership team for the About page "Meet Our Team" section, rendered in order.
  *
@@ -20,8 +22,8 @@ export const team: TeamMember[] = [
     role: "Founder & CEO",
     description:
       "An alumnus of IIT Bombay and a former EdTech industry professional, Mr. Gaurav Agrawal founded APTCODER with a vision to make coding and technology education accessible to every child.",
-    photo: "/images/team/web/gaurav-agrawal.jpg",
-    originalPhoto: "/images/team/gaurav-agrawal.png",
+    photo: assetUrl("/images/team/web/gaurav-agrawal.jpg"),
+    originalPhoto: assetUrl("/images/team/gaurav-agrawal.png"),
   },
   {
     id: "ashish-bhatt",
@@ -29,7 +31,7 @@ export const team: TeamMember[] = [
     role: "Technical Head & Founding Member",
     description:
       "An alumnus of IIT Bombay, Ashish Bhatt leads the technical vision and development at APTCODER, helping build engaging and scalable technology-driven learning solutions.",
-    photo: "/images/team/web/ashish-bhatt.jpg",
-    originalPhoto: "/images/team/ashish_bhatt.png",
+    photo: assetUrl("/images/team/web/ashish-bhatt.jpg"),
+    originalPhoto: assetUrl("/images/team/ashish_bhatt.png"),
   },
 ];

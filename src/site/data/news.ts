@@ -1,3 +1,5 @@
+import { assetUrl } from "@/site/assetUrl";
+
 /**
  * Entries for the homepage "APTCODER in the Spotlight" strip.
  *
@@ -43,7 +45,7 @@ export type OnlineNewsEntry = NewsEntryBase & {
 export type NewsEntry = ImageNewsEntry | OnlineNewsEntry;
 
 /** Files in public/News have spaces in their names; encode them for use as URLs. */
-const newsFile = (name: string) => `/News/${encodeURIComponent(name)}`;
+const newsFile = (name: string) => assetUrl(`/News/${encodeURIComponent(name)}`);
 
 export const newsEntries: NewsEntry[] = [
   {
@@ -53,7 +55,7 @@ export const newsEntries: NewsEntry[] = [
     publicationName: "Hindi newspaper",
     kind: "Print",
     headline: "Initiative at Government Model Sanskriti School",
-    thumbnail: "/News/thumbs/panchkula-sanskriti-school.jpg",
+    thumbnail: assetUrl("/News/thumbs/panchkula-sanskriti-school.jpg"),
     thumbnailAlt:
       "Newspaper cutting with photos of children learning coding on computers at a government school in Panchkula",
     thumbnailPosition: "center top",
@@ -75,7 +77,7 @@ By removing language and economic barriers, we are not only teaching coding but 
     kind: "Press release",
     headline: "Microsoft and FITT IIT Delhi, Launch UNNATI AI Accelerator Startup Cohort",
     publicationDate: "15 January 2026",
-    thumbnail: "/News/thumbs/theprint-unnati-ai.jpg",
+    thumbnail: assetUrl("/News/thumbs/theprint-unnati-ai.jpg"),
     thumbnailAlt:
       "APTCODER founder at the UNNATI AI Accelerator launch by Microsoft and FITT, IIT Delhi",
     thumbnailPosition: "center 30%",
@@ -93,7 +95,7 @@ By removing language and economic barriers, we are not only teaching coding but 
     publicationName: "APTCODER",
     kind: "Announcement",
     headline: "APTCODER in Middle East",
-    thumbnail: "/News/thumbs/aptcoder-al-imtehaan.jpg",
+    thumbnail: assetUrl("/News/thumbs/aptcoder-al-imtehaan.jpg"),
     thumbnailAlt: "APTCODER and Al-Imtehaan representatives holding a signed agreement",
     thumbnailPosition: "center 40%",
     fullImage: newsFile("middle east.jpeg"),
@@ -109,7 +111,7 @@ By removing language and economic barriers, we are not only teaching coding but 
     kind: "Case study",
     headline: "AptCoder: EdTech Software Development for an Online Coding School for Kids",
     publicationDate: "6 November 2026",
-    thumbnail: "/News/thumbs/ailoitte-case-study.jpg",
+    thumbnail: assetUrl("/News/thumbs/ailoitte-case-study.jpg"),
     thumbnailAlt: "Screens of the APTCODER website shown in the Ailoitte case study",
     thumbnailPosition: "center top",
     description:
@@ -125,7 +127,7 @@ By removing language and economic barriers, we are not only teaching coding but 
     publicationName: "APTCODER",
     kind: "Announcement",
     headline: "MoU with the Varanasi Administration",
-    thumbnail: "/News/thumbs/varanasi-csr-mou.jpg",
+    thumbnail: assetUrl("/News/thumbs/varanasi-csr-mou.jpg"),
     thumbnailAlt:
       "APTCODER and Varanasi Administration representatives exchanging signed MoU documents on stage",
     thumbnailPosition: "center 55%",
@@ -143,7 +145,7 @@ By removing language and economic barriers, we are not only teaching coding but 
     headline: "Miracle’s New Interventions in Education",
     publicationDate: "2 September 2021",
     // public/News/miracle.jpg, supplied for this entry.
-    thumbnail: "/News/thumbs/miracle-foundation-education.jpg",
+    thumbnail: assetUrl("/News/thumbs/miracle-foundation-education.jpg"),
     thumbnailAlt: "Children gathered around a computer for a coding session",
     thumbnailPosition: "center 60%",
     description:

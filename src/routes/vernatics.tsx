@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import VernaticsPage from "@/site/pages/VernaticsPage";
 
 import { useSiteNavigate } from "@/site/useSiteNavigate";
+import { assetUrl } from "@/site/assetUrl";
 
 const TITLE = "APTCODER | Vernatics Robotics";
 const DESCRIPTION =
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/vernatics")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "/videos/vernatics-poster.jpg" },
+      { property: "og:image", content: assetUrl("/videos/vernatics-poster.jpg") },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),

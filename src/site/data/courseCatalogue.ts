@@ -1,5 +1,6 @@
 import workbookPublicCourses from "./courseCatalogue.generated.json";
 import courseThumbnails from "./courseThumbnails.json";
+import { assetUrl } from "@/site/assetUrl";
 
 export const sortOptions = ["recommended", "grade", "level", "az"] as const;
 
@@ -116,7 +117,7 @@ export type CatalogueFilterValue = string | number;
 /** Web path of a mapped course thumbnail (built by scripts/build-course-thumbnails.py). */
 export function getCourseThumbnailPath(courseId: string): string | null {
   const mapped = (courseThumbnails.thumbnails as Record<string, unknown>)[courseId];
-  return mapped ? `/course-thumbnails/${courseId.toLowerCase()}.jpg` : null;
+  return mapped ? assetUrl(`/course-thumbnails/${courseId.toLowerCase()}.jpg`) : null;
 }
 
 /**

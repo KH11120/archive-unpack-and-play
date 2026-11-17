@@ -7,7 +7,7 @@ import {
   Phone,
   School,
 } from "lucide-react";
-import type { SiteNavigate } from "../page";
+import { pageHref, type SiteNavigate } from "../page";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_HREF } from "../data/contact";
 import { WHATSAPP_NUMBER } from "../components/WhatsAppButton";
 
@@ -98,7 +98,7 @@ export default function WorkWithUsPage({ navigate }: Props) {
             <School className="h-4 w-4 text-primary" aria-hidden="true" />
             Representing a school?
             <a
-              href="/school"
+              href={pageHref("school")}
               onClick={(event) => {
                 event.preventDefault();
                 navigate("school");

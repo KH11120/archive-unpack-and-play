@@ -1,3 +1,5 @@
+import { assetUrl } from "./assetUrl";
+
 export type Page =
   | "home"
   | "courses"
@@ -48,6 +50,6 @@ export const sectionIds = {
   courseSearch: "course-search",
 } as const;
 
-/** URL for a page, optionally with a section anchor. */
+/** URL for a page (including the site base path), optionally with a section anchor. */
 export const pageHref = (page: Page, section?: string) =>
-  section ? `${pagePaths[page]}#${section}` : pagePaths[page];
+  assetUrl(section ? `${pagePaths[page]}#${section}` : pagePaths[page]);

@@ -1,3 +1,5 @@
+import { assetUrl } from "@/site/assetUrl";
+
 /**
  * Partner schools shown as logos in the School page "Trusted by Schools" row, in order.
  *
@@ -16,8 +18,8 @@ export type PartnerSchool = {
 const school = (id: string, name: string, file: string): PartnerSchool => ({
   id,
   name,
-  logo: `/images/school/web/${file}`,
-  originalLogo: `/images/school/${file}`,
+  logo: assetUrl(`/images/school/web/${file}`),
+  originalLogo: assetUrl(`/images/school/${file}`),
 });
 
 export const partnerSchools: PartnerSchool[] = [

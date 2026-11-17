@@ -1,5 +1,5 @@
 import { Fragment, type ReactNode } from "react";
-import { pagePaths } from "@/site/page";
+import { pageHref } from "@/site/page";
 import AptcoderLogo from "@/site/components/AptcoderLogo";
 import { LEGAL_LAST_UPDATED, type LegalBlock, type LegalDocument } from "@/site/data/legal/types";
 
@@ -23,13 +23,13 @@ function RichText({ text }: { text: string }) {
         if (i % 2 === 0) return <Fragment key={i}>{part}</Fragment>;
         if (part === "[[privacy]]")
           return (
-            <a key={i} href={pagePaths.privacy} className={linkClass}>
+            <a key={i} href={pageHref("privacy")} className={linkClass}>
               Privacy Policy
             </a>
           );
         if (part === "[[terms]]")
           return (
-            <a key={i} href={pagePaths.terms} className={linkClass}>
+            <a key={i} href={pageHref("terms")} className={linkClass}>
               Terms &amp; Conditions
             </a>
           );
@@ -77,7 +77,7 @@ export default function LegalPage({ document: doc }: { document: LegalDocument }
     <main className="min-h-screen bg-white">
       <div className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
         <header className="mb-10 border-b border-gray-100 pb-8">
-          <a href="/" aria-label="APTCODER home" className="mb-8 inline-block">
+          <a href={pageHref("home")} aria-label="APTCODER home" className="mb-8 inline-block">
             <AptcoderLogo className="h-9 md:h-8 lg:h-10" eager />
           </a>
           <h1 className="mb-3 text-4xl font-black tracking-tight text-dark sm:text-5xl">

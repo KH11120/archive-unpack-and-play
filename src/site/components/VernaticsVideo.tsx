@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { assetUrl } from "@/site/assetUrl";
 
-export const VERNATICS_VIDEO_SRC = "/videos/Vernatics%20AI%20video.mp4";
-export const VERNATICS_POSTER_SRC = "/videos/vernatics-poster.jpg";
+export const VERNATICS_VIDEO_SRC = assetUrl("/videos/Vernatics%20AI%20video.mp4");
+export const VERNATICS_POSTER_SRC = assetUrl("/videos/vernatics-poster.jpg");
 
 const DEFAULT_FRAME =
   "relative w-full overflow-hidden bg-peach-mid aspect-video lg:rounded-2xl lg:shadow-[0_18px_40px_-18px_rgba(17,24,39,0.45)] lg:ring-1 lg:ring-black/5";
