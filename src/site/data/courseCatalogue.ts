@@ -168,8 +168,37 @@ const MULTI_VALUE_SEPARATOR = /[;|,\n]/;
  * Display order only (the workbook's Lists (2) order). An option still appears only when a
  * course actually uses it.
  */
+/**
+ * Subject bar order: the offerings APTCODER wants seen first (robotics and AI, then emerging
+ * technologies), then the rest. Names are spelled exactly as in the workbook's Subject column.
+ * A subject the workbook adds later and that is not listed here follows, in workbook order.
+ */
+export const SUBJECT_BAR_ORDER: readonly string[] = [
+  "Vernatics (Robotics)",
+  "AI & ML",
+  "Blockchain",
+  "Cryptography",
+  "Data Science",
+  "Python",
+  "Web Development",
+  "Game Development",
+  "App Development",
+  "Creative Coding (p5.js)",
+  "Art & Music with Coding",
+  "JavaScript",
+  "Cloud Computing",
+  "Block Coding",
+  "Programming Fundamentals (Codely)",
+  "Coding",
+];
+
 const PREFERRED_ORDER: Record<FacetKey, readonly string[]> = {
-  subjects: workbookPublicCourses.options.subjects,
+  subjects: [
+    ...SUBJECT_BAR_ORDER,
+    ...workbookPublicCourses.options.subjects.filter(
+      (subject) => !SUBJECT_BAR_ORDER.includes(subject),
+    ),
+  ],
   models: ["Live", "Assisted Learning (AL)", "Self Learning (SL)"],
   languages: ["English", "Hindi"],
   programTypes: ["Course", "Camp", "Capstone"],

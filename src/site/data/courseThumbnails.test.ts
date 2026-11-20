@@ -13,41 +13,49 @@ describe("course thumbnail mapping", () => {
     expect(entries.filter(([id]) => !ids.has(id))).toEqual([]);
   });
 
-  it("gives every mapped course its web image, and leaves the rest on the placeholder", () => {
+  it("gives every catalogue course its own web image", () => {
     for (const course of workbookCourses) {
-      const expected = course.id in mapping.thumbnails ? getCourseThumbnailPath(course.id) : null;
-      expect(course.thumbnailUrl).toBe(expected);
+      expect(course.id in mapping.thumbnails, course.id).toBe(true);
+      expect(course.thumbnailUrl).toBe(getCourseThumbnailPath(course.id));
     }
   });
 
   it("has the original and the resized file on disk for every mapping", () => {
     for (const [id, entry] of entries) {
-      expect(
-        existsSync(path.join(publicDir, "Thumbnail Samples", entry.source)),
-        entry.source,
-      ).toBe(true);
+      const original = entry.source.startsWith("/")
+        ? path.join(publicDir, entry.source)
+        : path.join(publicDir, "Thumbnail Samples", entry.source);
+      expect(existsSync(original), entry.source).toBe(true);
       expect(existsSync(path.join(publicDir, getCourseThumbnailPath(id)!.slice(1))), id).toBe(true);
     }
   });
 
-  it("shares an image only between records with the same LMS course name", () => {
-    // Same normalisation as the workbook's "Name Key (helper)" column.
-    const nameKey = (name: string) =>
-      name.replace("(Deleted)", "").replace(/[\s-]/g, "").toLocaleLowerCase();
-    const byId = new Map(workbookCourses.map((course) => [course.id, course]));
-    const bySource = new Map<string, string[]>();
-    for (const [id, entry] of entries) {
-      bySource.set(entry.source, [...(bySource.get(entry.source) ?? []), id]);
-    }
-    for (const ids of bySource.values()) {
-      const keys = new Set(ids.map((id) => nameKey(byId.get(id)?.source?.lmsName ?? id)));
-      expect(keys.size, ids.join(", ")).toBe(1);
-    }
+  it("explains every choice", () => {
+    for (const [id, entry] of entries) expect(entry.reason.length, id).toBeGreaterThan(20);
   });
 
-  it("records only High or Medium confidence matches", () => {
-    expect(new Set(entries.map(([, entry]) => entry.confidence))).toEqual(
-      new Set(["High", "Medium"]),
+  it("uses robotics images for Vernatics and subject images for the other key subjects", () => {
+    const sourceOf = (id: string) =>
+      (mapping.thumbnails as Record<string, { source: string }>)[id]!.source;
+    const bySubject = (subject: string) =>
+      workbookCourses.filter((course) => course.subject === subject).map((c) => sourceOf(c.id));
+    expect(new Set(bySubject("Vernatics (Robotics)"))).toEqual(
+      new Set(["/videos/vernatics-poster.jpg"]),
     );
+    for (const [subject, word] of [
+      ["AI & ML", /AI|Artificial/],
+      ["Blockchain", /Block Chain/],
+      ["Cryptography", /Crypt/],
+      ["Data Science", /Data Science/],
+      ["Python", /Python|पायथन/],
+      ["Web Development", /Web Development/],
+      ["App Development", /App Development/],
+      ["Art & Music with Coding", /Art|Music/],
+      ["JavaScript", /Javascript/],
+      ["Cloud Computing", /Cloud/],
+      ["Block Coding", /Block Coding|ब्लॉक/],
+    ] as const) {
+      for (const source of bySubject(subject)) expect(source, subject).toMatch(word);
+    }
   });
 });

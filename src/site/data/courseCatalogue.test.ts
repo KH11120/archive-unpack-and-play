@@ -9,6 +9,7 @@ import {
   languageOptions,
   learningModelOptions,
   subjectOptions,
+  SUBJECT_BAR_ORDER,
   getCourseFacetValues,
   getFacetOptions,
   isPublishableCourse,
@@ -122,24 +123,17 @@ describe("course catalogue publication and filtering", () => {
   });
 
   it("offers the workbook's subjects, learning models and languages as filter options", () => {
-    expect(subjectOptions).toEqual([
-      "Block Coding",
-      "Python",
-      "Web Development",
-      "JavaScript",
-      "Creative Coding (p5.js)",
-      "Game Development",
-      "App Development",
-      "Cloud Computing",
-      "AI & ML",
-      "Data Science",
-      "Blockchain",
-      "Cryptography",
-      "Programming Fundamentals (Codely)",
-      "Art & Music with Coding",
+    // Subject bar order: robotics and AI first, then emerging technologies, then the rest.
+    expect(subjectOptions).toEqual([...SUBJECT_BAR_ORDER]);
+    expect(SUBJECT_BAR_ORDER.slice(0, 3)).toEqual([
       "Vernatics (Robotics)",
-      "Coding",
+      "AI & ML",
+      "Blockchain",
     ]);
+    // Every listed name is a real workbook subject, and every workbook subject is listed once.
+    expect([...SUBJECT_BAR_ORDER].sort()).toEqual(
+      [...new Set(workbookCourses.map((c) => c.subject!))].sort(),
+    );
     expect(learningModelOptions).toEqual(["Live", "Self Learning (SL)"]);
     expect(languageOptions).toEqual(["English", "Hindi"]);
   });
