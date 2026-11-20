@@ -8,11 +8,12 @@ import type { CourseRecord } from "./courseCatalogue";
  * under the workbook's "Vernatics (Robotics)" subject. When they are added to the workbook,
  * delete this file.
  *
- * Only the title, category and level were provided. Everything else is left unset or
+ * Only the title, subject and level were provided. Everything else is left unset or
  * "Not specified" (hidden on cards and never offered as a filter option). All three use the
  * Vernatics robot photo, the only Vernatics course imagery in the repository.
  */
-export const VERNATICS_CATEGORY = "Vernatics";
+/** The workbook's Vernatics subject (Course Master (2) › Subject). */
+export const VERNATICS_SUBJECT = "Vernatics (Robotics)";
 
 const vernaticsImage = assetUrl("/videos/vernatics-poster.jpg");
 
@@ -30,8 +31,7 @@ export const vernaticsCourses: CourseRecord[] = levels.map(
     routeSlug: slug,
     catalogueInclusion: "intended",
     offeringApproved: false,
-    category: VERNATICS_CATEGORY,
-    subject: "Vernatics (Robotics)",
+    subject: VERNATICS_SUBJECT,
     programType: "Course",
     learningModel: "Not specified",
     level: "Not specified",

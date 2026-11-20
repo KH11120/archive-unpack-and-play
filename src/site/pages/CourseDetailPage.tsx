@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import { useSiteNavigate } from "@/site/useSiteNavigate";
 import {
   formatCourseGrades,
-  getCourseCategorySlug,
   catalogueCourses,
   type CourseRecord,
 } from "@/site/data/courseCatalogue";
@@ -47,11 +46,11 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
       .filter((candidate): candidate is CourseRecord =>
         Boolean(candidate && candidate.id !== course.id),
       );
-    const sameCategory = catalogueCourses.filter(
-      (candidate) => candidate.category === course.category && candidate.id !== course.id,
+    const sameSubject = catalogueCourses.filter(
+      (candidate) => candidate.subject === course.subject && candidate.id !== course.id,
     );
     return [
-      ...new Map([...explicit, ...sameCategory].map((item) => [item.id, item])).values(),
+      ...new Map([...explicit, ...sameSubject].map((item) => [item.id, item])).values(),
     ].slice(0, 3);
   }, [course]);
 
@@ -67,7 +66,6 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
 
   const gradeLabel = formatCourseGrades(course);
   const facts: [string, string][] = [
-    ["Category", course.category],
     ...(course.programType !== "Course"
       ? [["Program Type", course.programType] as [string, string]]
       : []),
@@ -102,16 +100,20 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
               </Link>
             </li>
             <li aria-hidden="true">›</li>
-            <li>
-              <Link
-                to="/courses/category/$category"
-                params={{ category: getCourseCategorySlug(course.category) }}
-                className="hover:text-[#E8401C]"
-              >
-                {course.category}
-              </Link>
-            </li>
-            <li aria-hidden="true">›</li>
+            {isDisplayable(course.subject) && (
+              <>
+                <li>
+                  <Link
+                    to="/courses"
+                    search={{ subject: course.subject }}
+                    className="hover:text-[#E8401C]"
+                  >
+                    {course.subject}
+                  </Link>
+                </li>
+                <li aria-hidden="true">›</li>
+              </>
+            )}
             <li aria-current="page" className="font-semibold text-gray-900" data-translate="no">
               {course.title}
             </li>
@@ -122,7 +124,9 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
       <section className="bg-[#FFF5F2]">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-9 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:px-8 lg:py-14">
           <div>
-            <p className="section-label mb-4">{course.category}</p>
+            {isDisplayable(course.subject) && (
+              <p className="section-label mb-4">{course.subject}</p>
+            )}
             <h1
               className="text-4xl font-black leading-tight text-gray-900 sm:text-5xl"
               data-translate="no"

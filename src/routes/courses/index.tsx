@@ -17,13 +17,13 @@ export const Route = createFileRoute("/courses/")({
       {
         name: "description",
         content:
-          "Explore APTCODER technology courses by category, learning model, level, language, and program type.",
+          "Explore APTCODER technology courses by subject, learning model, grade, language and program type.",
       },
       { property: "og:title", content: "APTCODER | Courses" },
       {
         property: "og:description",
         content:
-          "Explore APTCODER technology courses by category, learning model, level, language, and program type.",
+          "Explore APTCODER technology courses by subject, learning model, grade, language and program type.",
       },
       { name: "robots", content: loaderData?.noindex ? "noindex, follow" : "index, follow" },
     ],
@@ -38,7 +38,6 @@ function CoursesCatalogueRoute() {
   const filters = parseCatalogueSearch(search);
   return (
     <CoursesPage
-      category={undefined}
       filters={filters}
       navigate={navigate}
       onFiltersChange={(next, replace = false) => {

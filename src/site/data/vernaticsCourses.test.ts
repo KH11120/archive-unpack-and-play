@@ -3,7 +3,6 @@ import { parseCatalogueSearch } from "./catalogueSearch";
 import {
   sortCourses,
   catalogueCourses,
-  categoryOptions,
   emptyCatalogueFilters,
   getCourseLevelLabel,
   subjectOptions,
@@ -14,21 +13,9 @@ import workbook from "./courseCatalogue.generated.json";
 import { vernaticsCourses } from "./vernaticsCourses";
 
 describe("Vernatics courses (added outside the workbook)", () => {
-  it("adds a Vernatics category right after AI & Data Science, without changing the workbook courses", () => {
+  it("adds the Robo courses after the workbook courses, without changing them", () => {
     expect(workbookCourses).toHaveLength(workbook.courses.length);
     expect(catalogueCourses).toHaveLength(workbook.courses.length + 3);
-    expect(categoryOptions).toEqual([
-      "AI & Data Science",
-      "Vernatics",
-      "Coding Foundations",
-      "Python",
-      "Web Development",
-      "JavaScript",
-      "App Development",
-      "Games & Creative Coding",
-      "Blockchain & Cryptography",
-      "Cloud Computing",
-    ]);
   });
 
   it("lists Robo Star, Robo Orbit and Robo Galaxy with their levels and the Vernatics image", () => {
@@ -38,7 +25,6 @@ describe("Vernatics courses (added outside the workbook)", () => {
       ["Robo Galaxy", "Tough Level"],
     ]);
     for (const course of vernaticsCourses) {
-      expect(course.category).toBe("Vernatics");
       expect(course.thumbnailUrl).toBe("/videos/vernatics-poster.jpg");
       // Same subject as the workbook's Vernatics courses, so one Subject option covers all.
       expect(course.subject).toBe("Vernatics (Robotics)");
@@ -48,12 +34,10 @@ describe("Vernatics courses (added outside the workbook)", () => {
     ]);
   });
 
-  it("shows the workbook's Vernatics courses and the three Robo courses in the category", () => {
-    const filters = parseCatalogueSearch({ category: "vernatics" });
-    expect(filters.categories).toEqual(["Vernatics"]);
-    const shown = catalogueCourses.filter((course) =>
-      matchesCatalogueFilters(course, { ...emptyCatalogueFilters, categories: filters.categories }),
-    );
+  it("shows the workbook's Vernatics courses and the three Robo courses under the subject", () => {
+    const filters = parseCatalogueSearch({ subject: "Vernatics (Robotics)" });
+    expect(filters.subjects).toEqual(["Vernatics (Robotics)"]);
+    const shown = catalogueCourses.filter((course) => matchesCatalogueFilters(course, filters));
     expect(sortCourses(shown, "recommended").map((course) => course.title)).toEqual([
       "Vernatics Fundamentals",
       "Advanced Vernatics Concepts",

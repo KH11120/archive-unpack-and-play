@@ -608,6 +608,7 @@ export const hi: Record<string, string> = {
   "Search courses...": "कोर्स खोजें...",
   "Enter at least 2 characters to search.": "खोजने के लिए कम से कम 2 अक्षर लिखें।",
   "Course categories": "कोर्स श्रेणियाँ",
+  "Course subjects": "कोर्स के विषय",
   "All Courses": "सभी कोर्स",
   "(selected)": "(चुना गया)",
   Showing: "कुल",

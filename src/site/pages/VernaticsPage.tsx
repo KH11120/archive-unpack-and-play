@@ -18,9 +18,9 @@ import {
 } from "lucide-react";
 import type { Page } from "../page";
 import { assetUrl } from "../assetUrl";
-import CourseCategoryLink from "../components/CourseCategoryLink";
+import CourseSubjectLink from "../components/CourseSubjectLink";
 import VernaticsVideo, { VERNATICS_POSTER_SRC } from "../components/VernaticsVideo";
-import { VERNATICS_CATEGORY } from "../data/vernaticsCourses";
+import { VERNATICS_SUBJECT } from "../data/vernaticsCourses";
 
 interface Props {
   navigate: (page: Page) => void;
@@ -164,13 +164,13 @@ export default function VernaticsPage({ navigate }: Props) {
               ideas turn into action.
             </p>
             <div className="flex flex-wrap gap-3">
-              {/* Opens the catalogue with the Vernatics category selected. */}
-              <CourseCategoryLink
-                categories={[VERNATICS_CATEGORY]}
+              {/* Opens the catalogue with the Vernatics subject selected. */}
+              <CourseSubjectLink
+                subjects={[VERNATICS_SUBJECT]}
                 className="flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 font-semibold text-white transition-colors hover:bg-primary-dark"
               >
                 Start Learning →
-              </CourseCategoryLink>
+              </CourseSubjectLink>
               <a
                 href={`#${FEATURES_ID}`}
                 className="rounded-full border-2 border-gray-200 px-7 py-3.5 font-semibold text-gray-700 transition-colors hover:border-primary"

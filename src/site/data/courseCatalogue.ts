@@ -1,5 +1,5 @@
 import workbookPublicCourses from "./courseCatalogue.generated.json";
-import { VERNATICS_CATEGORY, vernaticsCourses } from "./vernaticsCourses";
+import { vernaticsCourses } from "./vernaticsCourses";
 import courseThumbnails from "./courseThumbnails.json";
 import { assetUrl } from "@/site/assetUrl";
 
@@ -59,7 +59,7 @@ export interface CourseRecord {
   catalogueInclusion: "intended";
   /** True only when workbook publication status and required-field rules pass. */
   offeringApproved: boolean;
-  category: string;
+  /** Subject column of Course Master (2), e.g. "Block Coding"; the catalogue's subject bar. */
   subject?: string;
   programType: ProgramType | string;
   learningModel: LearningModel | string;
@@ -109,8 +109,7 @@ export interface CourseRecord {
 
 export interface CatalogueFilters {
   q: string;
-  /** Categories chosen in the category strip (OR: a course in any of them matches). */
-  categories: string[];
+  /** Subjects chosen in the subject bar (OR: a course in any of them matches). */
   subjects: string[];
   models: string[];
   grades: number[];
@@ -257,42 +256,6 @@ export function getGradeOptions(courses: readonly CourseRecord[]): number[] {
   return [...grades].sort((a, b) => a - b);
 }
 
-/** Courses visible on a category page before any sidebar filter is applied. */
-export function getCoursesInCategory(
-  courses: readonly CourseRecord[],
-  category: string | undefined,
-): CourseRecord[] {
-  return courses.filter((course) => !category || sameValue(course.category, category));
-}
-
-function distinctValues(values: readonly string[]): string[] {
-  const result: string[] = [];
-  for (const value of values.map(normalizeCatalogueValue)) {
-    if (value && !result.some((item) => sameValue(item, value))) result.push(value);
-  }
-  return result;
-}
-
-/**
- * Category bar order as generated from the workbook, with Vernatics right after AI & Data
- * Science (added here too in case the workbook ever has no Vernatics course); then any others.
- */
-const CATEGORY_ORDER: readonly string[] = (() => {
-  const order: string[] = [...workbookPublicCourses.options.categories];
-  if (!order.includes(VERNATICS_CATEGORY))
-    order.splice(order.indexOf("AI & Data Science") + 1, 0, VERNATICS_CATEGORY);
-  return order;
-})();
-
-export const categoryOptions: readonly string[] = distinctValues(
-  catalogueCourses.map((course) => course.category),
-).sort((a, b) => {
-  const rank = (value: string) => {
-    const index = CATEGORY_ORDER.findIndex((category) => sameValue(category, value));
-    return index < 0 ? CATEGORY_ORDER.length : index;
-  };
-  return rank(a) - rank(b);
-});
 export const subjectOptions: readonly string[] = getFacetOptions(catalogueCourses, "subjects");
 export const learningModelOptions: readonly string[] = getFacetOptions(catalogueCourses, "models");
 export const languageOptions: readonly string[] = getFacetOptions(catalogueCourses, "languages");
@@ -307,7 +270,6 @@ export function isPublishableCourse(
   publishStatus: PublishStatus | string,
 ): boolean {
   const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(course.slug);
-  const validCategory = Boolean(course.category && categoryOptions.includes(course.category));
   const validLearningModel =
     learningModelOptions.some(
       (model) => model.toLocaleLowerCase() === course.learningModel?.trim().toLocaleLowerCase(),
@@ -339,7 +301,6 @@ export function isPublishableCourse(
     validSlug &&
     course.title.trim().length > 0 &&
     course.title.length <= 60 &&
-    validCategory &&
     Boolean(course.subject?.trim()) &&
     Boolean(course.programType && programTypeOptions.includes(course.programType)) &&
     validLearningModel &&
@@ -383,7 +344,6 @@ export const publishedCourses: readonly CourseRecord[] = catalogueCourses.filter
 
 export const emptyCatalogueFilters: CatalogueFilters = {
   q: "",
-  categories: [],
   subjects: [],
   models: [],
   grades: [],
@@ -408,30 +368,18 @@ function matchesGrades(course: CourseRecord, grades: readonly number[]): boolean
 }
 
 /** AND across groups, OR within a group. The single matching rule for cards and counts. */
-export function matchesCatalogueFilters(
-  course: CourseRecord,
-  filters: CatalogueFilters,
-  category?: string,
-): boolean {
+export function matchesCatalogueFilters(course: CourseRecord, filters: CatalogueFilters): boolean {
   const query = normalizeCatalogueValue(filters.q).toLocaleLowerCase();
   const matchesQuery =
     query.length < 2 ||
     [
       course.title,
       course.subject ?? "",
-      course.category ?? "",
       course.programType ?? "",
       isResolvedCatalogueValue(course.language) ? course.language : "",
     ].some((value) => normalizeCatalogueValue(value).toLocaleLowerCase().includes(query));
 
-  const categories = filters.categories ?? [];
-  const matchesCategories =
-    categories.length === 0 ||
-    categories.some((selected) => sameValue(course.category ?? "", selected));
-
   return (
-    (!category || sameValue(course.category ?? "", category)) &&
-    matchesCategories &&
     matchesQuery &&
     matchesFacet(course, "subjects", filters.subjects) &&
     matchesFacet(course, "models", filters.models) &&
@@ -443,18 +391,16 @@ export function matchesCatalogueFilters(
 
 /**
  * How many courses would be listed if this option were the only one selected in its group,
- * with every other active filter (search, other groups, category) still applied.
+ * with every other active filter (search, subjects, other groups) still applied.
  */
 export function getCatalogueOptionCount(
   courses: readonly CourseRecord[],
   filters: CatalogueFilters,
-  category: string | undefined,
   key: CatalogueFilterKey,
   value: CatalogueFilterValue,
 ): number {
   const onlyThisOption = { ...filters, [key]: [value] } as CatalogueFilters;
-  return courses.filter((course) => matchesCatalogueFilters(course, onlyThisOption, category))
-    .length;
+  return courses.filter((course) => matchesCatalogueFilters(course, onlyThisOption)).length;
 }
 
 export function sortCourses(
@@ -506,22 +452,6 @@ export function getCourseLevelLabel(course: CourseRecord): string | undefined {
     return course.liveLevel?.trim() || undefined;
   }
   return DIFFICULTY_LABELS[valueKey(course.level ?? "")];
-}
-
-export function getCourseCategorySlug(category: string): string {
-  return category
-    .normalize("NFKD")
-    .toLocaleLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-export function getCatalogueCategories(): string[] {
-  return [...categoryOptions];
-}
-
-export function getCategoryBySlug(slug: string): string | undefined {
-  return getCatalogueCategories().find((category) => getCourseCategorySlug(category) === slug);
 }
 
 export function getCatalogueCourseByRouteSlug(slug: string): CourseRecord | undefined {

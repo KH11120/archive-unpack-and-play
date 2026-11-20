@@ -9,8 +9,8 @@ import RecordedClassLead from "../components/RecordedClassLead"
 import { useKccJoin } from "../components/kcc/KccContext"
 import { useLanguage } from "../components/LanguageContext"
 import { siteWideFaqs } from "../data/siteFaqs"
-import { homeCourseCategories } from "../data/homeCourseCategories"
-import CourseCategoryLink from "../components/CourseCategoryLink"
+import { homeCourseSubjects } from "../data/homeCourseSubjects"
+import CourseSubjectLink from "../components/CourseSubjectLink"
 import FreeClassModal from "../components/freeClass/FreeClassModal"
 
 interface Props {
@@ -258,15 +258,15 @@ export default function HomePage({ navigate }: Props) {
                     <span className="enrolling-dot" aria-hidden="true" />
                     ENROLLING NOW
                   </p>
-                  <CourseCategoryLink
-                    categories={homeCourseCategories.heroPrograms}
+                  <CourseSubjectLink
+                    subjects={homeCourseSubjects.heroPrograms}
                     className="group inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-sm font-bold text-primary hover:text-primary-dark"
                   >
                     Explore Programs
                     <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
                       →
                     </span>
-                  </CourseCategoryLink>
+                  </CourseSubjectLink>
                 </div>
                 <div className="my-4 h-px bg-gray-100" aria-hidden="true" />
                 <p className="text-xl font-black leading-tight tracking-tight text-dark">
@@ -408,12 +408,12 @@ export default function HomePage({ navigate }: Props) {
                       </div>
                     ))}
                   </div>
-                  <CourseCategoryLink
-                    categories={homeCourseCategories.projects[selectedProject.title] ?? []}
+                  <CourseSubjectLink
+                    subjects={homeCourseSubjects.projects[selectedProject.title] ?? []}
                     className="mt-4 inline-block text-sm font-black text-primary hover:text-primary-dark"
                   >
                     Explore Courses →
-                  </CourseCategoryLink>
+                  </CourseSubjectLink>
                 </div>
               </div>
             </div>
@@ -462,12 +462,12 @@ export default function HomePage({ navigate }: Props) {
                 The next idea could be theirs.
               </p>
               <div className="relative mt-2 text-center">
-                <CourseCategoryLink
-                  categories={homeCourseCategories.morePossibilities}
+                <CourseSubjectLink
+                  subjects={homeCourseSubjects.morePossibilities}
                   className="inline-block text-sm font-black text-primary hover:text-white"
                 >
                   Explore Courses →
-                </CourseCategoryLink>
+                </CourseSubjectLink>
               </div>
             </div>
           )}

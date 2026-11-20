@@ -16,8 +16,7 @@ Rules (all from the workbook):
   - Grades: the "Grades Covered" column ("5" or "10, 11, 12") is the full list of grades a course
     covers. The Grade column ("Grade 5" or "Multi-Grade") must agree with it.
   - Age Group and Course Duration are copied as written.
-  - Category (the website's category strip): from the Subject, using SUBJECT_TO_CATEGORY below.
-    An unmapped subject stops the build.
+  - The Subject is the catalogue's subject bar; there are no separate website categories.
   - Difficulty and Live Level are kept for reference only; the site has no Level filter.
   - Display order = row order on the sheet.
   - Fields the workbook does not contain (description, lessons, overview, outcomes, syllabus,
@@ -73,47 +72,6 @@ REQUIRED_COLUMNS = (
 
 # Columns on Lists (2) whose values a Course Master (2) cell must use.
 LIST_COLUMNS = (COL_TYPE, COL_SUBJECT, COL_MODEL, COL_LANGUAGE, COL_GRADE)
-
-# Website category (the category strip and homepage links) for each Subject on Lists (2).
-SUBJECT_TO_CATEGORY = {
-    "Coding": "Coding Foundations",
-    "Block Coding": "Coding Foundations",
-    "Programming Fundamentals (Codely)": "Coding Foundations",
-    "Computer Fundamentals": "Coding Foundations",
-    "Python": "Python",
-    "Web Development": "Web Development",
-    "JavaScript": "JavaScript",
-    "App Development": "App Development",
-    "Game Development": "Games & Creative Coding",
-    "Creative Coding (p5.js)": "Games & Creative Coding",
-    "Art & Music with Coding": "Games & Creative Coding",
-    "AI & ML": "AI & Data Science",
-    "Data Science": "AI & Data Science",
-    "Vernatics (Robotics)": "Vernatics",
-    "Blockchain": "Blockchain & Cryptography",
-    "Cryptography": "Blockchain & Cryptography",
-    "Blockchain & Cryptography": "Blockchain & Cryptography",
-    "Cloud Computing": "Cloud Computing",
-    "General / Multi-subject": "Other",
-    "Intellectual Property": "Other",
-    "Teacher / Moderator Training": "Other",
-}
-
-# Category strip order: AI first (visible without scrolling), Vernatics next, then the
-# Wireframes sheet order, with "Other" last.
-CATEGORY_ORDER = (
-    "AI & Data Science",
-    "Vernatics",
-    "Coding Foundations",
-    "Python",
-    "Web Development",
-    "JavaScript",
-    "App Development",
-    "Games & Creative Coding",
-    "Blockchain & Cryptography",
-    "Cloud Computing",
-    "Other",
-)
 
 UNRESOLVED = {"", "not specified"}
 UNRESOLVED_MODELS = UNRESOLVED | {"alts (meaning to confirm)", "recorded", "n/a (assessment)"}
@@ -178,8 +136,8 @@ def row_to_course(row: dict[str, Any]) -> dict[str, Any]:
     if not record_id or not title:
         raise ValueError(f"Row {row.get(COL_SNO)!r} has no Record ID or name")
     subject = clean(row[COL_SUBJECT])
-    if subject not in SUBJECT_TO_CATEGORY:
-        raise ValueError(f"{record_id}: subject {subject!r} has no website category")
+    if not subject or subject.casefold() in UNRESOLVED:
+        raise ValueError(f"{record_id}: has no Subject")
     grades = parse_grades(record_id, clean(row[COL_GRADE]), row[COL_GRADES_COVERED])
     live_level = clean(row[COL_LIVE_LEVEL])
 
@@ -191,7 +149,6 @@ def row_to_course(row: dict[str, Any]) -> dict[str, Any]:
         "catalogueInclusion": "intended",
         # The workbook has no publish/approval field; approval is never inferred.
         "offeringApproved": False,
-        "category": SUBJECT_TO_CATEGORY[subject],
         "subject": subject,
         "programType": clean(row[COL_TYPE]),
         "learningModel": clean(row[COL_MODEL]) or "Not specified",
@@ -287,7 +244,6 @@ def main() -> int:
     assign_route_slugs(courses)
 
     options = {
-        "categories": ordered_values(courses, "category", order=CATEGORY_ORDER),
         "subjects": ordered_values(courses, "subject", order=lists[COL_SUBJECT]),
         "learningModels": ordered_values(
             courses, "learningModel", UNRESOLVED_MODELS, lists[COL_MODEL]
@@ -310,7 +266,7 @@ def main() -> int:
         inactive = sum(n for (t, s), n in by_type.items() if t == kind and s != ACTIVE)
         print(f"  {kind}: {by_type[(kind, ACTIVE)]} active, {inactive} not active")
     print(f"Courses written to the website catalogue: {len(courses)}")
-    for key in ("category", "subject", "learningModel", "language", "duration"):
+    for key in ("subject", "learningModel", "language", "duration"):
         print(f"By {key}: {dict(Counter(c[key] for c in courses))}")
     print(f"Options: {json.dumps(options, ensure_ascii=False)}")
     for c in courses:

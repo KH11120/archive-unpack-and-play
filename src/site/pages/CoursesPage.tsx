@@ -14,15 +14,14 @@ import CourseCard from "@/site/components/CourseCard";
 import {
   emptyCatalogueFilters,
   gradeOptions,
-  getCatalogueCategories,
   getCatalogueOptionCount,
-  getCourseCategorySlug,
-  getCoursesInCategory,
+  getCourseFacetValues,
   getFacetOptions,
   getGradeOptions,
   matchesCatalogueFilters,
   catalogueCourses,
   sortCourses,
+  subjectOptions,
   type CatalogueFilters,
   type CatalogueFilterKey,
   type CatalogueFilterValue,
@@ -32,13 +31,13 @@ import { hasActiveCatalogueSearch, serializeCatalogueSearch } from "@/site/data/
 import type { Page } from "../page";
 
 interface Props {
-  category: string | undefined;
   filters: CatalogueFilters;
   onFiltersChange: (filters: CatalogueFilters, replace?: boolean) => void;
   navigate: (page: Page) => void;
 }
 
-type FilterKey = CatalogueFilterKey;
+/** Sidebar groups. Subjects are chosen in the subject bar above the results, not here. */
+type FilterKey = Exclude<CatalogueFilterKey, "subjects">;
 type FilterValue = CatalogueFilterValue;
 
 function filterOptionLabel(key: FilterKey, value: FilterValue): string {
@@ -47,7 +46,6 @@ function filterOptionLabel(key: FilterKey, value: FilterValue): string {
 
 function filterKeyLabel(key: FilterKey): string {
   return {
-    subjects: "Subject",
     models: "Learning Model",
     grades: "Grade",
     languages: "Language",
@@ -60,7 +58,6 @@ function FilterGroup({
   filterKey,
   options,
   filters,
-  category,
   courses,
   onChange,
 }: {
@@ -68,7 +65,6 @@ function FilterGroup({
   filterKey: FilterKey;
   options: readonly FilterValue[];
   filters: CatalogueFilters;
-  category: string | undefined;
   courses: readonly CourseRecord[];
   onChange: (key: FilterKey, value: FilterValue, checked: boolean) => void;
 }) {
@@ -83,7 +79,7 @@ function FilterGroup({
       </summary>
       <div className="mt-3 space-y-2">
         {options.map((option) => {
-          const count = getCatalogueOptionCount(courses, filters, category, filterKey, option);
+          const count = getCatalogueOptionCount(courses, filters, filterKey, option);
           const label = filterOptionLabel(filterKey, option);
           const id = `${filterKey}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
           return (
@@ -110,13 +106,11 @@ function FilterGroup({
 
 export function FilterPanel({
   filters,
-  category,
   courses = catalogueCourses,
   onChange,
   onClear,
 }: {
   filters: CatalogueFilters;
-  category: string | undefined;
   courses?: readonly CourseRecord[];
   onChange: Props["onFiltersChange"];
   onClear: () => void;
@@ -127,22 +121,21 @@ export function FilterPanel({
     onChange({ ...filters, [key]: next } as CatalogueFilters);
   };
 
-  // Options come from the courses on this page (all courses, or one category), so a group
-  // only lists values those courses actually have. Selected values always stay visible so they
-  // can be removed, e.g. after switching to a category that does not use them.
-  const scopedCourses = getCoursesInCategory(courses, category).filter(
-    (course) => filters.categories.length === 0 || filters.categories.includes(course.category),
+  // Options come from the courses in the chosen subjects (all courses when none is chosen), so
+  // a group only lists values those courses actually have. Selected values always stay visible
+  // so they can be removed, e.g. after choosing a subject that does not use them.
+  const scopedCourses = courses.filter(
+    (course) =>
+      filters.subjects.length === 0 ||
+      getCourseFacetValues(course, "subjects").some((subject) =>
+        filters.subjects.includes(subject),
+      ),
   );
   const withSelected = <T extends FilterValue>(options: T[], selected: readonly T[]): T[] => [
     ...options,
     ...selected.filter((value) => !options.includes(value)),
   ];
   const groups: { title: string; key: FilterKey; options: FilterValue[] }[] = [
-    {
-      title: "Subject",
-      key: "subjects",
-      options: withSelected(getFacetOptions(scopedCourses, "subjects"), filters.subjects),
-    },
     {
       title: "Learning Model",
       key: "models",
@@ -186,7 +179,6 @@ export function FilterPanel({
               filterKey={key}
               options={options}
               filters={filters}
-              category={category}
               courses={courses}
               onChange={updateFilter}
             />
@@ -196,64 +188,51 @@ export function FilterPanel({
   );
 }
 
-export default function CoursesPage({ category, filters, onFiltersChange, navigate }: Props) {
+export default function CoursesPage({ filters, onFiltersChange, navigate }: Props) {
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(12);
-  const activeCategory = category ?? "All";
 
-  // Category pages share one component instance, so start each category at the first page.
-  const [pagedCategory, setPagedCategory] = useState(category);
-  if (pagedCategory !== category) {
-    setPagedCategory(category);
+  // Choosing other subjects starts the list at the first page again.
+  const subjectKey = filters.subjects.join("|");
+  const [pagedSubjects, setPagedSubjects] = useState(subjectKey);
+  if (pagedSubjects !== subjectKey) {
+    setPagedSubjects(subjectKey);
     setVisibleCount(12);
   }
 
-  const categories = useMemo(() => {
-    return getCatalogueCategories();
-  }, []);
-
-  // Categories chosen in the strip. A category page (/courses/category/<slug>) selects its own
-  // category; /courses can carry several (?category=a,b). A course in any of them matches.
-  const selectedCategories = category ? [category] : filters.categories;
-  const effectiveFilters = useMemo(
-    () => ({ ...filters, categories: selectedCategories }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filters, category],
-  );
+  // Subjects chosen in the bar (?subject=a,b). A course in any of them matches; the sidebar
+  // groups narrow that further.
+  const selectedSubjects = filters.subjects;
 
   const results = useMemo(() => {
-    const matched = catalogueCourses.filter((course) =>
-      matchesCatalogueFilters(course, effectiveFilters),
-    );
+    const matched = catalogueCourses.filter((course) => matchesCatalogueFilters(course, filters));
     return sortCourses(matched, filters.sort);
-  }, [effectiveFilters, filters.sort]);
+  }, [filters]);
 
-  // On a category page the category lives in the path, not in the query string.
   const updateFilters: Props["onFiltersChange"] = (next, replace) => {
     setVisibleCount(12);
-    onFiltersChange({ ...next, categories: category ? [] : next.categories }, replace);
+    onFiltersChange(next, replace);
   };
 
-  // Removes the search and every sidebar filter; the chosen categories and sort are kept.
+  // Removes the search and every sidebar filter; the chosen subjects and sort are kept.
   const clearFilters = () => {
     updateFilters({
       ...emptyCatalogueFilters,
-      categories: effectiveFilters.categories,
+      subjects: filters.subjects,
       sort: filters.sort,
     });
   };
 
-  /** Link target for a category selection (keeps search, sidebar filters and sort). */
-  const otherFilters = { ...filters, categories: [] };
-  const toggleCategory = (item: string) =>
-    selectedCategories.includes(item)
-      ? selectedCategories.filter((value) => value !== item)
-      : [...selectedCategories, item];
+  /** Subjects selected after clicking a chip (keeps search, sidebar filters and sort). */
+  const toggleSubject = (item: string) =>
+    selectedSubjects.includes(item)
+      ? selectedSubjects.filter((value) => value !== item)
+      : [...selectedSubjects, item];
 
   const activeChips: { key: FilterKey | "q"; value: FilterValue | string; label: string }[] = [];
   if (filters.q.trim())
     activeChips.push({ key: "q", value: filters.q, label: `Search: ${filters.q}` });
-  for (const key of ["subjects", "models", "grades", "languages", "programTypes"] as const) {
+  for (const key of ["models", "grades", "languages", "programTypes"] as const) {
     for (const value of filters[key])
       activeChips.push({
         key,
@@ -280,8 +259,8 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
           <div>
             <p className="section-label mb-4">OUR COURSES</p>
             <h1 className="text-4xl font-black leading-tight text-gray-900 sm:text-5xl">
-              {selectedCategories.length === 1
-                ? `${selectedCategories[0]} Courses`
+              {selectedSubjects.length === 1
+                ? `${selectedSubjects[0]} Courses`
                 : "Explore Our Courses"}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-gray-600">
@@ -311,52 +290,34 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
         </div>
       </section>
 
-      <nav aria-label="Course categories" className="border-b border-gray-100 bg-white">
-        {/* Multi-select: each chip toggles its category; filters, search and sort are kept. */}
-        <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-4 sm:px-6 lg:px-8">
-          {/* All Courses resets the catalogue: no categories, search or sidebar filters. */}
+      <nav aria-label="Course subjects" className="border-b border-gray-100 bg-white">
+        {/* Multi-select: each chip toggles its subject; filters, search and sort are kept. The
+            row scrolls sideways when the subjects do not fit; "relative" keeps the screen-reader
+            labels inside it, so the page itself never scrolls sideways. */}
+        <div className="relative mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-4 sm:px-6 lg:px-8">
+          {/* All Courses resets the catalogue: no subjects, search or sidebar filters. */}
           <Link
             to="/courses"
             search={{}}
-            aria-current={selectedCategories.length === 0 ? "page" : undefined}
-            className={`min-h-11 shrink-0 rounded-full px-5 py-3 text-sm font-bold transition-colors ${selectedCategories.length === 0 ? "bg-[#E8401C] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+            aria-current={selectedSubjects.length === 0 ? "page" : undefined}
+            className={`min-h-11 shrink-0 rounded-full px-5 py-3 text-sm font-bold transition-colors ${selectedSubjects.length === 0 ? "bg-[#E8401C] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
           >
             All Courses
           </Link>
-          {categories.map((item) => {
-            const selected = selectedCategories.includes(item);
-            const next = toggleCategory(item);
-            const chipClass = `inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-5 py-3 text-sm font-bold transition-colors ${selected ? "bg-[#E8401C] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`;
-            const content = (
-              <>
-                {selected && <Check aria-hidden="true" className="-ml-1 h-4 w-4" />}
-                {item}
-                <span className="sr-only">{selected ? " (selected)" : ""}</span>
-              </>
-            );
-            // One category keeps its own page; several are listed on /courses.
-            return next.length === 1 ? (
-              <Link
-                key={item}
-                to="/courses/category/$category"
-                params={{ category: getCourseCategorySlug(next[0]!) }}
-                search={serializeCatalogueSearch(otherFilters)}
-                className={chipClass}
-                data-category={item}
-                data-selected={selected || undefined}
-              >
-                {content}
-              </Link>
-            ) : (
+          {subjectOptions.map((item) => {
+            const selected = selectedSubjects.includes(item);
+            return (
               <Link
                 key={item}
                 to="/courses"
-                search={serializeCatalogueSearch({ ...otherFilters, categories: next })}
-                className={chipClass}
-                data-category={item}
+                search={serializeCatalogueSearch({ ...filters, subjects: toggleSubject(item) })}
+                className={`inline-flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-3 text-sm font-bold transition-colors ${selected ? "bg-[#E8401C] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+                data-subject={item}
                 data-selected={selected || undefined}
               >
-                {content}
+                {selected && <Check aria-hidden="true" className="-ml-1 h-4 w-4" />}
+                {item}
+                <span className="sr-only">{selected ? " (selected)" : ""}</span>
               </Link>
             );
           })}
@@ -382,12 +343,7 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
                   <SheetTitle>Filter courses</SheetTitle>
                   <SheetDescription>Select options, then apply to the catalogue.</SheetDescription>
                 </SheetHeader>
-                <FilterPanel
-                  filters={effectiveFilters}
-                  category={undefined}
-                  onChange={updateFilters}
-                  onClear={clearFilters}
-                />
+                <FilterPanel filters={filters} onChange={updateFilters} onClear={clearFilters} />
                 <SheetFooter className="mt-5">
                   <button
                     type="button"
@@ -444,12 +400,7 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
 
         <div className="grid gap-8 lg:grid-cols-[15rem_minmax(0,1fr)]">
           <aside className="hidden lg:block" aria-label="Filter courses">
-            <FilterPanel
-              filters={effectiveFilters}
-              category={undefined}
-              onChange={updateFilters}
-              onClear={clearFilters}
-            />
+            <FilterPanel filters={filters} onChange={updateFilters} onClear={clearFilters} />
           </aside>
           <div>
             {results.length > 0 ? (

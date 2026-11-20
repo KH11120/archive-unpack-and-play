@@ -1,7 +1,5 @@
 import {
-  categoryOptions,
   emptyCatalogueFilters,
-  getCourseCategorySlug,
   gradeOptions,
   languageOptions,
   learningModelOptions,
@@ -13,8 +11,7 @@ import {
 
 export interface CatalogueUrlSearch extends Record<string, unknown> {
   q?: string;
-  /** Selected categories as URL slugs, e.g. "python,web-development". */
-  category?: string;
+  /** Selected subjects as written in the workbook, e.g. "Python,Web Development". */
   subject?: string;
   model?: string;
   grade?: string;
@@ -22,6 +19,33 @@ export interface CatalogueUrlSearch extends Record<string, unknown> {
   program?: string;
   sort?: string;
 }
+
+/**
+ * The catalogue used to be browsed by broad categories (/courses/category/<slug> and
+ * ?category=<slug>). Those addresses may still be shared or bookmarked, so each old category
+ * opens the workbook subjects it used to contain. Nothing on the site links to them any more.
+ */
+export const LEGACY_CATEGORY_SUBJECTS: Readonly<Record<string, readonly string[]>> = {
+  "ai-data-science": ["AI & ML", "Data Science"],
+  vernatics: ["Vernatics (Robotics)"],
+  "coding-foundations": [
+    "Coding",
+    "Block Coding",
+    "Programming Fundamentals (Codely)",
+    "Computer Fundamentals",
+  ],
+  python: ["Python"],
+  "web-development": ["Web Development"],
+  javascript: ["JavaScript"],
+  "app-development": ["App Development"],
+  "games-creative-coding": [
+    "Game Development",
+    "Creative Coding (p5.js)",
+    "Art & Music with Coding",
+  ],
+  "blockchain-cryptography": ["Blockchain", "Cryptography", "Blockchain & Cryptography"],
+  "cloud-computing": ["Cloud Computing"],
+};
 
 function readCsv(value: unknown): string[] {
   // The router parses "?grade=5" as the number 5, so single numbers are accepted too.
@@ -58,12 +82,16 @@ export function parseCatalogueSearch(search: Record<string, unknown>): Catalogue
       : "recommended";
   return {
     q: typeof search["q"] === "string" ? search["q"].slice(0, 100) : "",
-    categories: readCsv(search["category"])
-      .map((slug) => categoryOptions.find((option) => getCourseCategorySlug(option) === slug))
-      .filter(
-        (value, index, list): value is string => Boolean(value) && list.indexOf(value) === index,
-      ),
-    subjects: approvedOptions(readCsv(search["subject"]), subjectOptions),
+    subjects: [
+      ...new Set([
+        ...approvedOptions(readCsv(search["subject"]), subjectOptions),
+        // Links made before the subject bar (?category=python) open the matching subjects.
+        ...approvedOptions(
+          readCsv(search["category"]).flatMap((slug) => LEGACY_CATEGORY_SUBJECTS[slug] ?? []),
+          subjectOptions,
+        ),
+      ]),
+    ],
     models: approvedOptions(readCsv(search["model"]), learningModelOptions),
     grades: readCsv(search["grade"])
       .map(Number)
@@ -77,8 +105,6 @@ export function parseCatalogueSearch(search: Record<string, unknown>): Catalogue
 export function serializeCatalogueSearch(filters: CatalogueFilters): Record<string, string> {
   const result: Record<string, string> = {};
   if (filters.q.trim()) result["q"] = filters.q.trim();
-  if (filters.categories.length)
-    result["category"] = filters.categories.map(getCourseCategorySlug).join(",");
   if (filters.subjects.length) result["subject"] = filters.subjects.join(",");
   if (filters.models.length) result["model"] = filters.models.join(",");
   if (filters.grades.length) result["grade"] = filters.grades.join(",");
@@ -95,7 +121,6 @@ export function validateCatalogueSearch(search: Record<string, unknown>): Catalo
 export function hasActiveCatalogueSearch(filters: CatalogueFilters): boolean {
   return Boolean(
     filters.q.trim() ||
-    filters.categories.length ||
     filters.subjects.length ||
     filters.models.length ||
     filters.grades.length ||

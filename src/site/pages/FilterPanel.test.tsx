@@ -11,7 +11,6 @@ const sampleCourses: CourseRecord[] = [
     routeSlug: "live-python",
     catalogueInclusion: "intended",
     offeringApproved: true,
-    category: "Python",
     subject: "Python",
     programType: "Course",
     learningModel: "Live",
@@ -35,7 +34,6 @@ const sampleCourses: CourseRecord[] = [
     routeSlug: "assisted-python",
     catalogueInclusion: "intended",
     offeringApproved: true,
-    category: "Python",
     subject: "Python",
     programType: "Camp",
     learningModel: "Assisted Learning (AL)",
@@ -66,7 +64,6 @@ describe("catalogue filter controls", () => {
     render(
       <FilterPanel
         filters={emptyCatalogueFilters}
-        category={undefined}
         courses={sampleCourses}
         onChange={onChange}
         onClear={vi.fn()}
@@ -81,7 +78,7 @@ describe("catalogue filter controls", () => {
     expect(onChange).toHaveBeenCalledWith({ ...emptyCatalogueFilters, models: ["Live"] });
   });
 
-  it("hides groups with no known values and only lists options used in the category", () => {
+  it("hides groups with no known values and only lists options used in the chosen subjects", () => {
     const sparse = sampleCourses.map((course) => ({
       ...course,
       language: "Not specified",
@@ -91,21 +88,20 @@ describe("catalogue filter controls", () => {
     const webCourse = {
       ...sampleCourses[0]!,
       id: "web",
-      category: "Web Development",
+      subject: "Web Development",
       language: "Tamil",
     };
     render(
       <FilterPanel
-        filters={emptyCatalogueFilters}
-        category="Python"
+        filters={{ ...emptyCatalogueFilters, subjects: ["Python"] }}
         courses={[...sparse, webCourse]}
         onChange={vi.fn()}
         onClear={vi.fn()}
       />,
     );
 
-    // Subject, Learning Model and Program Type only: there is no Level filter.
-    expect(groupTitles()).toEqual(["Subject", "Learning Model", "Program Type"]);
+    // Subjects are chosen in the subject bar, and there is no Level filter.
+    expect(groupTitles()).toEqual(["Learning Model", "Program Type"]);
     expect(screen.queryByRole("checkbox", { name: /Tamil/ })).not.toBeInTheDocument();
   });
 
@@ -114,7 +110,6 @@ describe("catalogue filter controls", () => {
     render(
       <FilterPanel
         filters={{ ...emptyCatalogueFilters, models: ["Self Learning (SL)"] }}
-        category={undefined}
         courses={sampleCourses}
         onChange={onChange}
         onClear={vi.fn()}
@@ -136,7 +131,6 @@ describe("catalogue filter controls", () => {
     render(
       <FilterPanel
         filters={emptyCatalogueFilters}
-        category={undefined}
         courses={sampleCourses}
         onChange={vi.fn()}
         onClear={onClear}

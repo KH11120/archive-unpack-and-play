@@ -51,7 +51,7 @@ describe("Vernatics page", () => {
     // Start Learning opens the catalogue with the Vernatics category selected.
     expect(screen.getByRole("link", { name: "Start Learning →" })).toHaveAttribute(
       "href",
-      "/courses/category/vernatics",
+      "/courses?subject=Vernatics+%28Robotics%29",
     );
     fireEvent.click(screen.getByRole("button", { name: "Explore APTCODER Classes →" }));
     expect(navigate).toHaveBeenLastCalledWith("courses");

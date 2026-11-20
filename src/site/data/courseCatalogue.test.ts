@@ -34,7 +34,6 @@ function testCourse(overrides: Partial<CourseRecord> = {}): CourseRecord {
     routeSlug: "example-test-record",
     catalogueInclusion: "intended",
     offeringApproved: true,
-    category: "Python",
     subject: "Python",
     programType: "Course",
     learningModel: "Live",
@@ -68,7 +67,6 @@ describe("course catalogue publication and filtering", () => {
     expect(workbookCourses[0]).toMatchObject({
       id: "CRS-001",
       title: "Coding Fundamentals",
-      category: "Coding Foundations",
       subject: "Coding",
       programType: "Course",
       learningModel: "Not specified",
@@ -98,22 +96,29 @@ describe("course catalogue publication and filtering", () => {
     ).toBe(false);
   });
 
-  it("places each course in the website category for its subject", () => {
+  it("keeps the Subject column as each course's subject, with no separate category", () => {
     const counts: Record<string, number> = {};
     for (const course of workbookCourses)
-      counts[course.category] = (counts[course.category] ?? 0) + 1;
+      counts[course.subject ?? ""] = (counts[course.subject ?? ""] ?? 0) + 1;
     expect(counts).toEqual({
-      "Coding Foundations": 74,
-      Python: 9,
+      Coding: 60,
+      "Block Coding": 9,
       "Web Development": 9,
+      Python: 9,
+      "Programming Fundamentals (Codely)": 5,
+      "Game Development": 2,
+      "Creative Coding (p5.js)": 1,
+      Cryptography: 2,
+      "Art & Music with Coding": 3,
+      Blockchain: 2,
+      "Data Science": 3,
       JavaScript: 1,
-      "App Development": 1,
-      "Games & Creative Coding": 6,
-      "AI & Data Science": 6,
-      Vernatics: 2,
-      "Blockchain & Cryptography": 4,
+      "AI & ML": 3,
+      "Vernatics (Robotics)": 2,
       "Cloud Computing": 1,
+      "App Development": 1,
     });
+    expect(workbookCourses.some((course) => "category" in course)).toBe(false);
   });
 
   it("offers the workbook's subjects, learning models and languages as filter options", () => {
@@ -259,7 +264,6 @@ describe("course catalogue publication and filtering", () => {
     const liveWeb = testCourse({
       id: "c",
       title: "Web Basics",
-      category: "Web Development",
       subject: "Web Development",
     });
 
@@ -404,12 +408,13 @@ describe("course catalogue publication and filtering", () => {
 
   it("gives each option the same count as the cards shown when it is selected", () => {
     const filters = { ...emptyCatalogueFilters, programTypes: ["Course"] };
-    for (const category of [undefined, "Python", "Games & Creative Coding"]) {
+    for (const subjects of [[], ["Python"], ["Coding", "Block Coding"]]) {
       for (const model of getFacetOptions(catalogueCourses, "models")) {
+        const withSubjects = { ...filters, subjects };
         const shown = catalogueCourses.filter((course) =>
-          matchesCatalogueFilters(course, { ...filters, models: [model] }, category),
+          matchesCatalogueFilters(course, { ...withSubjects, models: [model] }),
         );
-        expect(getCatalogueOptionCount(catalogueCourses, filters, category, "models", model)).toBe(
+        expect(getCatalogueOptionCount(catalogueCourses, withSubjects, "models", model)).toBe(
           shown.length,
         );
       }
@@ -423,10 +428,8 @@ describe("course catalogue publication and filtering", () => {
       testCourse({ id: "3", learningModel: "Live", grades: [7, 8, 9] }),
     ];
     const filters = { ...emptyCatalogueFilters, grades: [6] };
-    expect(getCatalogueOptionCount(courses, filters, undefined, "models", "Live")).toBe(1);
-    expect(
-      getCatalogueOptionCount(courses, filters, undefined, "models", "Assisted Learning (AL)"),
-    ).toBe(1);
-    expect(getCatalogueOptionCount(courses, filters, undefined, "grades", 7)).toBe(2);
+    expect(getCatalogueOptionCount(courses, filters, "models", "Live")).toBe(1);
+    expect(getCatalogueOptionCount(courses, filters, "models", "Assisted Learning (AL)")).toBe(1);
+    expect(getCatalogueOptionCount(courses, filters, "grades", 7)).toBe(2);
   });
 });

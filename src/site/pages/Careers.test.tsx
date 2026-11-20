@@ -28,30 +28,36 @@ const withProviders = (ui: React.ReactNode) =>
     </LanguageProvider>,
   );
 
-describe("category multi-select", () => {
-  it("reads and writes several categories in the URL as slugs", () => {
-    const filters = parseCatalogueSearch({ category: "ai-data-science,python,not-a-category" });
-    expect(filters.categories).toEqual(["AI & Data Science", "Python"]);
-    expect(serializeCatalogueSearch(filters)).toEqual({ category: "ai-data-science,python" });
+describe("subject multi-select", () => {
+  it("reads and writes several subjects in the URL, ignoring unknown ones", () => {
+    const filters = parseCatalogueSearch({ subject: "Python,web development,Robotics" });
+    expect(filters.subjects).toEqual(["Python", "Web Development"]);
+    expect(serializeCatalogueSearch(filters)).toEqual({ subject: "Python,Web Development" });
   });
 
-  it("matches courses in any selected category, together with other filters", () => {
-    const filters = { ...emptyCatalogueFilters, categories: ["AI & Data Science", "Python"] };
+  it("matches courses in any selected subject, together with other filters", () => {
+    const filters = { ...emptyCatalogueFilters, subjects: ["Python", "Web Development"] };
     const matched = catalogueCourses.filter((c) => matchesCatalogueFilters(c, filters));
     const expected = catalogueCourses.filter((c) =>
-      ["AI & Data Science", "Python"].includes(c.category),
+      ["Python", "Web Development"].includes(c.subject ?? ""),
     );
     expect(matched).toEqual(expected);
-    const liveOnly = catalogueCourses.filter((c) =>
-      matchesCatalogueFilters(c, { ...filters, models: ["Live"] }),
+    expect(matched).toHaveLength(18);
+    const selfLearning = catalogueCourses.filter((c) =>
+      matchesCatalogueFilters(c, { ...filters, models: ["Self Learning (SL)"] }),
     );
-    expect(liveOnly.every((c) => c.learningModel === "Live")).toBe(true);
-    expect(liveOnly.length).toBeLessThan(matched.length);
+    expect(selfLearning.map((c) => c.id)).toEqual(["CRS-095", "CRS-096", "CRS-097", "CRS-098"]);
   });
 
-  it("puts AI & Data Science first in the category strip", async () => {
-    const { getCatalogueCategories } = await import("@/site/data/courseCatalogue");
-    expect(getCatalogueCategories()[0]).toBe("AI & Data Science");
+  it("opens old category links with the subjects that category used to contain", () => {
+    expect(parseCatalogueSearch({ category: "ai-data-science,python" }).subjects).toEqual([
+      "AI & ML",
+      "Data Science",
+      "Python",
+    ]);
+    expect(serializeCatalogueSearch(parseCatalogueSearch({ category: "vernatics" }))).toEqual({
+      subject: "Vernatics (Robotics)",
+    });
   });
 });
 

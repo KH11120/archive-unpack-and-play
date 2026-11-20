@@ -92,9 +92,11 @@ export default function CourseCard({ course }: { course: CourseRecord }) {
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <span className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500">
-          {course.category}
-        </span>
+        {isDisplayable(course.subject) && (
+          <span className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500">
+            {course.subject}
+          </span>
+        )}
         {course.programType && (
           <span className="mb-2 text-xs font-bold uppercase tracking-wide text-[#E8401C]">
             {course.programType}

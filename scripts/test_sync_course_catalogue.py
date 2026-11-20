@@ -40,7 +40,7 @@ class CourseMasterExportTests(unittest.TestCase):
         self.assertEqual(course["id"], "CRS-028")
         self.assertEqual(course["title"], "Block-Based Coding Applications")
         self.assertEqual(course["subject"], "Block Coding")
-        self.assertEqual(course["category"], "Coding Foundations")
+        self.assertNotIn("category", course)
         self.assertEqual(course["programType"], "Course")
         self.assertEqual(course["language"], "English")
         self.assertEqual(course["ageGroup"], "15-18 years")
@@ -85,14 +85,10 @@ class CourseMasterExportTests(unittest.TestCase):
         self.assertEqual(fallback["title"], "Block-Based Coding Applications (English)")
         self.assertEqual(fallback["source"]["titleFrom"], "LMS Course Name")
 
-    def test_every_subject_on_lists_2_has_a_category(self):
-        for subject in ("Coding", "Vernatics (Robotics)", "Computer Fundamentals"):
-            self.assertIn(subject, sync.SUBJECT_TO_CATEGORY)
-        self.assertEqual(sync.SUBJECT_TO_CATEGORY["Vernatics (Robotics)"], "Vernatics")
-
-    def test_unmapped_subject_stops_the_build(self):
-        with self.assertRaises(ValueError):
-            sync.row_to_course(row(Subject="Robotics"))
+    def test_missing_subject_stops_the_build(self):
+        for subject in (None, "Not specified"):
+            with self.assertRaises(ValueError):
+                sync.row_to_course(row(Subject=subject))
 
     def test_route_slugs_are_unique_for_shared_titles(self):
         courses = [sync.row_to_course(row(**{"Record ID": i})) for i in ("CRS-001", "CRS-009")]

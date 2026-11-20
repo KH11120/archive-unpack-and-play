@@ -29,7 +29,6 @@ function fixture(overrides: Partial<CourseRecord> = {}): CourseRecord {
     routeSlug: "approved-test-course",
     catalogueInclusion: "intended",
     offeringApproved: true,
-    category: "Python",
     subject: "Python",
     programType: "Course",
     learningModel: "Live",
