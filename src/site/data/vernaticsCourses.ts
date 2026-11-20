@@ -2,9 +2,11 @@ import { assetUrl } from "@/site/assetUrl";
 import type { CourseRecord } from "./courseCatalogue";
 
 /**
- * Vernatics courses, added by hand for now. They are NOT in docs/Course_Catalogue_Website.xlsx
- * (the source of every other course), so they live here and are appended to the workbook
- * courses in courseCatalogue.ts. When they are added to the workbook, delete this file.
+ * Robo Star, Robo Orbit and Robo Galaxy, added by hand. They are NOT in
+ * docs/Course_Catalogue_Website.xlsx (the workbook's own Vernatics courses come from Course
+ * Master (2)), so they live here and are appended to the workbook courses in courseCatalogue.ts,
+ * under the workbook's "Vernatics (Robotics)" subject. When they are added to the workbook,
+ * delete this file.
  *
  * Only the title, category and level were provided. Everything else is left unset or
  * "Not specified" (hidden on cards and never offered as a filter option). All three use the
@@ -29,7 +31,7 @@ export const vernaticsCourses: CourseRecord[] = levels.map(
     catalogueInclusion: "intended",
     offeringApproved: false,
     category: VERNATICS_CATEGORY,
-    subject: "Vernatics",
+    subject: "Vernatics (Robotics)",
     programType: "Course",
     learningModel: "Not specified",
     level: "Not specified",

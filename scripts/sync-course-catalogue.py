@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
-"""Build the website course catalogue from docs/Course_Catalogue_Website.xlsx (Course Master).
+"""Build the website course catalogue from docs/Course_Catalogue_Website.xlsx.
+
+Source: the "Course Master (2)" sheet (one row per course), checked against the dropdown values
+on the "Lists (2)" sheet. The older "Course Master" sheet is no longer used.
 
 Rules (all from the workbook):
   - Only rows whose Type is Course, Camp or Capstone and whose LMS Status is Active are used.
-    Every such row becomes exactly one website course (duplicate names are kept as separate
-    courses, because each is its own LMS record), so the website count always equals the
-    workbook count.
-  - Title: the "Display Name (cleaned from "New Lesson Name")" column. Only if a row has no
-    display name is the original LMS name used, and every such row is listed in the report
-    so the Display Name can be filled in. Nothing is reworded.
-  - Category: the website categories named on the Catalogue Page / Wireframes sheets, assigned
-    from the Subject column using SUBJECT_TO_CATEGORY below (the same subject-to-category
-    placement as APTCODER's previous Website Courses sheet). An unmapped subject stops the build.
-  - Program Type = Type; Learning Model, Level (= Difficulty), Live Level and Language are copied
-    as written. The card shows Live Level for Live courses and Difficulty for all others.
-    "Not specified", "ALTS (meaning to confirm)" etc. are kept as data; the site never shows
-    them as filter options or badges (see src/site/data/courseCatalogue.ts).
-  - Grade "Grade N" gives Grade From = Grade To = N; "Not specified" gives no grade.
-  - Lessons = the Lessons column (revision lessons are reported separately, not added).
-  - Display order = Course Master row order (the workbook has no Display Order column).
-  - Fields the workbook does not contain (short description, duration, overview, outcomes,
-    syllabus, price, enrol CTA, publish status...) are left empty; the site hides them.
-  - Thumbnails are handled separately and are not read here.
+    Every such row becomes exactly one website course, so the website count always equals the
+    workbook count. Record IDs must be unique.
+  - Title: the "Display Name (cleaned from "New Lesson Name")" column; the LMS name only if a
+    row has no display name (listed in the report). Nothing is reworded.
+  - Subject, Type (= Program Type), Learning Model and Language are copied as written and must be
+    values listed on Lists (2). "Not specified" is kept as data; the site never shows it as a
+    filter option or badge (see src/site/data/courseCatalogue.ts).
+  - Grades: the "Grades Covered" column ("5" or "10, 11, 12") is the full list of grades a course
+    covers. The Grade column ("Grade 5" or "Multi-Grade") must agree with it.
+  - Age Group and Course Duration are copied as written.
+  - Category (the website's category strip): from the Subject, using SUBJECT_TO_CATEGORY below.
+    An unmapped subject stops the build.
+  - Difficulty and Live Level are kept for reference only; the site has no Level filter.
+  - Display order = row order on the sheet.
+  - Fields the workbook does not contain (description, lessons, overview, outcomes, syllabus,
+    price...) are left empty; the site hides them.
+  - Thumbnails are handled separately (src/site/data/courseThumbnails.json).
 
     python3 -m pip install -r requirements-catalogue.txt
     python3 scripts/sync-course-catalogue.py
@@ -41,7 +42,8 @@ from openpyxl import load_workbook
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKBOOK = ROOT / "docs" / "Course_Catalogue_Website.xlsx"
-SHEET = "Course Master"
+SHEET = "Course Master (2)"
+LISTS_SHEET = "Lists (2)"
 OUTPUT = ROOT / "src" / "site" / "data" / "courseCatalogue.generated.json"
 
 INCLUDED_TYPES = ("Course", "Camp", "Capstone")
@@ -56,22 +58,28 @@ COL_SUBJECT = "Subject"
 COL_MODEL = "Learning Model"
 COL_DIFFICULTY = "Difficulty"
 COL_GRADE = "Grade"
-COL_LANGUAGE = "Language"
 COL_LIVE_LEVEL = "Live Level"
+COL_LANGUAGE = "Language"
 COL_STATUS = "LMS Status"
-COL_LESSONS = "Lessons"
-COL_REVISION = "Revision Lessons"
+COL_GRADES_COVERED = "Grades Covered"
+COL_AGE = "Age Group"
+COL_DURATION = "Course Duration"
+COL_FLAGS = "Data Flags"
 REQUIRED_COLUMNS = (
     COL_ID, COL_SNO, COL_LMS_NAME, COL_DISPLAY, COL_TYPE, COL_SUBJECT, COL_MODEL,
-    COL_DIFFICULTY, COL_GRADE, COL_LANGUAGE, COL_STATUS, COL_LESSONS, COL_REVISION,
-    COL_LIVE_LEVEL,
+    COL_DIFFICULTY, COL_GRADE, COL_LIVE_LEVEL, COL_LANGUAGE, COL_STATUS, COL_GRADES_COVERED,
+    COL_AGE, COL_DURATION,
 )
 
-# Website category for each Course Master Subject. Category names are those on the workbook's
-# Catalogue Page and Wireframes sheets; the placement matches the previous Website Courses sheet.
+# Columns on Lists (2) whose values a Course Master (2) cell must use.
+LIST_COLUMNS = (COL_TYPE, COL_SUBJECT, COL_MODEL, COL_LANGUAGE, COL_GRADE)
+
+# Website category (the category strip and homepage links) for each Subject on Lists (2).
 SUBJECT_TO_CATEGORY = {
+    "Coding": "Coding Foundations",
     "Block Coding": "Coding Foundations",
     "Programming Fundamentals (Codely)": "Coding Foundations",
+    "Computer Fundamentals": "Coding Foundations",
     "Python": "Python",
     "Web Development": "Web Development",
     "JavaScript": "JavaScript",
@@ -81,18 +89,21 @@ SUBJECT_TO_CATEGORY = {
     "Art & Music with Coding": "Games & Creative Coding",
     "AI & ML": "AI & Data Science",
     "Data Science": "AI & Data Science",
+    "Vernatics (Robotics)": "Vernatics",
     "Blockchain": "Blockchain & Cryptography",
     "Cryptography": "Blockchain & Cryptography",
     "Blockchain & Cryptography": "Blockchain & Cryptography",
     "Cloud Computing": "Cloud Computing",
     "General / Multi-subject": "Other",
     "Intellectual Property": "Other",
+    "Teacher / Moderator Training": "Other",
 }
 
-# Category bar order: AI first (so it is visible without scrolling), then the Wireframes
-# sheet order, with "Other" last.
+# Category strip order: AI first (visible without scrolling), Vernatics next, then the
+# Wireframes sheet order, with "Other" last.
 CATEGORY_ORDER = (
     "AI & Data Science",
+    "Vernatics",
     "Coding Foundations",
     "Python",
     "Web Development",
@@ -120,17 +131,28 @@ def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", normalized.lower()).strip("-")
 
 
-def whole_number(value: Any) -> int | None:
-    if isinstance(value, bool) or value in (None, ""):
-        return None
-    if isinstance(value, (int, float)) and float(value).is_integer():
-        return int(value)
-    raise ValueError(f"Expected a whole number, got {value!r}")
-
-
-def grade_number(value: str | None) -> int | None:
-    match = re.fullmatch(r"Grade (\d{1,2})", value or "")
-    return int(match.group(1)) if match else None
+def parse_grades(record_id: str, grade: str | None, covered: Any) -> list[int]:
+    """All grades a course covers, from Grades Covered, checked against the Grade column."""
+    text = clean(covered)
+    grades: list[int] = []
+    if text:
+        for part in re.split(r"[,;]", text):
+            part = part.strip()
+            if not part:
+                continue
+            if not re.fullmatch(r"\d{1,2}", part) or not 1 <= int(part) <= 12:
+                raise ValueError(f"{record_id}: unreadable Grades Covered {text!r}")
+            if int(part) not in grades:
+                grades.append(int(part))
+    single = re.fullmatch(r"Grade (\d{1,2})", grade or "")
+    if not grades and single:
+        grades = [int(single.group(1))]
+    grades.sort()
+    if single and grades != [int(single.group(1))]:
+        raise ValueError(f"{record_id}: Grade {grade!r} disagrees with Grades Covered {text!r}")
+    if grade == "Multi-Grade" and len(grades) < 2:
+        raise ValueError(f"{record_id}: Multi-Grade but Grades Covered is {text!r}")
+    return grades
 
 
 def assign_route_slugs(courses: list[dict[str, Any]]) -> None:
@@ -149,18 +171,20 @@ def assign_route_slugs(courses: list[dict[str, Any]]) -> None:
 
 
 def row_to_course(row: dict[str, Any]) -> dict[str, Any]:
+    record_id = clean(row[COL_ID])
     display = clean(row[COL_DISPLAY])
     lms_name = clean(row[COL_LMS_NAME])
     title = display or lms_name
-    if not title:
-        raise ValueError(f"{row[COL_ID]} has no name")
+    if not record_id or not title:
+        raise ValueError(f"Row {row.get(COL_SNO)!r} has no Record ID or name")
     subject = clean(row[COL_SUBJECT])
     if subject not in SUBJECT_TO_CATEGORY:
-        raise ValueError(f"{row[COL_ID]}: subject {subject!r} has no website category")
-    grade = grade_number(clean(row[COL_GRADE]))
+        raise ValueError(f"{record_id}: subject {subject!r} has no website category")
+    grades = parse_grades(record_id, clean(row[COL_GRADE]), row[COL_GRADES_COVERED])
+    live_level = clean(row[COL_LIVE_LEVEL])
 
     return {
-        "id": clean(row[COL_ID]),
+        "id": record_id,
         "title": title,
         "slug": slugify(title),
         "routeSlug": "",
@@ -170,15 +194,17 @@ def row_to_course(row: dict[str, Any]) -> dict[str, Any]:
         "category": SUBJECT_TO_CATEGORY[subject],
         "subject": subject,
         "programType": clean(row[COL_TYPE]),
-        "learningModel": clean(row[COL_MODEL]),
-        "level": clean(row[COL_DIFFICULTY]),
-        # "Level 1".."Level 3" from the Live Level column; "N/A" means none.
-        "liveLevel": None if clean(row[COL_LIVE_LEVEL]) in (None, "N/A") else clean(row[COL_LIVE_LEVEL]),
-        "language": clean(row[COL_LANGUAGE]),
-        "lessons": whole_number(row[COL_LESSONS]),
-        "gradeFrom": grade,
-        "gradeTo": grade,
-        "duration": None,
+        "learningModel": clean(row[COL_MODEL]) or "Not specified",
+        # Difficulty / Live Level: reference only (no Level filter on the site).
+        "level": clean(row[COL_DIFFICULTY]) or "Not specified",
+        "liveLevel": None if live_level in (None, "N/A") else live_level,
+        "language": clean(row[COL_LANGUAGE]) or "Not specified",
+        "lessons": None,
+        "grades": grades,
+        "gradeFrom": grades[0] if grades else None,
+        "gradeTo": grades[-1] if grades else None,
+        "ageGroup": clean(row[COL_AGE]),
+        "duration": clean(row[COL_DURATION]),
         "shortDescription": None,
         "overview": None,
         "learningOutcomes": [],
@@ -200,7 +226,7 @@ def row_to_course(row: dict[str, Any]) -> dict[str, Any]:
             "sourceSno": clean(row[COL_SNO]),
             "lmsName": lms_name,
             "titleFrom": "Display Name" if display else "LMS Course Name",
-            "revisionLessons": whole_number(row[COL_REVISION]),
+            "revisionLessons": None,
         },
     }
 
@@ -215,6 +241,20 @@ def ordered_values(courses, field, unresolved=UNRESOLVED, order=()) -> list[str]
     return sorted(values, key=lambda v: (rank.get(v.casefold(), len(rank)), values.index(v)))
 
 
+def read_lists(workbook) -> dict[str, list[str]]:
+    """Dropdown values per column on Lists (2), in sheet order."""
+    if LISTS_SHEET not in workbook.sheetnames:
+        raise ValueError(f"Workbook is missing the {LISTS_SHEET} sheet")
+    rows = workbook[LISTS_SHEET].iter_rows(values_only=True)
+    headers = [clean(value) for value in next(rows)]
+    lists: dict[str, list[str]] = {header: [] for header in headers if header}
+    for values in rows:
+        for header, value in zip(headers, values):
+            if header and clean(value):
+                lists[header].append(clean(value))
+    return lists
+
+
 def main() -> int:
     if not WORKBOOK.is_file():
         print(f"Workbook not found: {WORKBOOK}", file=sys.stderr)
@@ -222,6 +262,7 @@ def main() -> int:
     workbook = load_workbook(WORKBOOK, data_only=True, read_only=True)
     if SHEET not in workbook.sheetnames:
         raise ValueError(f"Workbook is missing the {SHEET} sheet")
+    lists = read_lists(workbook)
     rows = workbook[SHEET].iter_rows(values_only=True)
     headers = [clean(value) for value in next(rows)]
     missing = [column for column in REQUIRED_COLUMNS if column not in headers]
@@ -229,6 +270,11 @@ def main() -> int:
         raise ValueError(f"{SHEET} is missing columns: {', '.join(missing)}")
 
     records = [dict(zip(headers, values)) for values in rows if any(v is not None for v in values)]
+    for record in records:
+        for column in LIST_COLUMNS:
+            value = clean(record[column])
+            if value and value not in lists.get(column, []):
+                raise ValueError(f"{record[COL_ID]}: {column} {value!r} is not on {LISTS_SHEET}")
     selected = [
         r for r in records
         if clean(r[COL_TYPE]) in INCLUDED_TYPES and clean(r[COL_STATUS]) == ACTIVE
@@ -242,16 +288,13 @@ def main() -> int:
 
     options = {
         "categories": ordered_values(courses, "category", order=CATEGORY_ORDER),
+        "subjects": ordered_values(courses, "subject", order=lists[COL_SUBJECT]),
         "learningModels": ordered_values(
-            courses, "learningModel", UNRESOLVED_MODELS,
-            ("Live", "Assisted Learning (AL)", "Self Learning (SL)"),
+            courses, "learningModel", UNRESOLVED_MODELS, lists[COL_MODEL]
         ),
-        "levels": ordered_values(
-            courses, "level", order=("Very Easy", "Easy", "Moderate", "Hard", "All Levels")
-        ),
-        "languages": ordered_values(courses, "language", order=("English", "Hindi")),
+        "languages": ordered_values(courses, "language", order=lists[COL_LANGUAGE]),
         "programTypes": ordered_values(courses, "programType", order=INCLUDED_TYPES),
-        "grades": sorted({c["gradeFrom"] for c in courses if c["gradeFrom"] is not None}),
+        "grades": sorted({grade for c in courses for grade in c["grades"]}),
     }
 
     OUTPUT.write_text(
@@ -262,21 +305,23 @@ def main() -> int:
 
     # ---- Report -------------------------------------------------------------------------
     by_type = Counter((clean(r[COL_TYPE]), clean(r[COL_STATUS])) for r in records)
-    print(f"Course Master records: {len(records)}")
+    print(f"{SHEET} records: {len(records)}")
     for kind in INCLUDED_TYPES:
         inactive = sum(n for (t, s), n in by_type.items() if t == kind and s != ACTIVE)
         print(f"  {kind}: {by_type[(kind, ACTIVE)]} active, {inactive} not active")
-    print(f"Active Course + Camp + Capstone in workbook: {len(selected)}")
     print(f"Courses written to the website catalogue: {len(courses)}")
-    print(f"By category: {dict(Counter(c['category'] for c in courses))}")
-    from_display = sum(c["source"]["titleFrom"] == "Display Name" for c in courses)
-    print(f"Titles from Display Name: {from_display} of {len(courses)}")
+    for key in ("category", "subject", "learningModel", "language", "duration"):
+        print(f"By {key}: {dict(Counter(c[key] for c in courses))}")
+    print(f"Options: {json.dumps(options, ensure_ascii=False)}")
     for c in courses:
         if c["source"]["titleFrom"] != "Display Name":
             print(f"  NO DISPLAY NAME - using LMS name for now: {c['id']} {c['title']!r}")
-    shared = Counter(c["title"] for c in courses)
-    print(f"Titles shared by more than one course: {sum(n > 1 for n in shared.values())} titles, "
-          f"{sum(n for n in shared.values() if n > 1)} courses")
+        if not c["grades"]:
+            print(f"  NO GRADES: {c['id']} {c['title']!r}")
+    flagged = [r for r in selected if clean(r.get(COL_FLAGS))]
+    print(f"Rows with Data Flags (shown as written; please confirm in the sheet): {len(flagged)}")
+    for r in flagged:
+        print(f"  {r[COL_ID]}: {clean(r[COL_FLAGS])}")
     print(f"Generated: {OUTPUT.relative_to(ROOT)}")
     return 0
 

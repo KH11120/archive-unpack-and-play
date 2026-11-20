@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock3, Code2, GraduationCap, Languages, ListChecks } from "lucide-react";
-import { getCourseLevelLabel, type CourseRecord } from "@/site/data/courseCatalogue";
+import { Clock3, Code2, GraduationCap, Languages, ListChecks, Users } from "lucide-react";
+import {
+  formatCourseGrades,
+  getCourseLevelLabel,
+  type CourseRecord,
+} from "@/site/data/courseCatalogue";
 
 function isDisplayable(value: string | null | undefined): value is string {
   return Boolean(value?.trim() && value.trim().toLocaleLowerCase() !== "not specified");
@@ -42,12 +46,9 @@ export default function CourseCard({ course }: { course: CourseRecord }) {
   const levelLabel = getCourseLevelLabel(course);
   const language = isDisplayable(course.language) ? course.language : undefined;
   const lessons = typeof course.lessons === "number" ? `${course.lessons} lessons` : undefined;
-  const gradeLabel =
-    typeof course.gradeFrom === "number" && typeof course.gradeTo === "number"
-      ? course.gradeFrom === course.gradeTo
-        ? `Grade ${course.gradeFrom}`
-        : `Grades ${course.gradeFrom}-${course.gradeTo}`
-      : undefined;
+  const gradeLabel = formatCourseGrades(course);
+  const ageGroup = isDisplayable(course.ageGroup) ? course.ageGroup : undefined;
+  const duration = isDisplayable(course.duration) ? course.duration : undefined;
 
   return (
     <Link
@@ -111,20 +112,26 @@ export default function CourseCard({ course }: { course: CourseRecord }) {
 
         {/* Footer: pinned to the bottom of the card, so the details line up across a row of
             cards and always keep a fixed gap above the button. Each detail has a fixed slot:
-            level left and language right; lessons left and duration right. */}
+            age group left and duration right; level left and language right; lessons. */}
         <div className="mt-auto pt-5">
-          {(levelLabel || language || lessons || course.duration) && (
+          {(ageGroup || duration || levelLabel || language || lessons) && (
             <dl className="mb-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-gray-600">
+              {(ageGroup || duration) && (
+                <>
+                  <CardDetail icon={Users} label="Age group" value={ageGroup} />
+                  <CardDetail icon={Clock3} label="Duration" value={duration} />
+                </>
+              )}
               {(levelLabel || language) && (
                 <>
                   <CardDetail icon={GraduationCap} label="Level" value={levelLabel} />
                   <CardDetail icon={Languages} label="Language" value={language} />
                 </>
               )}
-              {(lessons || course.duration) && (
+              {lessons && (
                 <>
                   <CardDetail icon={ListChecks} label="Lessons" value={lessons} />
-                  <CardDetail icon={Clock3} label="Duration" value={course.duration ?? undefined} />
+                  <div aria-hidden="true" />
                 </>
               )}
             </dl>

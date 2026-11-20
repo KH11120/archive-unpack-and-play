@@ -104,7 +104,8 @@ describe("catalogue filter controls", () => {
       />,
     );
 
-    expect(groupTitles()).toEqual(["Learning Model", "Level", "Program Type"]);
+    // Subject, Learning Model and Program Type only: there is no Level filter.
+    expect(groupTitles()).toEqual(["Subject", "Learning Model", "Program Type"]);
     expect(screen.queryByRole("checkbox", { name: /Tamil/ })).not.toBeInTheDocument();
   });
 

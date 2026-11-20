@@ -2,8 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   emptyCatalogueFilters,
   gradeOptions,
+  formatCourseGrades,
+  getCourseGrades,
   getCourseLevelLabel,
   getCatalogueOptionCount,
+  languageOptions,
+  learningModelOptions,
+  subjectOptions,
   getCourseFacetValues,
   getFacetOptions,
   isPublishableCourse,
@@ -50,32 +55,38 @@ function testCourse(overrides: Partial<CourseRecord> = {}): CourseRecord {
 }
 
 describe("course catalogue publication and filtering", () => {
-  it("includes every active Course, Camp and Capstone from Course Master, one record each", () => {
-    // Counts verified against docs/Course_Catalogue_Website.xlsx › Course Master.
-    expect(workbookCourses).toHaveLength(108);
+  it("includes every active Course, Camp and Capstone from Course Master (2), one record each", () => {
+    // Counts verified against docs/Course_Catalogue_Website.xlsx › Course Master (2).
+    expect(workbookCourses).toHaveLength(113);
     const byType = (type: string) => workbookCourses.filter((c) => c.programType === type).length;
-    expect([byType("Course"), byType("Camp"), byType("Capstone")]).toEqual([79, 19, 10]);
-    expect(new Set(workbookCourses.map((course) => course.id)).size).toBe(108);
+    expect([byType("Course"), byType("Camp"), byType("Capstone")]).toEqual([100, 8, 5]);
+    expect(new Set(workbookCourses.map((course) => course.id)).size).toBe(113);
     expect(workbookCourses.every((course) => /^CRS-\d{3}$/.test(course.id))).toBe(true);
-    expect(new Set(workbookCourses.map((course) => course.routeSlug)).size).toBe(108);
+    expect(new Set(workbookCourses.map((course) => course.routeSlug)).size).toBe(113);
     expect(publishedCourses).toEqual([]);
     expect(workbookCourses.some((course) => course.offeringApproved)).toBe(false);
     expect(workbookCourses[0]).toMatchObject({
       id: "CRS-001",
-      title: "Python Transition Program",
-      category: "Python",
-      subject: "Python",
+      title: "Coding Fundamentals",
+      category: "Coding Foundations",
+      subject: "Coding",
       programType: "Course",
-      learningModel: "Assisted Learning (AL)",
-      level: "Moderate",
-      language: "Hindi",
+      learningModel: "Not specified",
+      language: "Not specified",
+      grades: [5],
+      ageGroup: "10-11 years",
+      duration: "6 Months",
     });
-    // Inactive (Deleted) records are excluded, e.g. CRS-095 "Javascript(E) - AL(Deleted)".
-    expect(workbookCourses.some((course) => course.id === "CRS-095")).toBe(false);
-    // Other types are excluded, e.g. demos and C-NAT practice sets.
-    expect(workbookCourses.some((course) => course.id === "CRS-009")).toBe(false);
-    expect(workbookCourses.some((course) => course.id === "CRS-062")).toBe(false);
-    expect(gradeOptions).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(workbookCourses.find((course) => course.id === "CRS-028")).toMatchObject({
+      title: "Block-Based Coding Applications",
+      subject: "Block Coding",
+      language: "English",
+      grades: [10, 11, 12],
+      gradeFrom: 10,
+      gradeTo: 12,
+      duration: "3 Months",
+    });
+    expect(gradeOptions).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
     expect(
       workbookCourses.some((course) =>
         Object.keys(course).some((key) =>
@@ -92,26 +103,76 @@ describe("course catalogue publication and filtering", () => {
     for (const course of workbookCourses)
       counts[course.category] = (counts[course.category] ?? 0) + 1;
     expect(counts).toEqual({
-      "Coding Foundations": 31,
-      Python: 13,
-      "Web Development": 14,
+      "Coding Foundations": 74,
+      Python: 9,
+      "Web Development": 9,
       JavaScript: 1,
-      "App Development": 7,
-      "Games & Creative Coding": 7,
-      "AI & Data Science": 8,
-      "Blockchain & Cryptography": 6,
-      "Cloud Computing": 6,
-      Other: 15,
+      "App Development": 1,
+      "Games & Creative Coding": 6,
+      "AI & Data Science": 6,
+      Vernatics: 2,
+      "Blockchain & Cryptography": 4,
+      "Cloud Computing": 1,
     });
   });
 
+  it("offers the workbook's subjects, learning models and languages as filter options", () => {
+    expect(subjectOptions).toEqual([
+      "Block Coding",
+      "Python",
+      "Web Development",
+      "JavaScript",
+      "Creative Coding (p5.js)",
+      "Game Development",
+      "App Development",
+      "Cloud Computing",
+      "AI & ML",
+      "Data Science",
+      "Blockchain",
+      "Cryptography",
+      "Programming Fundamentals (Codely)",
+      "Art & Music with Coding",
+      "Vernatics (Robotics)",
+      "Coding",
+    ]);
+    expect(learningModelOptions).toEqual(["Live", "Self Learning (SL)"]);
+    expect(languageOptions).toEqual(["English", "Hindi"]);
+  });
+
+  it("shows one grade or a grade range, and finds multi-grade courses under each grade", () => {
+    const byId = (id: string) => workbookCourses.find((course) => course.id === id)!;
+    expect(formatCourseGrades(byId("CRS-001"))).toBe("Grade 5");
+    expect(formatCourseGrades(byId("CRS-028"))).toBe("Grade 10–12");
+    expect(formatCourseGrades(byId("CRS-037"))).toBe("Grade 1–12");
+    expect(formatCourseGrades(testCourse({ grades: [1, 3, 5] }))).toBe("Grades 1, 3, 5");
+    expect(formatCourseGrades(testCourse({ grades: [], gradeFrom: null, gradeTo: null }))).toBe(
+      undefined,
+    );
+    const grade11 = catalogueCourses.filter((course) =>
+      matchesCatalogueFilters(course, { ...emptyCatalogueFilters, grades: [11] }),
+    );
+    expect(grade11.map((course) => course.id)).toEqual(
+      expect.arrayContaining(["CRS-007", "CRS-028", "CRS-032", "CRS-037", "CRS-093"]),
+    );
+    expect(grade11.every((course) => getCourseGrades(course).includes(11))).toBe(true);
+    expect(grade11.some((course) => course.id === "CRS-027")).toBe(false); // Grades 7–9
+  });
+
+  it("combines subject, learning model, grade and language filters", () => {
+    const shown = catalogueCourses.filter((course) =>
+      matchesCatalogueFilters(course, {
+        ...emptyCatalogueFilters,
+        subjects: ["Block Coding"],
+        models: ["Self Learning (SL)"],
+        grades: [5],
+        languages: ["Hindi"],
+      }),
+    );
+    expect(shown.map((course) => course.id)).toEqual(["CRS-091"]);
+  });
+
   it("titles every course from the Display Name column", () => {
-    const fromDisplay = workbookCourses.filter((c) => c.source?.titleFrom === "Display Name");
-    expect(fromDisplay).toHaveLength(105);
-    // Only these rows have no Display Name in the workbook yet (reported by the sync script).
-    expect(
-      workbookCourses.filter((c) => c.source?.titleFrom !== "Display Name").map((c) => c.id),
-    ).toEqual(["CRS-096", "CRS-097", "CRS-098"]);
+    expect(workbookCourses.every((c) => c.source?.titleFrom === "Display Name")).toBe(true);
   });
 
   it("labels the card level: Live Level for Live courses, difficulty for the rest", () => {
@@ -223,7 +284,7 @@ describe("course catalogue publication and filtering", () => {
     ).toBe(false);
   });
 
-  it("sorts by grade, level, alphabetic title, or display order", () => {
+  it("sorts by grade, alphabetic title, or display order", () => {
     const laterGrade = testCourse({ id: "b", title: "Second", gradeFrom: 8, displayOrder: 2 });
     const earlierGrade = testCourse({
       id: "a",
@@ -233,10 +294,6 @@ describe("course catalogue publication and filtering", () => {
       displayOrder: 1,
     });
     expect(sortCourses([laterGrade, earlierGrade], "grade").map((course) => course.id)).toEqual([
-      "a",
-      "b",
-    ]);
-    expect(sortCourses([laterGrade, earlierGrade], "level").map((course) => course.id)).toEqual([
       "a",
       "b",
     ]);
@@ -252,12 +309,18 @@ describe("course catalogue publication and filtering", () => {
   it("round-trips shareable catalogue query state", () => {
     const filters = parseCatalogueSearch({
       q: "python",
-      model: "Live,Assisted Learning (AL)",
+      subject: "Python,Block Coding",
+      model: "Live,Self Learning (SL)",
+      grade: "11",
+      language: "Hindi",
       sort: "az",
     });
     expect(filters).toMatchObject({
       q: "python",
-      models: ["Live", "Assisted Learning (AL)"],
+      subjects: ["Python", "Block Coding"],
+      models: ["Live", "Self Learning (SL)"],
+      grades: [11],
+      languages: ["Hindi"],
       sort: "az",
     });
     expect(
@@ -267,36 +330,32 @@ describe("course catalogue publication and filtering", () => {
 
   it("normalizes approved filter values from shared URLs", () => {
     expect(
-      parseCatalogueSearch({ model: " live ", level: "easy", language: "HINDI" }),
+      parseCatalogueSearch({
+        subject: "block coding",
+        model: " live ",
+        level: "easy",
+        language: "HINDI",
+      }),
     ).toMatchObject({
+      subjects: ["Block Coding"],
       models: ["Live"],
-      levels: ["Easy"],
       languages: ["Hindi"],
     });
+    // The router hands a single number over as a number, e.g. ?grade=11.
+    expect(parseCatalogueSearch({ grade: 11 }).grades).toEqual([11]);
+    // The old Level filter is gone; a shared ?level= link is simply ignored.
+    expect(parseCatalogueSearch({ level: "Easy" })).not.toHaveProperty("levels");
     expect(
       parseCatalogueSearch({
         model: "ALTS (meaning to confirm)",
-        level: "Not specified",
+        subject: "Robotics",
         grade: "13",
       }),
     ).toMatchObject({
       models: [],
-      levels: [],
+      subjects: [],
       grades: [],
     });
-  });
-
-  it("matches All Levels courses under each selected individual level", () => {
-    const allLevels = testCourse({ level: "All Levels" });
-    expect(matchesCatalogueFilters(allLevels, { ...emptyCatalogueFilters, levels: ["Hard"] })).toBe(
-      true,
-    );
-    expect(
-      matchesCatalogueFilters(allLevels, {
-        ...emptyCatalogueFilters,
-        levels: ["Not specified"],
-      }),
-    ).toBe(false);
   });
 
   it("matches values case-insensitively, ignores stray spaces and splits multi-value cells", () => {
@@ -324,14 +383,13 @@ describe("course catalogue publication and filtering", () => {
       }),
     ];
     expect(getFacetOptions(courses, "languages")).toEqual(["English", "Hindi", "Tamil"]);
-    expect(getFacetOptions(courses, "levels")).toEqual(["Easy", "Moderate"]);
     expect(getFacetOptions(courses, "models")).toEqual(["Live"]);
   });
 
   it("derives sidebar options from the real catalogue rows", () => {
     for (const [key, field] of [
+      ["subjects", "subject"],
       ["models", "learningModel"],
-      ["levels", "level"],
       ["languages", "language"],
       ["programTypes", "programType"],
     ] as const) {
@@ -360,9 +418,9 @@ describe("course catalogue publication and filtering", () => {
 
   it("counts each option after applying the other filter groups", () => {
     const courses = [
-      testCourse({ id: "1", learningModel: "Live", gradeFrom: 4, gradeTo: 6 }),
-      testCourse({ id: "2", learningModel: "Assisted Learning (AL)", gradeFrom: 6, gradeTo: 8 }),
-      testCourse({ id: "3", learningModel: "Live", gradeFrom: 7, gradeTo: 9 }),
+      testCourse({ id: "1", learningModel: "Live", grades: [4, 5, 6] }),
+      testCourse({ id: "2", learningModel: "Assisted Learning (AL)", grades: [6, 7, 8] }),
+      testCourse({ id: "3", learningModel: "Live", grades: [7, 8, 9] }),
     ];
     const filters = { ...emptyCatalogueFilters, grades: [6] };
     expect(getCatalogueOptionCount(courses, filters, undefined, "models", "Live")).toBe(1);

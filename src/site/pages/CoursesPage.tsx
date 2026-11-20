@@ -47,9 +47,9 @@ function filterOptionLabel(key: FilterKey, value: FilterValue): string {
 
 function filterKeyLabel(key: FilterKey): string {
   return {
+    subjects: "Subject",
     models: "Learning Model",
     grades: "Grade",
-    levels: "Level",
     languages: "Language",
     programTypes: "Program Type",
   }[key];
@@ -139,6 +139,11 @@ export function FilterPanel({
   ];
   const groups: { title: string; key: FilterKey; options: FilterValue[] }[] = [
     {
+      title: "Subject",
+      key: "subjects",
+      options: withSelected(getFacetOptions(scopedCourses, "subjects"), filters.subjects),
+    },
+    {
       title: "Learning Model",
       key: "models",
       options: withSelected(getFacetOptions(scopedCourses, "models"), filters.models),
@@ -147,11 +152,6 @@ export function FilterPanel({
       title: "Grade",
       key: "grades",
       options: withSelected(getGradeOptions(scopedCourses), filters.grades),
-    },
-    {
-      title: "Level",
-      key: "levels",
-      options: withSelected(getFacetOptions(scopedCourses, "levels"), filters.levels),
     },
     {
       title: "Language",
@@ -253,7 +253,7 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
   const activeChips: { key: FilterKey | "q"; value: FilterValue | string; label: string }[] = [];
   if (filters.q.trim())
     activeChips.push({ key: "q", value: filters.q, label: `Search: ${filters.q}` });
-  for (const key of ["models", "grades", "levels", "languages", "programTypes"] as const) {
+  for (const key of ["subjects", "models", "grades", "languages", "programTypes"] as const) {
     for (const value of filters[key])
       activeChips.push({
         key,
@@ -414,7 +414,6 @@ export default function CoursesPage({ category, filters, onFiltersChange, naviga
             >
               <option value="recommended">Recommended</option>
               {gradeOptions.length > 0 && <option value="grade">Grade low to high</option>}
-              <option value="level">Level easy to hard</option>
               <option value="az">A-Z</option>
             </select>
           </label>

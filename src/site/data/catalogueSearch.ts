@@ -5,9 +5,9 @@ import {
   gradeOptions,
   languageOptions,
   learningModelOptions,
-  levelOptions,
   programTypeOptions,
   sortOptions,
+  subjectOptions,
   type CatalogueFilters,
 } from "./courseCatalogue";
 
@@ -15,16 +15,23 @@ export interface CatalogueUrlSearch extends Record<string, unknown> {
   q?: string;
   /** Selected categories as URL slugs, e.g. "python,web-development". */
   category?: string;
+  subject?: string;
   model?: string;
   grade?: string;
-  level?: string;
   language?: string;
   program?: string;
   sort?: string;
 }
 
 function readCsv(value: unknown): string[] {
-  const raw = Array.isArray(value) ? value : typeof value === "string" ? value.split(",") : [];
+  // The router parses "?grade=5" as the number 5, so single numbers are accepted too.
+  const raw = Array.isArray(value)
+    ? value
+    : typeof value === "string"
+      ? value.split(",")
+      : typeof value === "number"
+        ? [String(value)]
+        : [];
   return [
     ...new Set(
       raw
@@ -56,11 +63,11 @@ export function parseCatalogueSearch(search: Record<string, unknown>): Catalogue
       .filter(
         (value, index, list): value is string => Boolean(value) && list.indexOf(value) === index,
       ),
+    subjects: approvedOptions(readCsv(search["subject"]), subjectOptions),
     models: approvedOptions(readCsv(search["model"]), learningModelOptions),
     grades: readCsv(search["grade"])
       .map(Number)
       .filter((grade) => Number.isInteger(grade) && gradeOptions.includes(grade)),
-    levels: approvedOptions(readCsv(search["level"]), levelOptions),
     languages: approvedOptions(readCsv(search["language"]), languageOptions),
     programTypes: approvedOptions(readCsv(search["program"]), programTypeOptions),
     sort,
@@ -72,9 +79,9 @@ export function serializeCatalogueSearch(filters: CatalogueFilters): Record<stri
   if (filters.q.trim()) result["q"] = filters.q.trim();
   if (filters.categories.length)
     result["category"] = filters.categories.map(getCourseCategorySlug).join(",");
+  if (filters.subjects.length) result["subject"] = filters.subjects.join(",");
   if (filters.models.length) result["model"] = filters.models.join(",");
   if (filters.grades.length) result["grade"] = filters.grades.join(",");
-  if (filters.levels.length) result["level"] = filters.levels.join(",");
   if (filters.languages.length) result["language"] = filters.languages.join(",");
   if (filters.programTypes.length) result["program"] = filters.programTypes.join(",");
   if (filters.sort !== "recommended") result["sort"] = filters.sort;
@@ -89,9 +96,9 @@ export function hasActiveCatalogueSearch(filters: CatalogueFilters): boolean {
   return Boolean(
     filters.q.trim() ||
     filters.categories.length ||
+    filters.subjects.length ||
     filters.models.length ||
     filters.grades.length ||
-    filters.levels.length ||
     filters.languages.length ||
     filters.programTypes.length,
   );

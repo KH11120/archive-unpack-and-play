@@ -38,6 +38,7 @@ function fixture(overrides: Partial<CourseRecord> = {}): CourseRecord {
     lessons: 8,
     gradeFrom: 4,
     gradeTo: 6,
+    ageGroup: "10-13 years",
     duration: "12 weeks",
     shortDescription: "A test description.",
     overview: "Test-only overview.",
@@ -58,7 +59,8 @@ describe("CourseCard", () => {
       "/courses/approved-test-course",
     );
     expect(screen.getByRole("img", { name: "Approved test course" })).toBeInTheDocument();
-    expect(screen.getByText("Grades 4-6")).toBeInTheDocument();
+    expect(screen.getByText("Grade 4–6")).toBeInTheDocument();
+    expect(screen.getByText("10-13 years")).toBeInTheDocument();
     expect(screen.getByText("Camp")).toBeInTheDocument();
     expect(screen.getByText("8 lessons")).toBeInTheDocument();
     expect(screen.getByText("Python")).toBeInTheDocument();
@@ -136,6 +138,11 @@ describe("CourseCard detail slots", () => {
       (slot) => slot.querySelector("dd")?.textContent ?? "",
     );
 
+  it("keeps age group on the left and duration on the right", () => {
+    const { container } = render(<CourseCard course={fixture()} />);
+    expect(slots(container).slice(0, 2)).toEqual(["10-13 years", "12 weeks"]);
+  });
+
   it("keeps level on the left and language on the right", () => {
     const { container } = render(
       <CourseCard
@@ -146,7 +153,7 @@ describe("CourseCard detail slots", () => {
         })}
       />,
     );
-    expect(slots(container).slice(0, 2)).toEqual(["Moderate", "Hindi"]);
+    expect(slots(container).slice(2, 4)).toEqual(["Moderate", "Hindi"]);
   });
 
   it("keeps language on the right even when there is no level", () => {
@@ -159,7 +166,7 @@ describe("CourseCard detail slots", () => {
         })}
       />,
     );
-    expect(slots(container).slice(0, 2)).toEqual(["", "English"]);
+    expect(slots(container).slice(2, 4)).toEqual(["", "English"]);
   });
 
   it("puts the details above the button, never after it", () => {

@@ -6,7 +6,7 @@ import {
   categoryOptions,
   emptyCatalogueFilters,
   getCourseLevelLabel,
-  levelOptions,
+  subjectOptions,
   matchesCatalogueFilters,
   workbookCourses,
 } from "./courseCatalogue";
@@ -28,7 +28,6 @@ describe("Vernatics courses (added outside the workbook)", () => {
       "Games & Creative Coding",
       "Blockchain & Cryptography",
       "Cloud Computing",
-      "Other",
     ]);
   });
 
@@ -41,18 +40,23 @@ describe("Vernatics courses (added outside the workbook)", () => {
     for (const course of vernaticsCourses) {
       expect(course.category).toBe("Vernatics");
       expect(course.thumbnailUrl).toBe("/videos/vernatics-poster.jpg");
+      // Same subject as the workbook's Vernatics courses, so one Subject option covers all.
+      expect(course.subject).toBe("Vernatics (Robotics)");
     }
-    // Their levels are card text only, never new sidebar options.
-    expect(levelOptions).not.toContain("Simple Level");
+    expect(subjectOptions.filter((subject) => subject.startsWith("Vernatics"))).toEqual([
+      "Vernatics (Robotics)",
+    ]);
   });
 
-  it("shows only the three Vernatics courses when the category is selected", () => {
+  it("shows the workbook's Vernatics courses and the three Robo courses in the category", () => {
     const filters = parseCatalogueSearch({ category: "vernatics" });
     expect(filters.categories).toEqual(["Vernatics"]);
     const shown = catalogueCourses.filter((course) =>
       matchesCatalogueFilters(course, { ...emptyCatalogueFilters, categories: filters.categories }),
     );
     expect(sortCourses(shown, "recommended").map((course) => course.title)).toEqual([
+      "Vernatics Fundamentals",
+      "Advanced Vernatics Concepts",
       "Robo Star",
       "Robo Orbit",
       "Robo Galaxy",

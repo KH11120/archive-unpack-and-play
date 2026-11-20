@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useSiteNavigate } from "@/site/useSiteNavigate";
 import {
+  formatCourseGrades,
   getCourseCategorySlug,
   catalogueCourses,
   type CourseRecord,
@@ -64,22 +65,16 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
     return [...grouped.entries()].sort(([a], [b]) => a - b);
   }, [course.syllabus]);
 
+  const gradeLabel = formatCourseGrades(course);
   const facts: [string, string][] = [
     ["Category", course.category],
     ...(course.programType !== "Course"
       ? [["Program Type", course.programType] as [string, string]]
       : []),
-    ...(typeof course.gradeFrom === "number" && typeof course.gradeTo === "number"
-      ? [
-          [
-            `Grade${course.gradeFrom === course.gradeTo ? "" : "s"}`,
-            course.gradeFrom === course.gradeTo
-              ? `${course.gradeFrom}`
-              : `${course.gradeFrom}-${course.gradeTo}`,
-          ] as [string, string],
-        ]
-      : []),
-    ...(course.duration ? [["Duration", course.duration] as [string, string]] : []),
+    ...(isDisplayable(course.subject) ? [["Subject", course.subject] as [string, string]] : []),
+    ...(gradeLabel ? [["Grade", gradeLabel] as [string, string]] : []),
+    ...(isDisplayable(course.ageGroup) ? [["Age Group", course.ageGroup] as [string, string]] : []),
+    ...(isDisplayable(course.duration) ? [["Duration", course.duration] as [string, string]] : []),
     ...(typeof course.lessons === "number"
       ? [["Lessons", String(course.lessons)] as [string, string]]
       : []),
@@ -140,11 +135,14 @@ export default function CourseDetailPage({ course }: { course: CourseRecord }) {
               </p>
             )}
             <div className="mt-5 flex flex-wrap gap-2">
-              {typeof course.gradeFrom === "number" && typeof course.gradeTo === "number" && (
+              {gradeLabel && (
                 <span className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-800">
-                  {course.gradeFrom === course.gradeTo
-                    ? `Grade ${course.gradeFrom}`
-                    : `Grades ${course.gradeFrom}-${course.gradeTo}`}
+                  {gradeLabel}
+                </span>
+              )}
+              {isDisplayable(course.duration) && (
+                <span className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-800">
+                  {course.duration}
                 </span>
               )}
               {displayLearningModel(course.learningModel) && (

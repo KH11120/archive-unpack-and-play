@@ -51,6 +51,11 @@ describe("Hindi translation", () => {
     expect(toHindi("12 lessons")).toBe("12 पाठ");
     expect(toHindi("Python Courses")).toBe("Python कोर्स");
     expect(toHindi("15 January 2026")).toBe("15 जनवरी 2026");
+    expect(toHindi("Grade 10–12")).toBe("कक्षा 10–12");
+    expect(toHindi("6 Months")).toBe("6 महीने");
+    expect(toHindi("1 Week")).toBe("1 सप्ताह");
+    expect(toHindi("12-15 years")).toBe("12-15 वर्ष");
+    expect(toHindi("Subject: Block Coding")).toBe("विषय: ब्लॉक कोडिंग");
     expect(toHindi("Something not in the dictionary")).toBeNull();
   });
 
